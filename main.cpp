@@ -103,8 +103,9 @@ void uartReceive(Uart* uart){
         }else if(cnt==1 && buffer[0]=='a'){
             state = ARMOR_STATE;
             LOGM("State switch to armor!");
-        }else{
-            sscanf(buffer, "%f %f", &yaw, &pitch);
+        }else if(cnt==8){
+            memcpy(&yaw, buffer, 4);
+            memcpy(&pitch, buffer+4, 4);
             LOGM("Get yaw:%f pitch:%f", yaw, pitch);
         }
         cnt = 0;

@@ -62,16 +62,16 @@ bool CameraWrapper::init() {
         return false;
     }
 
-        CameraGetFriendlyName(h_camera0, camera_name0);
-        CameraGetFriendlyName(h_camera1, camera_name1);
-        cout<<"camera names: "<<camera_name0<<" "<<camera_name1<<endl;
+    CameraGetFriendlyName(h_camera0, camera_name0);
+    CameraGetFriendlyName(h_camera1, camera_name1);
+    cout<<"camera names: "<<camera_name0<<" "<<camera_name1<<endl;
 //        cout<<camera_name0<<endl;
 //        cout<<camera_name1<<endl;
-    //如果读取的相机列表不是0在左，1在右，则交换相机句柄
-//    if(strcmp(camera_name0, "camera0") != 0)
-//    {
-//        swapCameraHandle();
-//    }
+    //如果读取的相机列表不是energy在左，armor在右，则交换相机句柄
+    if(strcmp(camera_name0, "armor") != 0)
+    {
+        swapCameraHandle();
+    }
 
     //获得相机的特性描述结构体。该结构体中包含了相机可设置的各种参数的范围信息。决定了相关函数的参数
     CameraGetCapability(h_camera0, &tCapability0);
