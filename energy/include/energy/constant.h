@@ -17,8 +17,8 @@ const int CLOCKWISE = 1;
 const int ANTICLOCKWISE = -1;
 const float ATTACK_DISTANCE = 770;//cm
 const double WHOLE_FAN = 80;//cm
-//const double ARMOR_CENTER_TO_CYCLE_CENTER = 75;//cm
-const double ARMOR_CENTER_TO_CYCLE_CENTER = 71;//cm
+const double ARMOR_CENTER_TO_CYCLE_CENTER = 75;//cm
+//const double ARMOR_CENTER_TO_CYCLE_CENTER = 71;//cm
 const int EXTRACT_POINT_X = 200;
 const int EXTRACT_POINT_Y = 20;
 const int EXTRACT_WIDTH = 240;
@@ -30,7 +30,7 @@ const int GM_X = 15;//云台摄像头x方向
 const int GM_H = 16;//云台摄像头y方向
 
 //const double STRETCH = 231.0/640.0;//实际距离与图像伸缩比
-const double STRETCH = 231.0/640.0;
+const double STRETCH = 0.34;
 
 const int ZERO_POINT_X = 281;
 const int ZERO_POINT_Y = 188;

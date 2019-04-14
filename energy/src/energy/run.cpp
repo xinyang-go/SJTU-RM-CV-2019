@@ -24,7 +24,7 @@ int Energy::run(cv::Mat &src){
     threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
 //    imshow("bin",src);
 
-
+/*
     fans_cnt = findFan(src, fans, last_fans_cnt);
 //    cout<<"fans_cnt: "<<fans_cnt<<endl;
     if(fans_cnt==-1) return 0;//滤去漏判的帧
@@ -39,14 +39,16 @@ int Energy::run(cv::Mat &src){
     if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src, fans, armors);
 
     if(armors_cnt != fans_cnt+1) return 0;
-
+*/
 
 //此处用于标定云台在摄像头视频中的零点
-//    findGimbleZeroPoint(src,gimble_zero_points);
-//    cout<<"gimble zero points: :"<<gimble_zero_points.size()<<endl;
-//    showFanContours("zero",src,gimble_zero_points);
+    findGimbleZeroPoint(src,gimble_zero_points);
+    cout<<"gimble zero points: :"<<gimble_zero_points.size()<<endl;
+    showFanContours("zero",src,gimble_zero_points);
+    cycle_center = cv::Point(291,305);
+    if(gimble_zero_points.size()>0)hit_point = gimble_zero_points.at(0).rect.center;
 
-
+/*
     getAllArmorCenters();
     cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
@@ -62,6 +64,7 @@ int Energy::run(cv::Mat &src){
     getHitPoint();
     cout << "The hit point position is " << hit_point << endl;
 //    hit_point = cycle_center;
+*/
     gimbleRotation();
 
     sendTargetByUart(yaw_rotation, pitch_rotation, attack_distance);
