@@ -6,7 +6,6 @@
 #define _LOG_H_
 
 #include <stdio.h>
-#include <type_traits>
 #include <sys/time.h>
 
 /************** Define the control code *************/
@@ -57,8 +56,9 @@
 /*************** Define the log level value ***************/
 #define LOG_NONE    0
 #define LOG_ERROR   1
-#define LOG_WARRING 2
+#define LOG_WARNING 2
 #define LOG_MSG     3
+#define LOG_NOTHING 4
 /************** Ensure the current log level **************/
 #ifndef LOG_LEVEL
     #define LOG_LEVEL LOG_MSG
@@ -72,8 +72,8 @@
 #ifndef LOG_ERROR_COLOR
     #define LOG_ERROR_COLOR         WORD_RED
 #endif
-#ifndef LOG_WARRING_COLOR
-    #define LOG_WARRING_COLOR       WORD_YELLOW
+#ifndef LOG_WARNING_COLOR
+    #define LOG_WARNING_COLOR       WORD_YELLOW
 #endif
 #ifndef LOG_MSG_COLOR
     #define LOG_MSG_COLOR           WORD_GRAY
@@ -88,7 +88,7 @@
 #else
     #define LOG_1(format, ...)      ((void)0)
 #endif
-#if LOG_LEVEL >= LOG_WARRING
+#if LOG_LEVEL >= LOG_WARNING
     #define LOG_2(format, ...)      printf(format, ##__VA_ARGS__)
 #else
     #define LOG_2(format, ...)      ((void)0)
@@ -98,6 +98,7 @@
 #else
     #define LOG_3(format, ...)      ((void)0)
 #endif
+#define LOG_4(format, ...)          ((void)0)
 #define LOG_(level, format, ...)    LOG_##level (format, ##__VA_ARGS__)
 #define LOG(level, format, ...)     LOG_(level, format"\n", ##__VA_ARGS__)
 #define STR_CTR(ctrs, str)          START_CTR ctrs END_CTR str CLEAR_ALL
@@ -105,17 +106,17 @@
 #define LOGA(format, ...)           LOG(LOG_NONE, format, ##__VA_ARGS__)
 #define LOGA_INFO(format, ...)      LOG(LOG_NONE, "<%s:%d>: " format, ##__VA_ARGS__)
 #define LOGE(format, ...)           LOG(LOG_ERROR,   STR_CTR(LOG_ERROR_COLOR,  "<ERROR>: "   format), ## __VA_ARGS__)
-#define LOGW(format, ...)           LOG(LOG_WARRING, STR_CTR(LOG_WARRING_COLOR,"<WARRING>: " format), ## __VA_ARGS__)
+#define LOGW(format, ...)           LOG(LOG_WARNING, STR_CTR(LOG_WARNING_COLOR,"<WARNING>: " format), ## __VA_ARGS__)
 #define LOGM(format, ...)           LOG(LOG_MSG,     STR_CTR(LOG_MSG_COLOR,    "<MSG>: "     format), ## __VA_ARGS__)
 #define LOGE_INFO(format, ...)      LOG(LOG_ERROR, \
                                             STR_CTR(LOG_ERROR_COLOR,  "<") \
                                             STR_CTR(LOG_LINK_COLOR,  "%s:%d") \
                                             STR_CTR(LOG_ERROR_COLOR, " ERROR>: "   format), \
                                             __FILE__, __LINE__, ##__VA_ARGS__)
-#define LOGW_INFO(format, ...)      LOG(LOG_WARRING, \
-                                            STR_CTR(LOG_WARRING_COLOR,"<") \
+#define LOGW_INFO(format, ...)      LOG(LOG_WARNING, \
+                                            STR_CTR(LOG_WARNING_COLOR,"<") \
                                             STR_CTR(LOG_LINK_COLOR,"%s:%d") \
-                                            STR_CTR(LOG_WARRING_COLOR, " WARRING>: " format), \
+                                            STR_CTR(LOG_WARNING_COLOR, " WARNING>: " format), \
                                             __FILE__, __LINE__, ##__VA_ARGS__)
 #define LOGM_INFO(format, ...)      LOG(LOG_MSG, \
                                             STR_CTR(LOG_MSG_COLOR,    "<") \
