@@ -5,7 +5,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "energy/energy.h"
-#include "include/uart/uart.h"
+#include "uart/uart.h"
 #include "energy/param_struct_define.h"
 #include "energy/constant.h"
 #include "camera/camera_wrapper.h"
