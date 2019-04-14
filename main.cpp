@@ -1,11 +1,8 @@
 //
 // Created by xixiliadorabarry on 1/24/19.
 //
-#include <fstream>
 #include <iostream>
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 #include "energy/energy.h"
 #include "include/uart/uart.h"
@@ -18,7 +15,6 @@
 #include <options/options.h>
 #include <log.h>
 
-#include <time.h>
 #include <thread>
 
 using namespace cv;
@@ -27,8 +23,8 @@ using namespace std;
 #define ENERGY_STATE 1
 #define ARMOR_STATE 0
 
-int state = ENERGY_STATE;
-float yaw, pitch;
+int state = ARMOR_STATE;
+float yaw=0, pitch=0;
 
 void uartReceive(Uart* uart);
 
@@ -36,8 +32,8 @@ int main(int argc, char *argv[])
 {
     process_options(argc, argv);
     Uart uart;
+    thread receive(uartReceive, &uart);
 	bool flag = true;
-	short done = 0;//用于检测是否已经读完初始激光中心时的角度
 
 	while (flag)
 	{
@@ -60,7 +56,7 @@ int main(int argc, char *argv[])
 			cout << "Video source initialization successfully." << endl;
 		}
 
-		Mat src, src_none;
+		Mat energy_src, armor_src;
 
 		ArmorFinder armorFinder(ENEMY_BLUE, uart);
 
@@ -68,26 +64,16 @@ int main(int argc, char *argv[])
         energy.setAllyColor(ally_color);
         energy.setRotation(energy_part_rotation);
 
-        static thread receive(uartReceive, &uart);
-
-        if(state==1 && done == 0){
-            energy.uart.receive_data();
-            done = 1;
-        }
-
-//        energy.sendTargetByUart(-8,-8,-8);
-
-
-		time_t t1 = time(nullptr), t2 = time(nullptr);
-
-		while (video->read(src, src_none))
+		while (video->read(energy_src, armor_src))
 		{
-//			if(!from_camera)energy.extract(src);
-            if(state == 1){
-                imshow("src", src);
-                energy.run(src);
+		    if(show_origin) {
+                imshow("enery src", energy_src);
+                imshow("armor src", armor_src);
+            }
+            if(state == ENERGY_STATE){
+                energy.run(energy_src);
             }else{
-                armorFinder.run(src_none);
+                armorFinder.run(armor_src);
             }
 
 			if (waitKey(1) == 'q') {
@@ -119,6 +105,7 @@ void uartReceive(Uart* uart){
             LOGM("State switch to armor!");
         }else{
             sscanf(buffer, "%f %f", &yaw, &pitch);
+            LOGM("Get yaw:%f pitch:%f", yaw, pitch);
         }
         cnt = 0;
     }

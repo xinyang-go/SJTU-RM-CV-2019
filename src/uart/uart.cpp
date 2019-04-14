@@ -159,13 +159,3 @@ char Uart::receive() {
     return data;
 }
 
-
-void Uart::receive_data() {
-    char Enemy_Info[6] = {0};
-    read(fd, &Enemy_Info, 6);
-    if(Enemy_Info[0]=='s'&&Enemy_Info[5]=='e'){
-        aim.yaw = static_cast<float>(((Enemy_Info[1]<<8)|(Enemy_Info[2]))*(100.0 / (32768.0 - 1.0)));
-        aim.pitch = static_cast<float>(((Enemy_Info[3]<<8)|(Enemy_Info[4]))*(100.0 / (32768.0 - 1.0)));
-    }
-    else return;
-}
