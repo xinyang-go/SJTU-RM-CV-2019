@@ -96,6 +96,9 @@ void uartReceive(Uart* uart){
         char data;
         while((data=uart->receive()) != '\n'){
             buffer[cnt++] = data;
+            if(cnt >= 100){
+                LOGE("data receive over flow!");
+            }
         }buffer[cnt] = 0;
         if(cnt == 9){
             if(buffer[8] == 'e'){
