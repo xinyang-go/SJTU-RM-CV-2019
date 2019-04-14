@@ -153,8 +153,8 @@ void Uart::sendTarget(float x, float y, float z) {
 // 's' + (x) ( 8bit + 8bit ) + (y) ( 8bit + 8bit ) + (z) ( 8bit + 8bit ) + 'e'
 
 
-char Uart::receive() {
-    char data;
+uint8_t Uart::receive() {
+    uint8_t data;
     while(read(fd, &data, 1) < 1);
     return data;
 }

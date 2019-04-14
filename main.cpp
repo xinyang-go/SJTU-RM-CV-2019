@@ -93,9 +93,10 @@ void uartReceive(Uart* uart){
     char buffer[100];
     int cnt=0;
     while(true){
-        char data;
-        while((data=uart->receive()) != '\n'){
-            buffer[cnt++] = data;
+        unsigned int data;
+        while(1){
+            cout << (data=uart->receive()) << endl;
+//            buffer[cnt++] = data;
         }buffer[cnt] = 0;
         if(cnt==1 && buffer[0]=='e'){
             state = ENERGY_STATE;

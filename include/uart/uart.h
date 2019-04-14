@@ -34,7 +34,7 @@ public:
     Uart();
     void sendTarget(float x, float y ,float z);
 
-    char receive();
+    uint8_t receive();
     void receive_data();
 };
 
