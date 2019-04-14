@@ -16,6 +16,7 @@
 #include "camera/wrapper_head.h"
 #include "armor_finder/armor_finder.h"
 
+#include <log.h>
 #include <time.h>
 #include <thread>
 
@@ -108,10 +109,12 @@ void uartReceive(Uart* uart){
         }buffer[cnt] = 0;
         if(cnt==1 && buffer[0]=='e'){
             state = ENERGY_STATE;
+            LOGM("State switch to energy!");
         }else if(cnt==1 && buffer[0]=='a'){
             state = ARMOR_STATE;
+            LOGM("State switch to armor!");
         }else{
-            sscanf(buffer, "%f, %f", &yaw, &pitch);
+            sscanf(buffer, "%f %f", &yaw, &pitch);
         }
         cnt = 0;
     }
