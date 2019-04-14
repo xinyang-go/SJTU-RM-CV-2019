@@ -24,7 +24,8 @@ using namespace std;
 #define ARMOR_STATE 0
 
 int state = ARMOR_STATE;
-float yaw=0, pitch=0;
+float curr_yaw=0, curr_pitch=0;
+float mark_yaw=0, mark_pitch=0;
 
 void uartReceive(Uart* uart);
 
@@ -99,20 +100,22 @@ void uartReceive(Uart* uart){
             if(cnt >= 100){
                 LOGE("data receive over flow!");
             }
-        }buffer[cnt] = 0;
-        if(cnt == 9){
+        }
+        if(cnt == 10){
             if(buffer[8] == 'e'){
                 state = ENERGY_STATE;
                 LOGM("Energy state");
-                memcpy(&yaw, buffer, 4);
-                memcpy(&pitch, buffer+4, 4);
-                LOGM("Get yaw:%f pitch:%f", yaw, pitch);
             }else if(buffer[8] == 'a'){
                 state = ARMOR_STATE;
                 LOGM("Armor state");
-                memcpy(&yaw, buffer, 4);
-                memcpy(&pitch, buffer+4, 4);
-                LOGM("Get yaw:%f pitch:%f", yaw, pitch);
+            }
+            memcpy(&curr_yaw, buffer, 4);
+            memcpy(&curr_pitch, buffer+4, 4);
+            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+            if(buffer[9] == 1){
+                mark_yaw = curr_yaw;
+                mark_pitch = curr_pitch;
+                LOGM("Marked");
             }
         }
         cnt = 0;
