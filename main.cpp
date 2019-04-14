@@ -93,21 +93,24 @@ void uartReceive(Uart* uart){
     char buffer[100];
     int cnt=0;
     while(true){
-        unsigned int data;
-        while(1){
-            cout << (data=uart->receive()) << endl;
-//            buffer[cnt++] = data;
+        char data;
+        while((data=uart->receive()) != '\n'){
+            buffer[cnt++] = data;
         }buffer[cnt] = 0;
-        if(cnt==1 && buffer[0]=='e'){
-            state = ENERGY_STATE;
-            LOGM("State switch to energy!");
-        }else if(cnt==1 && buffer[0]=='a'){
-            state = ARMOR_STATE;
-            LOGM("State switch to armor!");
-        }else if(cnt==8){
-            memcpy(&yaw, buffer, 4);
-            memcpy(&pitch, buffer+4, 4);
-            LOGM("Get yaw:%f pitch:%f", yaw, pitch);
+        if(cnt == 9){
+            if(buffer[8] == 'e'){
+                state = ENERGY_STATE;
+                LOGM("Energy state");
+                memcpy(&yaw, buffer, 4);
+                memcpy(&pitch, buffer+4, 4);
+                LOGM("Get yaw:%f pitch:%f", yaw, pitch);
+            }else if(buffer[8] == 'a'){
+                state = ARMOR_STATE;
+                LOGM("Armor state");
+                memcpy(&yaw, buffer, 4);
+                memcpy(&pitch, buffer+4, 4);
+                LOGM("Get yaw:%f pitch:%f", yaw, pitch);
+            }
         }
         cnt = 0;
     }
