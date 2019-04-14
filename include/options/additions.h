@@ -9,7 +9,6 @@
 #include <opencv2/core.hpp>
 #include <thread>
 
-std::thread*  create_data_recv_thread(Uart *uart);
 void save_video_file(cv::Mat &src);
 void save_labelled_image(cv::Mat &src, cv::Rect2d box);
 

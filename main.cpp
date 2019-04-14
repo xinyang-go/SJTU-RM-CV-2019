@@ -15,8 +15,9 @@
 #include "camera/video_wrapper.h"
 #include "camera/wrapper_head.h"
 #include "armor_finder/armor_finder.h"
-
+#include <options/options.h>
 #include <log.h>
+
 #include <time.h>
 #include <thread>
 
@@ -31,8 +32,9 @@ float yaw, pitch;
 
 void uartReceive(Uart* uart);
 
-int main()
+int main(int argc, char *argv[])
 {
+    process_options(argc, argv);
     Uart uart;
 	bool flag = true;
 	short done = 0;//用于检测是否已经读完初始激光中心时的角度
@@ -43,8 +45,10 @@ int main()
         int energy_part_rotation = CLOCKWISE;
 
 	    int from_camera = 1;
-	    cout<<"Input 1 for camera, 0 for video files"<<endl;
-	    cin>>from_camera;
+	    if(!run_with_camera) {
+            cout << "Input 1 for camera, 0 for video files" << endl;
+            cin >> from_camera;
+        }
 
 		WrapperHead *video;
 		if(from_camera)
@@ -86,7 +90,7 @@ int main()
                 armorFinder.run(src_none);
             }
 
-			if (waitKey(10) == 'q') {
+			if (waitKey(1) == 'q') {
 				flag = false;
 				break;
 			}
