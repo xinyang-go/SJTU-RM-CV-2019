@@ -25,7 +25,7 @@ using namespace std;
 #define ENERGY_STATE 1
 #define ARMOR_STATE 0
 
-int state = ARMOR_STATE;
+int state = ENERGY_STATE;
 float yaw, pitch;
 
 void uartReceive(Uart* uart);
