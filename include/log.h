@@ -136,4 +136,6 @@
 #else
     #define CNT_TIME(str_ctrs, tag, codes, ...) codes
 #endif
+#else /* _LOG_H_ */
+    #warning "Multiple include of log.h, some settings may not work."
 #endif /* _LOG_H_ */
