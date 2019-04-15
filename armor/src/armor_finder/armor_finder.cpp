@@ -35,6 +35,10 @@ void ArmorFinder::run(cv::Mat &src) {
                     cv::Mat roi = src_use.clone()(armor_box);
                     cv::threshold(roi, roi, 200, 255, cv::THRESH_BINARY);
                     contour_area = cv::countNonZero(roi);
+                    auto para = TrackerToUse::Params();
+                    para.desc_npca = 1;
+                    para.desc_pca = 0;
+                    tracker = TrackerToUse::create(para);
                     tracker->init(src_use, armor_box);
                     state = TRACKING_STATE;
                     LOGW("into track");
