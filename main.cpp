@@ -114,10 +114,10 @@ void uartReceive(Uart* uart){
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer+4, 4);
 //            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
-            if(buffer[9] == 1){
-                mark = 1;
-                mark_yaw = curr_yaw;
-                mark_pitch = curr_pitch;
+            if(buffer[9] == 1 && mark == 0){
+                    mark = 1;
+                    mark_yaw = curr_yaw;
+                    mark_pitch = curr_pitch;
 //                LOGM("Marked");
             }
         }

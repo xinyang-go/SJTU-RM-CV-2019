@@ -61,8 +61,8 @@ int Energy::run(cv::Mat &src){
     cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
 
-    cycle_center = cv::Point(416,227);
-    radius = 203.665;
+    cycle_center = cv::Point(414,227);
+    radius = 203.728;
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);
     findTarget(fanPosition, armorPosition, target_armor);
@@ -81,7 +81,7 @@ int Energy::run(cv::Mat &src){
     cout<<"curr_yaw: "<<curr_yaw<<'\t'<<"curr_pitch: "<<curr_pitch<<endl;
     cout<<"mark_yaw: "<<mark_yaw<<'\t'<<"mark_pitch: "<<mark_pitch<<endl;
 
-    cout<<"send_cnt: "<<send_cnt<<endl;
+//    cout<<"send_cnt: "<<send_cnt<<endl;
 
 }
 
