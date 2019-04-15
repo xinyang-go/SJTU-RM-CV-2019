@@ -8,12 +8,18 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+extern float mark_yaw, mark_pitch;
+extern int mark;
+
 int Energy::run(cv::Mat &src){
     fans.clear();
     armors.clear();
     fanPosition.clear();
     armorPosition.clear();
     gimble_zero_points.clear();
+
+    if(mark==0)return 0;
+
 //    if(all_armor_centers.size()>200)all_armor_centers.clear();
 //    if(first_armor_centers.size()>200)first_armor_centers.clear();
 //    cout<<"first_armor_centers.size(): "<<first_armor_centers.size()<<endl;
@@ -24,7 +30,7 @@ int Energy::run(cv::Mat &src){
     threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
 //    imshow("bin",src);
 
-/*
+
     fans_cnt = findFan(src, fans, last_fans_cnt);
 //    cout<<"fans_cnt: "<<fans_cnt<<endl;
     if(fans_cnt==-1) return 0;//滤去漏判的帧
@@ -39,22 +45,24 @@ int Energy::run(cv::Mat &src){
     if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src, fans, armors);
 
     if(armors_cnt != fans_cnt+1) return 0;
-*/
 
+
+/*
 //此处用于标定云台在摄像头视频中的零点
     findGimbleZeroPoint(src,gimble_zero_points);
     cout<<"gimble zero points: :"<<gimble_zero_points.size()<<endl;
     showFanContours("zero",src,gimble_zero_points);
     cycle_center = cv::Point(291,305);
     if(gimble_zero_points.size()>0)hit_point = gimble_zero_points.at(0).rect.center;
+*/
 
-/*
+
     getAllArmorCenters();
     cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
 
-//    cycle_center = cv::Point(248,247);
-//    radius = 208.439;
+    cycle_center = cv::Point(416,227);
+    radius = 203.665;
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);
     findTarget(fanPosition, armorPosition, target_armor);
@@ -62,14 +70,17 @@ int Energy::run(cv::Mat &src){
     cout<<"The target armor center is: "<<target_center<<endl;
 
     getHitPoint();
+    hit_point = target_center;
     cout << "The hit point position is " << hit_point << endl;
 //    hit_point = cycle_center;
-*/
+
     gimbleRotation();
 
     sendTargetByUart(yaw_rotation, pitch_rotation, attack_distance);
     cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
-//    cout<<"send_cnt: "<<send_cnt<<endl;
+    cout<<"mark_yaw: "<<mark_yaw<<'\t'<<"mark_pitch: "<<mark_pitch<<endl;
+
+    cout<<"send_cnt: "<<send_cnt<<endl;
 
 
 

@@ -27,6 +27,7 @@ using namespace std;
 int state = ENERGY_STATE;
 float curr_yaw=0, curr_pitch=0;
 float mark_yaw=0, mark_pitch=0;
+int mark = 0;
 
 void uartReceive(Uart* uart);
 
@@ -112,8 +113,9 @@ void uartReceive(Uart* uart){
             }
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer+4, 4);
-            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+//            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
             if(buffer[9] == 1){
+                mark = 1;
                 mark_yaw = curr_yaw;
                 mark_pitch = curr_pitch;
 //                LOGM("Marked");

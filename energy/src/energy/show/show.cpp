@@ -88,6 +88,10 @@ void Energy::showBothContours(std::string windows_name, const cv::Mat &src, cons
 			line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 255), 4);
 //		cout << "armor center: "<< armor.rect.center << '\t'<< "armor angle: "<< armor.rect.angle;
 //		cout << endl;
+
+        cv::Point2f point = armor.rect.center;
+        cv::circle(image2show, point, 2, cv::Scalar(0, 0, 255));//在图像中画出特征点，2是圆的半径
+
 	}
 
     imshow(windows_name, image2show);
