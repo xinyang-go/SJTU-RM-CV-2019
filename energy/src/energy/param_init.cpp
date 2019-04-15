@@ -11,7 +11,7 @@ using std::vector;
 void Energy::initEnergyPartParam() {
 
     energy_part_param_.RPM = 10;
-    energy_part_param_.HIT_TIME = 1.0;
+    energy_part_param_.HIT_TIME = 1.5;
 
 	energy_part_param_.GRAY_THRESH = 240;
 	energy_part_param_.SPLIT_GRAY_THRESH = 80;
@@ -36,6 +36,13 @@ void Energy::initEnergyPartParam() {
 
 	energy_part_param_.TWIN_ANGEL_MAX = 10;
 
+	lift_height_.LIFT_0 = 0;
+    lift_height_.LIFT_30 = 0;
+    lift_height_.LIFT_60 = 0;
+    lift_height_.LIFT_90 = 10;
+    lift_height_.LIFT_minus_30 = 0;
+    lift_height_.LIFT_minus_60 = 0;
+    lift_height_.LIFT_minus_90 = 0;
 
 }
 

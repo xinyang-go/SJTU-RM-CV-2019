@@ -12,6 +12,7 @@ extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
 extern int mark;
 
 int Energy::run(cv::Mat &src){
+//    imshow("src",src);
     fans.clear();
     armors.clear();
     fanPosition.clear();
@@ -31,11 +32,11 @@ int Energy::run(cv::Mat &src){
 //    imshow("bin",src);
 
 
-//    fans_cnt = findFan(src, fans, last_fans_cnt);
+    fans_cnt = findFan(src, fans, last_fans_cnt);
 //    cout<<"fans_cnt: "<<fans_cnt<<endl;
-//    if(fans_cnt==-1) return 0;//滤去漏判的帧
+    if(fans_cnt==-1) return 0;//滤去漏判的帧
 //    if(fans_cnt>0)showFanContours("fan",src,fans);
-    fans_cnt=0;
+//    fans_cnt=0;
 
     armors_cnt = findArmor(src, armors, last_armors_cnt);
 //    cout<<"armors_cnt: "<<armors_cnt<<endl;
@@ -61,8 +62,11 @@ int Energy::run(cv::Mat &src){
     cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
 
-    cycle_center = cv::Point(414,227);
-    radius = 203.728;
+
+    cycle_center = cv::Point(332,233);
+    radius = 208.835;
+    attack_distance = ATTACK_DISTANCE * 203.728 / radius;
+
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);
     findTarget(fanPosition, armorPosition, target_armor);

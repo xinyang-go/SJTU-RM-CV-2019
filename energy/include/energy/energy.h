@@ -39,6 +39,7 @@ public:
 private:
 
 	EnergyPartParam energy_part_param_;
+	LiftHeight lift_height_;
 	int fans_cnt;
 	int armors_cnt;
 	int count;
