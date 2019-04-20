@@ -260,6 +260,7 @@ Classifier::operator bool() const {
 int Classifier::operator()(const cv::Mat &image) {
     MatrixXd x;
     cv2eigen(image, x);
+    x /= 255;
     vector<MatrixXd> sub = {x};
     vector<vector<MatrixXd>> in = {sub};
     MatrixXd result = calculate(in);
