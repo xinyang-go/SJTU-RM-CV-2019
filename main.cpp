@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
 		Mat energy_src, armor_src;
 
-		ArmorFinder armorFinder(ENEMY_BLUE, uart);
+		ArmorFinder armorFinder(ENEMY_BLUE, uart, "../paras/");
 
         Energy energy(uart);
         energy.setAllyColor(ally_color);

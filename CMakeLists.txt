@@ -12,16 +12,17 @@ IF(CCACHE_FOUND)
 ENDIF()
 
 FIND_PACKAGE(OpenCV 3 REQUIRED)
+FIND_PACKAGE(Eigen3 REQUIRED)
 FIND_PACKAGE(Threads)
 
+include_directories( ${EIGEN3_INCLUDE_DIR} )
 include_directories( ${PROJECT_SOURCE_DIR}/energy/include )
 include_directories( ${PROJECT_SOURCE_DIR}/armor/include )
 include_directories( ${PROJECT_SOURCE_DIR}/include )
-include_directories( ${PROJECT_SOURCE_DIR}/src )
-FILE(GLOB_RECURSE sourcefiles "src/*.cpp" "energy/src/*cpp" "armor/src/*.cpp")
 
+FILE(GLOB_RECURSE sourcefiles "src/*.cpp" "energy/src/*cpp" "armor/src/*.cpp")
 add_executable(run main.cpp ${sourcefiles} )
 
-TARGET_LINK_LIBRARIES (run ${CMAKE_THREAD_LIBS_INIT})
-TARGET_LINK_LIBRARIES(run  ${OpenCV_LIBS})
-TARGET_LINK_LIBRARIES(run  ${PROJECT_SOURCE_DIR}/libMVSDK.so)
+TARGET_LINK_LIBRARIES(run ${CMAKE_THREAD_LIBS_INIT})
+TARGET_LINK_LIBRARIES(run ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(run ${PROJECT_SOURCE_DIR}/libMVSDK.so)

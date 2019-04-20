@@ -8,6 +8,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/tracking.hpp>
 #include <uart/uart.h>
+#include <armor_finder/classifier/classifier.h>
 
 typedef enum{
     ENEMY_BLUE, ENEMY_RED
@@ -15,7 +16,7 @@ typedef enum{
 
 class ArmorFinder{
 public:
-    ArmorFinder(EnemyColor color, Uart &u);
+    ArmorFinder(EnemyColor color, Uart &u, string paras_folder);
     ~ArmorFinder() = default;
 
 private:
@@ -29,6 +30,9 @@ private:
     State state;
     cv::Rect2d armor_box;
     cv::Ptr<cv::Tracker> tracker;
+    cv::Mat src_gray;
+
+    Classifier classifier;
 
     int  contour_area;
     Uart &uart;

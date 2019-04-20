@@ -4,10 +4,12 @@
 #include <log.h>
 #include <armor_finder/armor_finder.h>
 
-ArmorFinder::ArmorFinder(EnemyColor color, Uart &u) :
+ArmorFinder::ArmorFinder(EnemyColor color, Uart &u, string paras_folder) :
                             uart(u),
                             enemy_color(color),
-                            state(STANDBY_STATE)
+                            state(STANDBY_STATE),
+                            classifier(std::move(paras_folder)),
+                            contour_area(0)
                             {
     auto para = TrackerToUse::Params();
     para.desc_npca = 1;
@@ -25,6 +27,7 @@ void ArmorFinder::run(cv::Mat &src) {
     }else{
         src_use = src.clone();
     }
+    cv::cvtColor(src_use, src_gray, CV_BayerBG2GRAY);
 
 //    return stateSearchingTarget(src_use);
 
