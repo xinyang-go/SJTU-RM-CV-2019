@@ -26,6 +26,7 @@ using namespace std;
 int state = ARMOR_STATE;
 float curr_yaw=0, curr_pitch=0;
 float mark_yaw=0, mark_pitch=0;
+int mark = 0;
 
 void uartReceive(Uart* uart);
 
