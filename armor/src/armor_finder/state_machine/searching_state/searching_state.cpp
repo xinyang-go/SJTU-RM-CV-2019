@@ -99,7 +99,7 @@ bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j)
 
 }
 
-double centerDistance(cv::Rect2d box){
+double centerDistance(const cv::Rect2d &box){
     double dx = box.x-box.width/2 - 320;
     double dy = box.y-box.height/2 - 240;
     return dx*dx + dy*dy;
@@ -169,14 +169,23 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
 //    }
     if(show_light_blobs){
         showContours("blobs", split, light_blobs);
-//        showContours("pm blobs", pmsrc, pm_light_blobs);
-//        showContours("blobs real", src, light_blobs_real);
         cv::waitKey(1);
     }
     if(!findArmorBoxes(light_blobs, armor_boxes)){
         return false;
     }
-    armor_box = armor_boxes[0];
+    if(classifier){
+        for(const auto &box : armor_boxes){
+            cv::Mat roi = src(box).clone();
+            cv::resize(roi, roi, cv::Size(60, 45));
+            if(classifier(roi)){
+                armor_box = box;
+                break;
+            }
+        }
+    }else{
+        armor_box = armor_boxes[0];
+    }
     if(show_armor_boxes){
         showArmorBoxVector("boxes", split, armor_boxes);
         cv::waitKey(1);
