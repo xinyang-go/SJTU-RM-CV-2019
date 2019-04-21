@@ -23,7 +23,7 @@ using namespace std;
 #define ENERGY_STATE 1
 #define ARMOR_STATE 0
 
-int state = ARMOR_STATE;
+int state = ENERGY_STATE;
 float curr_yaw=0, curr_pitch=0;
 float mark_yaw=0, mark_pitch=0;
 int mark = 0;
@@ -99,24 +99,28 @@ void uartReceive(Uart* uart){
         while((data=uart->receive()) != '\n'){
             buffer[cnt++] = data;
             if(cnt >= 100){
-                LOGE("data receive over flow!");
+//                LOGE("data receive over flow!");
             }
         }
         if(cnt == 10){
             if(buffer[8] == 'e'){
                 state = ENERGY_STATE;
-                LOGM("Energy state");
+//                LOGM("Energy state");
             }else if(buffer[8] == 'a'){
                 state = ARMOR_STATE;
-                LOGM("Armor state");
+//                LOGM("Armor state");
             }
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer+4, 4);
-            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+//            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
             if(buffer[9] == 1){
-                mark_yaw = curr_yaw;
-                mark_pitch = curr_pitch;
-                LOGM("Marked");
+                if(mark == 0){
+                    mark = 1;
+                    mark_yaw = curr_yaw;
+                    mark_pitch = curr_pitch;
+                }
+
+//                LOGM("Marked");
             }
         }
         cnt = 0;

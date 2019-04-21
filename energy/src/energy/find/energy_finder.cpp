@@ -19,7 +19,7 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 	std::vector<vector<Point> > fan_contours;
 
 	StructingElementClose(src_bin);
-//	imshow("fan struct",src_bin);
+	imshow("fan struct",src_bin);
 
 	findContours(src_bin, fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -28,25 +28,26 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 			continue;
 		}
 
-//        double cur_contour_area = contourArea(fan_contour);
-//        RotatedRect cur_rect = minAreaRect(fan_contour);
-//        Size2f cur_size = cur_rect.size;
+        double cur_contour_area = contourArea(fan_contour);
+        RotatedRect cur_rect = minAreaRect(fan_contour);
+        Size2f cur_size = cur_rect.size;
 //
 //		  cout<<"cur_contour_area: "<<cur_contour_area<<'\t'<<"rect_area: "<<cur_size.area()<<'\t'<<"ratio: "<<cur_contour_area/cur_size.area()<<endl;
 
-//        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
-//        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
+        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
 
-//		if(length>5&&width>5){
+//		if(length>20&&width>20){
 //			cout<<cur_rect.center;
 //			fans.emplace_back(fan_contour);
 //			cout<<"fan area: "<<length<<'\t'<<width<<endl;
 //		}
-
+//
         fans.emplace_back(fan_contour);
 //        cout<<"fan area: "<<length<<'\t'<<width<<endl;
 
 	}
+//	cout<<fans.size()<<endl;
 	if(fans.size() < last_fans_cnt){
 		last_fans_cnt = static_cast<int>(fans.size());
 		return -1;
@@ -100,13 +101,14 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
         float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
         float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
 
-//        if(length>10&&width>10){
+//        if(length>10&&width>5){
 //            armors.emplace_back(armor_contour);
-//            cout<<"armor area: "<<length<<'\t'<<width<<endl;
+//            cout<<"armor area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
+//            armors.emplace_back(armor_contour);
 //        }
         armors.emplace_back(armor_contour);
-        cout<<"armor area: "<<length<<'\t'<<width<<endl;
 
+//        cout<<"armor area: "<<length<<'\t'<<width<<endl;
 	}
 	if(armors.size() < last_armors_cnt){
 		last_armors_cnt = static_cast<int>(armors.size());
@@ -164,7 +166,8 @@ bool Energy::isValidFanContour(const vector<cv::Point> &fan_contour) {
 	Size2f cur_size = cur_rect.size;
 	float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 	float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-	if (length < energy_part_param_.FAN_CONTOUR_LENGTH_MIN || width < energy_part_param_.FAN_CONTOUR_WIDTH_MIN)
+	if (length < energy_part_param_.FAN_CONTOUR_LENGTH_MIN || width < energy_part_param_.FAN_CONTOUR_WIDTH_MIN ||
+            length > energy_part_param_.FAN_CONTOUR_LENGTH_MAX || width > energy_part_param_.FAN_CONTOUR_WIDTH_MAX)
 	{
 		//cout<<"length width min fail."<<endl;
 		return false;

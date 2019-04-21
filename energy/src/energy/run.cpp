@@ -63,9 +63,9 @@ int Energy::run(cv::Mat &src){
     cycleLeastFit();
 
 
-    cycle_center = cv::Point(332,233);
-    radius = 208.835;
-    attack_distance = ATTACK_DISTANCE * 203.728 / radius;
+//    cycle_center = cv::Point(212,246);
+//    radius = 123.942;
+    attack_distance = ATTACK_DISTANCE * 123.323 / radius;
 
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);
@@ -74,7 +74,7 @@ int Energy::run(cv::Mat &src){
     cout<<"The target armor center is: "<<target_center<<endl;
 
     getHitPoint();
-    hit_point = target_center;
+//    hit_point = target_center;
     cout << "The hit point position is " << hit_point << endl;
 //    hit_point = cycle_center;
 
