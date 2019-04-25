@@ -2,6 +2,7 @@
 // Created by xinyang on 19-4-19.
 //
 
+//#define LOG_LEVEL LOG_NONE
 #include <armor_finder/classifier/classifier.h>
 #include <log.h>
 #include <cstdio>
@@ -91,7 +92,33 @@ MatrixXd Classifier::softmax(const MatrixXd &input){
     return tmp.array().exp() / tmp.array().exp().sum();
 }
 
-vector<vector<MatrixXd>> Classifier::pool(const vector<vector<MatrixXd>> &input, int size){
+vector<vector<MatrixXd>> max_pool(const vector<vector<MatrixXd>> &input, int size){
+    vector<vector<MatrixXd>> output;
+    for(int sample=0; sample<input.size(); sample++) {
+        vector<MatrixXd> sub;
+        for (int channel = 0; channel < input[0].size(); channel++) {
+            MatrixXd tmp(input[0][0].rows() / size, input[0][0].cols() / size);
+            for (int row = 0; row < input[0][0].rows() / size; row++) {
+                for (int col = 0; col < input[0][0].cols() / size; col++) {
+                    double max = 0;
+                    for (int x = 0; x < size; x++) {
+                        for (int y = 0; y < size; y++) {
+                            if(max < input[sample][channel](row * size + x, col * size + y)){
+                                max = input[sample][channel](row * size + x, col * size + y);
+                            }
+                        }
+                    }
+                    tmp(row, col) = max;
+                }
+            }
+            sub.emplace_back(tmp);
+        }
+        output.emplace_back(sub);
+    }
+    return output;
+}
+
+vector<vector<MatrixXd>> Classifier::mean_pool(const vector<vector<MatrixXd>> &input, int size){
     vector<vector<MatrixXd>> output;
     for(int sample=0; sample<input.size(); sample++) {
         vector<MatrixXd> sub;
@@ -240,9 +267,9 @@ Classifier::Classifier(const string &folder) : state(true){
 
 MatrixXd Classifier::calculate(const vector<vector<MatrixXd>> &input) {
     vector<vector<MatrixXd>> conv1_result = relu(apply_bias(conv2(conv1_w, input), conv1_b));
-    vector<vector<MatrixXd>> pool1_result = pool(conv1_result, 2);
+    vector<vector<MatrixXd>> pool1_result = mean_pool(conv1_result, 2);
     vector<vector<MatrixXd>> conv2_result = relu(apply_bias(conv2(conv2_w, pool1_result), conv2_b));
-    vector<vector<MatrixXd>> pool2_result = pool(conv2_result, 2);
+    vector<vector<MatrixXd>> pool2_result = mean_pool(conv2_result, 2);
     MatrixXd flattened = flatten(pool2_result);
     MatrixXd y1 = fc1_w * flattened;
     y1.colwise() += fc1_b;
@@ -260,7 +287,7 @@ Classifier::operator bool() const {
 int Classifier::operator()(const cv::Mat &image) {
     MatrixXd x;
     cv2eigen(image, x);
-    x /= 255;
+    x /= 255.0;
     vector<MatrixXd> sub = {x};
     vector<vector<MatrixXd>> in = {sub};
     MatrixXd result = calculate(in);
