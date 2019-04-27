@@ -49,15 +49,15 @@ int main(int argc, char *argv[])
         }
 
 		WrapperHead *video_armor;
-        WrapperHead *video_enegy;
+        WrapperHead *video_energy;
 		if(from_camera) {
             video_armor = new CameraWrapper("armor");
-            video_enegy = new CameraWrapper("energy");
+            video_energy = new CameraWrapper("energy");
         }else {
-            video_armor = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
-            video_enegy = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
+            video_armor = new VideoWrapper("r_l_640.avi");
+            video_energy = new VideoWrapper("r_l_640.avi");
         }
-		if (video_enegy->init() && video_armor->init()) {
+		if (video_energy->init() && video_armor->init()) {
 			cout << "Video source initialization successfully." << endl;
 		}
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         energy.setAllyColor(ally_color);
         energy.setRotation(energy_part_rotation);
 
-		while (video_armor->read(energy_src) && video_armor->read(armor_src))
+		while (video_energy->read(energy_src) && video_armor->read(armor_src))
 		{
 		    if(show_origin) {
                 imshow("enery src", energy_src);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		delete video_enegy, video_armor;
+		delete video_energy, video_armor;
 		cout << "Program fails. Restarting" << endl;
 	}
 
