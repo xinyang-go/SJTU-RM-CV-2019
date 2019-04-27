@@ -36,15 +36,17 @@ void imageColorSplit(cv::Mat &src_input, cv::Mat &split, EnemyColor color) {
         resize(channels.at(0), blue, cv::Size(640, 480));
         resize(channels.at(2), red, cv::Size(640, 480));
         if(color == ENEMY_RED){
-            split = red;
+            split = red - blue;
         }else if(color == ENEMY_BLUE){
-            split = blue;
+            split = blue - red;
         }
     }
 
 }
 
 void imagePreProcess(cv::Mat &src) {
+//    cv::medianBlur(src, src, 5);
+
     static cv::Mat kernel_erode = getStructuringElement(cv::MORPH_RECT, cv::Size(1, 4));
     erode(src, src, kernel_erode);
 

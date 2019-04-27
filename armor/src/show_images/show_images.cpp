@@ -18,6 +18,28 @@ void showArmorBoxVector(std::string windows_name, const cv::Mat &src, const std:
     imshow(windows_name, image2show);
 }
 
+void showArmorBoxClass(std::string windows_name, const cv::Mat &src, vector<cv::Rect2d> boxes_one,
+        vector<cv::Rect2d> boxes_two, vector<cv::Rect2d> boxes_three){
+    static Mat image2show;
+    if (src.type() == CV_8UC1) // 黑白图像
+    {
+        cvtColor(src, image2show, COLOR_GRAY2RGB);
+    } else if(src.type() == CV_8UC3) //RGB 彩色
+    {
+        image2show = src.clone();
+    }
+    for (auto &box:boxes_one) {
+        rectangle(image2show, box, Scalar(255, 0, 0), 1);
+    }
+    for (auto &box:boxes_two) {
+        rectangle(image2show, box, Scalar(0, 255, 0), 1);
+    }
+    for (auto &box:boxes_three) {
+        rectangle(image2show, box, Scalar(0, 0, 255), 1);
+    }
+    imshow(windows_name, image2show);
+}
+
 void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor_box) {
     static Mat image2show;
     if (src.type() == CV_8UC1) // 黑白图像

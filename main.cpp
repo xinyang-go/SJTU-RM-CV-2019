@@ -48,25 +48,28 @@ int main(int argc, char *argv[])
             cin >> from_camera;
         }
 
-		WrapperHead *video;
-		if(from_camera)
-		    video = new CameraWrapper;
-		else
-		    video = new VideoWrapper("r_l_640.avi", "fan_640.avi");
-
-		if (video->init()) {
+		WrapperHead *video_armor;
+        WrapperHead *video_enegy;
+		if(from_camera) {
+            video_armor = new CameraWrapper("armor");
+            video_enegy = new CameraWrapper("energy");
+        }else {
+            video_armor = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
+            video_enegy = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
+        }
+		if (video_enegy->init() && video_armor->init()) {
 			cout << "Video source initialization successfully." << endl;
 		}
 
 		Mat energy_src, armor_src;
 
-		ArmorFinder armorFinder(ENEMY_BLUE, uart, "../paras/");
+		ArmorFinder armorFinder(ENEMY_BLUE, uart, "/home/xinyang/Desktop/AutoAim/tools/para/");
 
         Energy energy(uart);
         energy.setAllyColor(ally_color);
         energy.setRotation(energy_part_rotation);
 
-		while (video->read(energy_src, armor_src))
+		while (video_armor->read(energy_src) && video_armor->read(armor_src))
 		{
 		    if(show_origin) {
                 imshow("enery src", energy_src);
@@ -78,15 +81,16 @@ int main(int argc, char *argv[])
                 }
                 energy.run(energy_src);
             }else{
-                armorFinder.run(armor_src);
+                CNT_TIME(WORD_LIGHT_BLUE, "Armor Time", {
+                    armorFinder.run(armor_src);
+                });
             }
-
 			if (waitKey(1) == 'q') {
 				flag = false;
 				break;
 			}
 		}
-		delete video;
+		delete video_enegy, video_armor;
 		cout << "Program fails. Restarting" << endl;
 	}
 

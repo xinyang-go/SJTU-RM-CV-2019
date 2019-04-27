@@ -22,14 +22,15 @@ ArmorFinder::ArmorFinder(EnemyColor color, Uart &u, string paras_folder) :
 
 void ArmorFinder::run(cv::Mat &src) {
     cv::Mat src_use;
-    if (src.type() == CV_8UC3) {
-        cv::cvtColor(src, src_use, CV_RGB2GRAY);
-    }else{
+//    if (src.type() == CV_8UC3) {
+//        cv::cvtColor(src, src_use, CV_RGB2GRAY);
+//    }else{
         src_use = src.clone();
-    }
-    cv::cvtColor(src_use, src_gray, CV_BayerBG2GRAY);
+//    }
+    cv::cvtColor(src_use, src_gray, CV_RGB2GRAY);
 
-//    return stateSearchingTarget(src_use);
+    stateSearchingTarget(src_use);
+    return;
 
     switch (state){
         case SEARCHING_STATE:
@@ -49,7 +50,7 @@ void ArmorFinder::run(cv::Mat &src) {
             }
             break;
         case TRACKING_STATE:
-            if(!stateTrackingTarget(src_use)){
+            if(!stateTrackingTarget(src_gray)){
                 state = SEARCHING_STATE;
                 //std::cout << "into search!" << std::endl;
             }

@@ -3,7 +3,7 @@ import tensorflow as tf
 
 def get_weight(shape, regularizer=None):
     w = tf.Variable(tf.truncated_normal(shape, stddev=0.1))
-    if regularizer is None:
+    if regularizer is not None:
         tf.add_to_collection('losses', tf.contrib.layers.l2_regularizer(regularizer)(w))
     return w
 
@@ -25,32 +25,23 @@ def max_pool_2x2(x):
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="VALID")
 
 
-# 原图像行数
-SRC_ROWS = 36
-
-# 原图像列数
-SRC_COLS = 48
-
-# 原图像通道数
-SRC_CHANNELS = 1
-
 # 第一层卷积核大小
 CONV1_KERNAL_SIZE = 5
 
 # 第一层卷积输出通道数
-CONV1_OUTPUT_CHANNELS = 8
+CONV1_OUTPUT_CHANNELS = 4
 
 # 第二层卷积核大小
 CONV2_KERNAL_SIZE = 3
 
 # 第二层卷积输出通道数
-CONV2_OUTPUT_CHANNELS = 16
+CONV2_OUTPUT_CHANNELS = 8
 
 # 第一层全连接宽度
-FC1_OUTPUT_NODES = 32
+FC1_OUTPUT_NODES = 16
 
 # 第二层全连接宽度（输出标签类型数）
-FC2_OUTPUT_NODES = 8
+FC2_OUTPUT_NODES = 4
 
 # 输出标签类型数
 OUTPUT_NODES = FC2_OUTPUT_NODES
@@ -61,7 +52,7 @@ def forward(x, regularizer=None):
     nodes = []
 
     conv1_w = get_weight(
-        [CONV1_KERNAL_SIZE, CONV1_KERNAL_SIZE, 1, CONV1_OUTPUT_CHANNELS]
+        [CONV1_KERNAL_SIZE, CONV1_KERNAL_SIZE, int(x.shape[3]), CONV1_OUTPUT_CHANNELS]
     )
     conv1_b = get_bias([CONV1_OUTPUT_CHANNELS])
     conv1   = tf.nn.relu(tf.nn.bias_add(conv2d(x, conv1_w), conv1_b))

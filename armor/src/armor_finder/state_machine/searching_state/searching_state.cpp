@@ -114,8 +114,8 @@ static bool findArmorBoxes(LightBlobs &light_blobs, std::vector<cv::Rect2d> &arm
             cv::Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
             cv::Rect2d rect_right = light_blobs.at(static_cast<unsigned long>(j)).rect.boundingRect();
             double min_x, min_y, max_x, max_y;
-            min_x = fmin(rect_left.x, rect_right.x) - 5;
-            max_x = fmax(rect_left.x + rect_left.width, rect_right.x + rect_right.width) + 5;
+            min_x = fmin(rect_left.x, rect_right.x);
+            max_x = fmax(rect_left.x + rect_left.width, rect_right.x + rect_right.width);
             min_y = fmin(rect_left.y, rect_right.y) - 5;
             max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height) + 5;
             if (min_x < 0 || max_x > 640 || min_y < 0 || max_y > 480) {
@@ -151,7 +151,7 @@ bool judge_light_color(std::vector<LightBlob> &light, std::vector<LightBlob> &co
 bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
     cv::Mat split, pmsrc=src.clone();
     LightBlobs light_blobs, pm_light_blobs, light_blobs_real;
-    std::vector<cv::Rect2d> armor_boxes;
+    std::vector<cv::Rect2d> armor_boxes, boxes_one, boxes_two, boxes_three;
 
 //    cv::resize(src, pmsrc, cv::Size(320, 240));
     imageColorSplit(src, split, enemy_color);
@@ -174,20 +174,45 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
     if(!findArmorBoxes(light_blobs, armor_boxes)){
         return false;
     }
+    if(show_armor_boxes){
+        showArmorBoxVector("boxes", split, armor_boxes);
+        cv::waitKey(1);
+    }
     if(classifier){
-        for(const auto &box : armor_boxes){
+        for(auto box : armor_boxes){
             cv::Mat roi = src(box).clone();
-            cv::resize(roi, roi, cv::Size(60, 45));
-            if(classifier(roi)){
-                armor_box = box;
-                break;
+            cv::resize(roi, roi, cv::Size(48, 36));
+//            cv::imshow("roi", roi);
+//            cv::waitKey(0);
+            int c = classifier(roi);
+//            cout << c << endl;
+            switch(c){
+                case 1:
+                    boxes_one.emplace_back(box);
+                    break;
+                case 2:
+                    boxes_two.emplace_back(box);
+                    break;
+                case 3:
+                    boxes_three.emplace_back(box);
+                    break;
             }
+        }
+        if(!boxes_one.empty()){
+            armor_box = boxes_one[0];
+        }else if(!boxes_two.empty()){
+            armor_box = boxes_two[0];
+        }else if(!boxes_three.empty()){
+            armor_box = boxes_three[0];
+        }
+        if(show_armor_box){
+            showArmorBoxClass("class", src, boxes_one, boxes_two, boxes_three);
         }
     }else{
         armor_box = armor_boxes[0];
     }
-    if(show_armor_boxes){
-        showArmorBoxVector("boxes", split, armor_boxes);
+    if(show_armor_box){
+        showArmorBox("box", src, armor_box);
         cv::waitKey(1);
     }
     if(split.size() == cv::Size(320, 240)){
@@ -196,6 +221,5 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
         armor_box.width *= 2;
         armor_box.height *= 2;
     }
-    
     return sendBoxPosition();
 }

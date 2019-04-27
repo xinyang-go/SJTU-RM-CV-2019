@@ -258,6 +258,9 @@ Classifier::Classifier(const string &folder) : state(true){
     fc1_b = load_fc_b(folder+"fc1_b");
     fc2_w = load_fc_w(folder+"fc2_w");
     fc2_b = load_fc_b(folder+"fc2_b");
+    if(state){
+        LOGM("Load paras success!");
+    }
 }
 
 //#define PRINT_MAT(name) (cout << #name":\n" << name << endl)
@@ -285,10 +288,16 @@ Classifier::operator bool() const {
 }
 
 int Classifier::operator()(const cv::Mat &image) {
-    MatrixXd x;
-    cv2eigen(image, x);
-    x /= 255.0;
-    vector<MatrixXd> sub = {x};
+    MatrixXd r, g, b;
+    std::vector<cv::Mat> channels;
+    cv::split(image, channels);
+    cv2eigen(channels[0], b);
+    cv2eigen(channels[1], g);
+    cv2eigen(channels[2], r);
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    vector<MatrixXd> sub = {b, g, r};
     vector<vector<MatrixXd>> in = {sub};
     MatrixXd result = calculate(in);
     MatrixXd::Index minRow, minCol;
