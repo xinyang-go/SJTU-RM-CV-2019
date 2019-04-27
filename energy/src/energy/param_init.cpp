@@ -14,7 +14,7 @@ void Energy::initEnergyPartParam() {
     energy_part_param_.HIT_TIME = 1.14;
 
 	energy_part_param_.GRAY_THRESH = 240;
-	energy_part_param_.SPLIT_GRAY_THRESH = 80;
+	energy_part_param_.SPLIT_GRAY_THRESH = 60;
 	energy_part_param_.FAN_GRAY_THRESH = 75;
 	energy_part_param_.ARMOR_GRAY_THRESH = 80;
 

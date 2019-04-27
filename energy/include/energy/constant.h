@@ -19,10 +19,10 @@ const float ATTACK_DISTANCE = 770;//cm
 const double WHOLE_FAN = 80;//cm
 const double ARMOR_CENTER_TO_CYCLE_CENTER = 75;//cm
 //const double ARMOR_CENTER_TO_CYCLE_CENTER = 71;//cm
-const int EXTRACT_POINT_X = 200;
-const int EXTRACT_POINT_Y = 20;
-const int EXTRACT_WIDTH = 240;
-const int EXTRACT_HEIGHT = 180;
+const int EXTRACT_POINT_X = 120;
+const int EXTRACT_POINT_Y = 0;
+const int EXTRACT_WIDTH = 400;
+const int EXTRACT_HEIGHT = 300;
 
 //以摄像头正方向位y轴
 const int GM_L = 14;//云台摄像头z方向

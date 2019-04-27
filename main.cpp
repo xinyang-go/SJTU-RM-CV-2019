@@ -73,6 +73,9 @@ int main(int argc, char *argv[])
                 imshow("armor src", armor_src);
             }
             if(state == ENERGY_STATE){
+                if(from_camera==0){
+                    energy.extract(energy_src);
+                }
                 energy.run(energy_src);
             }else{
                 armorFinder.run(armor_src);

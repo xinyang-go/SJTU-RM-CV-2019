@@ -19,13 +19,13 @@ int Energy::run(cv::Mat &src){
     armorPosition.clear();
     gimble_zero_points.clear();
 
-    if(mark==0)return 0;
+//    if(mark==0)return 0;
 
 //    if(all_armor_centers.size()>200)all_armor_centers.clear();
 //    if(first_armor_centers.size()>200)first_armor_centers.clear();
 //    cout<<"first_armor_centers.size(): "<<first_armor_centers.size()<<endl;
 
-//    imagePreprocess(src);
+    imagePreprocess(src);
 //    imshow("img_preprocess",src);
 
     threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
@@ -47,21 +47,9 @@ int Energy::run(cv::Mat &src){
 
     if(armors_cnt != fans_cnt+1) return 0;
 
-
-/*
-//此处用于标定云台在摄像头视频中的零点
-    findGimbleZeroPoint(src,gimble_zero_points);
-    cout<<"gimble zero points: :"<<gimble_zero_points.size()<<endl;
-    showFanContours("zero",src,gimble_zero_points);
-    cycle_center = cv::Point(291,305);
-    if(gimble_zero_points.size()>0)hit_point = gimble_zero_points.at(0).rect.center;
-*/
-
-
     getAllArmorCenters();
     cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
-
 
 //    cycle_center = cv::Point(212,246);
 //    radius = 123.942;
@@ -88,6 +76,18 @@ int Energy::run(cv::Mat &src){
 //    cout<<"send_cnt: "<<send_cnt<<endl;
 
 }
+
+//-----------------------------------------------------------------------------------
+
+/*
+//此处用于标定云台在摄像头视频中的零点
+    findGimbleZeroPoint(src,gimble_zero_points);
+    cout<<"gimble zero points: :"<<gimble_zero_points.size()<<endl;
+    showFanContours("zero",src,gimble_zero_points);
+    cycle_center = cv::Point(291,305);
+    if(gimble_zero_points.size()>0)hit_point = gimble_zero_points.at(0).rect.center;
+*/
+
 
 
 
