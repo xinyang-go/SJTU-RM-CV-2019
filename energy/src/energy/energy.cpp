@@ -12,6 +12,8 @@ Energy::Energy(Uart &u):uart(u),
         src_blue(SRC_HEIGHT, SRC_WIDTH, CV_8UC1),
         src_red(SRC_HEIGHT, SRC_WIDTH, CV_8UC1)
 {
+    isSendTarget = false;
+
 	fans_cnt = 0;
 	armors_cnt = 0;
 	cycle_center = Point(0, 0);

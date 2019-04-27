@@ -40,6 +40,7 @@ private:
 
 	EnergyPartParam energy_part_param_;
 	LiftHeight lift_height_;
+	bool isSendTarget;
 	int fans_cnt;
 	int armors_cnt;
 	int count;

@@ -66,6 +66,9 @@ int Energy::run(cv::Mat &src){
     cout << "The hit point position is " << hit_point << endl;
 //    hit_point = cycle_center;
 
+    if(!isSendTarget)return 0;
+
+
     gimbleRotation();
 
     sendTargetByUart(yaw_rotation, pitch_rotation, attack_distance);
