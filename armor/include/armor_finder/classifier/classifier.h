@@ -32,7 +32,8 @@ private:
     MatrixXd relu(const MatrixXd &input);
     vector<vector<MatrixXd>> apply_bias(const vector<vector<MatrixXd>> &input, const vector<double> &bias);
     vector<vector<MatrixXd>> relu(const vector<vector<MatrixXd>> &input);
-    vector<vector<MatrixXd>> pool(const vector<vector<MatrixXd>> &input, int size);
+    vector<vector<MatrixXd>> max_pool(const vector<vector<MatrixXd>> &input, int size);
+    vector<vector<MatrixXd>> mean_pool(const vector<vector<MatrixXd>> &input, int size);
     vector<vector<MatrixXd>> pand(const vector<vector<MatrixXd>> &input, int val);
     MatrixXd conv(const MatrixXd &filter, const MatrixXd &input);
     vector<vector<MatrixXd>> conv2(const vector<vector<MatrixXd>> &filter, const vector<vector<MatrixXd>> &input);

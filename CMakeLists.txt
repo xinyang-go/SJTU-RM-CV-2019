@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(auto-aim)
+project(AutoAim)
 set(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_BUILD_TYPE DEBUG)
 
@@ -18,11 +18,17 @@ FIND_PACKAGE(Threads)
 include_directories( ${EIGEN3_INCLUDE_DIR} )
 include_directories( ${PROJECT_SOURCE_DIR}/energy/include )
 include_directories( ${PROJECT_SOURCE_DIR}/armor/include )
-include_directories( ${PROJECT_SOURCE_DIR}/include )
+include_directories( ${PROJECT_SOURCE_DIR}/others/include )
 
-FILE(GLOB_RECURSE sourcefiles "src/*.cpp" "energy/src/*cpp" "armor/src/*.cpp")
+FILE(GLOB_RECURSE sourcefiles "others/src/*.cpp" "energy/src/*cpp" "armor/src/*.cpp")
 add_executable(run main.cpp ${sourcefiles} )
 
 TARGET_LINK_LIBRARIES(run ${CMAKE_THREAD_LIBS_INIT})
 TARGET_LINK_LIBRARIES(run ${OpenCV_LIBS})
-TARGET_LINK_LIBRARIES(run ${PROJECT_SOURCE_DIR}/libMVSDK.so)
+TARGET_LINK_LIBRARIES(run ${PROJECT_SOURCE_DIR}/others/libMVSDK.so)
+
+# Todo
+# ADD_CUSTOM_TARGET(bind-monitor COMMAND "")
+
+# Todo
+# ADD_CUSTOM_TARGET(train COMMAND "")
