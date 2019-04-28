@@ -19,7 +19,7 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 	std::vector<vector<Point> > fan_contours;
 
 	StructingElementClose(src_bin);
-	imshow("fan struct",src_bin);
+//	imshow("fan struct",src_bin);
 
 	findContours(src_bin, fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 

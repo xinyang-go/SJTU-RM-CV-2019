@@ -97,12 +97,14 @@ bool CameraWrapper::init() {
         CameraSetAnalogGain(h_camera, 63);
         // 使用预设LUT表
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
+        // 抗频闪
+//        CameraSetAntiFlick(h_camera, true);
     }
     else if(mode == 1){
         // 使用自动曝光
         CameraSetAeState(h_camera, true);
         // 抗频闪
-//        CameraSetAntiFlick(h_camera, true);
+        CameraSetAntiFlick(h_camera, true);
     }
 
     /*让SDK进入工作模式，开始接收来自相机发送的图像
@@ -116,9 +118,6 @@ bool CameraWrapper::init() {
          CameraSetGamma、CameraSetConrast、CameraSetGain等设置图像伽马、对比度、RGB数字增益等等。
          CameraGetFriendlyName    CameraSetFriendlyName 获取/设置相机名称（该名称可写入相机硬件）
     */
-
-    // 抗频闪
-//    CameraSetAntiFlick(h_camera, true);
 
     if (tCapability.sIspCapacity.bMonoSensor) {
         channel = 1;
@@ -135,7 +134,8 @@ bool CameraWrapper::init() {
 
 bool CameraWrapper::read(cv::Mat& src) {
 //    return readRaw(src);             //suit for using bayer hacking in armor_finder to replace process, fast and it can filter red and blue.
-    return readProcessed(src);   // processed color image, but this runs slowly, about half fps of previous one.
+    if(mode==0)return readProcessed(src);   // processed color image, but this runs slowly, about half fps of previous one.
+    if(mode==1)return readRaw(src);
 
 
 }
