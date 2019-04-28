@@ -15,7 +15,7 @@ void Energy::getFanPosition(std::vector<float> &fanPosition, const std::vector<E
 		float angle = static_cast<float>(180 / PI * atan2(-1 * (fan.rect.center.y - cycle_center.y), (fan.rect.center.x - cycle_center.x)));
 		fanPosition.push_back(angle);
 	}
-	cout << "fanPosition.size() = " << fanPosition.size() << '\t' << endl;
+//	cout << "fanPosition.size() = " << fanPosition.size() << '\t' << endl;
 }
 
 void Energy::getArmorPosition(std::vector<float> &armorPosition, const std::vector<EnergyPart> &armors, cv::Point cycle_center, double radius) {
@@ -26,7 +26,7 @@ void Energy::getArmorPosition(std::vector<float> &armorPosition, const std::vect
 		armorPosition.push_back(angle);
 
 	}
-	cout << "armorPosition.size() = " << armorPosition.size() << '\t' << endl;
+//	cout << "armorPosition.size() = " << armorPosition.size() << '\t' << endl;
 }
 
 void Energy::getFirstArmorCenters(vector<EnergyPart> &armors, std::vector<cv::Point> &first_armor_centers)

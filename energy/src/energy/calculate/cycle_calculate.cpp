@@ -101,6 +101,6 @@ void Energy::cycleLeastFit()
     cycle_center.y = static_cast<int>(b / (-2));
     radius = sqrt(a * a + b * b - 4 * c) / 2;
 
-    cout << "The cycle center is: " << cycle_center << endl;
-    cout << "The radius is: " << radius << endl;
+//    cout << "The cycle center is: " << cycle_center << endl;
+//    cout << "The radius is: " << radius << endl;
 }

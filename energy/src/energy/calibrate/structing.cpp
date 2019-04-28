@@ -8,19 +8,29 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-void Energy::StructingElementClose(cv::Mat &src){
+void Energy::StructingElementClose(cv::Mat &src,int length, int width){
     if (src.empty())return;
     //threshold(src, src, energy_part_param_.CAMERA_GRAY_THRESH, 255, THRESH_BINARY);
-    Mat element = getStructuringElement(MORPH_RECT, Size(10, 10));
+    Mat element = getStructuringElement(MORPH_RECT, Size(length, width));
     morphologyEx(src, src, MORPH_CLOSE, element);
 }
 
 void Energy::StructingElementErodeDilate(cv::Mat &src) {
     cv::Mat src_out, src_out_out;
-    Mat element_erode = getStructuringElement(MORPH_RECT, Size(4, 4));
-    Mat element_dilate = getStructuringElement(MORPH_RECT, Size(20, 20));
-    erode(src,src_out, element_erode);
-    imshow("erode", src_out);
-    dilate(src_out, src_out_out, element_dilate);
-    imshow("dilate", src_out_out);
+    Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(6, 6));
+    Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(10, 10));
+    Mat element_erode_2 = getStructuringElement(MORPH_RECT, Size(2, 2));
+    Mat element_dilate_2 = getStructuringElement(MORPH_RECT, Size(3, 3));
+
+    dilate(src, src, element_dilate_1);
+    imshow("dilate_1", src);
+
+    erode(src,src, element_erode_1);
+    imshow("erode_1", src);
+
+//    dilate(src, src, element_dilate_2);
+//    imshow("dilate_2", src);
+//
+//    erode(src,src, element_erode_2);
+//    imshow("erode_2", src);
 }

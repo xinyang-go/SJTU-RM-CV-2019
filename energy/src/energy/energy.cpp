@@ -22,6 +22,7 @@ Energy::Energy(Uart &u):uart(u),
 	hit_point = Point(0,0);
 	target_position = -1;
 	last_target_position = -1;
+    last_hit_position = 20000;
 	target_armor = -1;
 	radius = 0;
 

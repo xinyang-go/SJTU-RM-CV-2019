@@ -18,8 +18,8 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
     }
 	std::vector<vector<Point> > fan_contours;
 
-	StructingElementClose(src_bin);
-//	imshow("fan struct",src_bin);
+	StructingElementClose(src_bin,6,6);
+	imshow("fan struct",src_bin);
 
 	findContours(src_bin, fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -36,7 +36,7 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 
         float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
         float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-        cout<<"fan area: "<<length<<'\t'<<width<<endl;
+//        cout<<"fan area: "<<length<<'\t'<<width<<endl;
 
 //		if(length>20&&width>20){
 //			cout<<cur_rect.center;
@@ -70,8 +70,8 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
 	std::vector<vector<Point> > armor_contours;
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
-    StructingElementClose(src_bin);
-//    imshow("armor struct",src_bin);
+    StructingElementErodeDilate(src_bin);
+    imshow("armor struct",src_bin);
 
 	findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
     findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -105,12 +105,12 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
 //        if(length>10&&width>5){
 //            armors.emplace_back(armor_contour);
 //            cout<<"armor area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
-//            armors.emplace_back(armor_contour);
 //        }
         armors.emplace_back(armor_contour);
 
 //        cout<<"armor area: "<<length<<'\t'<<width<<endl;
 	}
+//    cout<<armors.size()<<endl;
 	if(armors.size() < last_armors_cnt){
 		last_armors_cnt = static_cast<int>(armors.size());
 		return -1;

@@ -24,7 +24,7 @@ void Energy::gimbleRotation(){
 //    pitch_rotation = static_cast<float>(180 / PI * atan2((ATTACK_DISTANCE*tan(PITCH_ORIGIN_RAD)-real_hit_point.y), ATTACK_DISTANCE));
 
     yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(mark_yaw*PI/180)-real_hit_point.x), attack_distance));
-    pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(mark_pitch*PI/180)-real_hit_point.y), attack_distance));
+    pitch_rotation = 5.5+static_cast<float>(180 / PI * atan2((attack_distance*tan(mark_pitch*PI/180)-real_hit_point.y), attack_distance));
 
 //    yaw_rotation = static_cast<float>(180 / PI * atan2((ATTACK_DISTANCE*tan(3.5*PI/180)-STRETCH*(hit_point.x-cycle_center.x)), ATTACK_DISTANCE));
 //    pitch_rotation = static_cast<float>(180 / PI * atan2((ATTACK_DISTANCE*tan(9.1*PI/180)-STRETCH*(hit_point.y-cycle_center.y)), ATTACK_DISTANCE));
