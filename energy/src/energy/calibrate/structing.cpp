@@ -11,7 +11,7 @@ using std::vector;
 void Energy::StructingElementClose(cv::Mat &src){
     if (src.empty())return;
     //threshold(src, src, energy_part_param_.CAMERA_GRAY_THRESH, 255, THRESH_BINARY);
-    Mat element = getStructuringElement(MORPH_RECT, Size(6, 6));
+    Mat element = getStructuringElement(MORPH_RECT, Size(10, 10));
     morphologyEx(src, src, MORPH_CLOSE, element);
 }
 

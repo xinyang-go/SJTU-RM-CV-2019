@@ -19,6 +19,7 @@
 class CameraWrapper: public WrapperHead {
 private:
     const std::string name;
+    int mode;
 
     unsigned char* rgb_buffer;
     int camera_cnts;
@@ -37,6 +38,9 @@ private:
 public:
     CameraWrapper();
     CameraWrapper(const std::string &n);
+    CameraWrapper(int camera_mode);
+    CameraWrapper(const std::string &n,int camera_mode);
+
     ~CameraWrapper() final;
 
     bool init() final;

@@ -12,7 +12,7 @@ extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
 extern int mark;
 
 int Energy::run(cv::Mat &src){
-//    imshow("src",src);
+    imshow("src",src);
     fans.clear();
     armors.clear();
     fanPosition.clear();
@@ -25,11 +25,11 @@ int Energy::run(cv::Mat &src){
 //    if(first_armor_centers.size()>200)first_armor_centers.clear();
 //    cout<<"first_armor_centers.size(): "<<first_armor_centers.size()<<endl;
 
-    imagePreprocess(src);
+//    imagePreprocess(src);
 //    imshow("img_preprocess",src);
 
     threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
-//    imshow("bin",src);
+    imshow("bin",src);
 
 
     fans_cnt = findFan(src, fans, last_fans_cnt);
@@ -51,8 +51,8 @@ int Energy::run(cv::Mat &src){
     cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
 
-//    cycle_center = cv::Point(212,246);
-//    radius = 123.942;
+    cycle_center = cv::Point(321,319);
+    radius = 109.178;
     attack_distance = ATTACK_DISTANCE * 123.323 / radius;
 
     getFanPosition(fanPosition, fans, cycle_center, radius);

@@ -9,16 +9,36 @@ using std::cout;
 using std::endl;
 using namespace cv;
 
-CameraWrapper::CameraWrapper(const std::string &n):
-    name(n),
-    camera_cnts(2),
-    camera_status(-1),
-    iplImage(nullptr),
-    channel(3){
-}
-
 CameraWrapper::CameraWrapper():
         name("NULL"),
+        mode(1),
+        camera_cnts(2),
+        camera_status(-1),
+        iplImage(nullptr),
+        channel(3){
+}
+
+CameraWrapper::CameraWrapper(const std::string &n):
+        name(n),
+        mode(1),
+        camera_cnts(2),
+        camera_status(-1),
+        iplImage(nullptr),
+        channel(3){
+}
+
+CameraWrapper::CameraWrapper(int camera_mode):
+        name("NULL"),
+        mode(camera_mode),
+        camera_cnts(2),
+        camera_status(-1),
+        iplImage(nullptr),
+        channel(3){
+}
+
+CameraWrapper::CameraWrapper(const std::string &n,int camera_mode):
+        name(n),
+        mode(camera_mode),
         camera_cnts(2),
         camera_status(-1),
         iplImage(nullptr),
@@ -68,15 +88,22 @@ bool CameraWrapper::init() {
 
     rgb_buffer = (unsigned char *)malloc(tCapability.sResolutionRange.iHeightMax *
             tCapability.sResolutionRange.iWidthMax * 3);
-
-    // 不使用自动曝光
-    CameraSetAeState(h_camera, false);
-    // 曝光时间10ms
-    CameraSetExposureTime(h_camera, 10000);
-    // 模拟增益4
-    CameraSetAnalogGain(h_camera, 63);
-    // 使用预设LUT表
-    CameraSetLutMode(h_camera, LUTMODE_PRESET);
+    if(mode == 0){
+        // 不使用自动曝光
+        CameraSetAeState(h_camera, false);
+        // 曝光时间10ms
+        CameraSetExposureTime(h_camera, 10000);
+        // 模拟增益4
+        CameraSetAnalogGain(h_camera, 63);
+        // 使用预设LUT表
+        CameraSetLutMode(h_camera, LUTMODE_PRESET);
+    }
+    else if(mode == 1){
+        // 使用自动曝光
+        CameraSetAeState(h_camera, true);
+        // 抗频闪
+//        CameraSetAntiFlick(h_camera, true);
+    }
 
     /*让SDK进入工作模式，开始接收来自相机发送的图像
     数据。如果当前相机是触发模式，则需要接收到

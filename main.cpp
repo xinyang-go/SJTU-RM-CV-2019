@@ -51,13 +51,13 @@ int main(int argc, char *argv[])
 		WrapperHead *video_armor;
         WrapperHead *video_energy;
 		if(from_camera) {
-            video_armor = new CameraWrapper("armor");
-            video_energy = new CameraWrapper("energy");
+//            video_armor = new CameraWrapper();
+            video_energy = new CameraWrapper();
         }else {
             video_armor = new VideoWrapper("r_l_640.avi");
             video_energy = new VideoWrapper("r_l_640.avi");
         }
-		if (video_energy->init() && video_armor->init()) {
+		if (video_energy->init()) {
 			cout << "Video source initialization successfully." << endl;
 		}
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         energy.setAllyColor(ally_color);
         energy.setRotation(energy_part_rotation);
 
-		while (video_energy->read(energy_src) && video_armor->read(armor_src))
+		while (video_energy->read(energy_src) && video_energy->read(armor_src))
 		{
 		    if(show_origin) {
                 imshow("enery src", energy_src);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		delete video_energy, video_armor;
+		delete video_energy;
 		cout << "Program fails. Restarting" << endl;
 	}
 
@@ -119,7 +119,7 @@ void uartReceive(Uart* uart){
             }
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer+4, 4);
-//            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
             if(buffer[9] == 1){
                 if(mark == 0){
                     mark = 1;

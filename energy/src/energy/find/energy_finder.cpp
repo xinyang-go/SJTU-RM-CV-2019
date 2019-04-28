@@ -36,6 +36,7 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 
         float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
         float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+        cout<<"fan area: "<<length<<'\t'<<width<<endl;
 
 //		if(length>20&&width>20){
 //			cout<<cur_rect.center;
