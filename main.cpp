@@ -13,32 +13,33 @@
 #include <camera/wrapper_head.h>
 #include <armor_finder/armor_finder.h>
 #include <options/options.h>
+#include <thread>
+
+#define DO_NOT_CNT_TIME
 #include <log.h>
 
-#include <thread>
+#define PATH PROJECT_DIR
+#define ENERGY_STATE 1
+#define ARMOR_STATE 0
 
 using namespace cv;
 using namespace std;
 
-#define ENERGY_STATE 1
-#define ARMOR_STATE 0
 
-int state = ENERGY_STATE;
+int state = ARMOR_STATE;
 float curr_yaw=0, curr_pitch=0;
 float mark_yaw=0, mark_pitch=0;
 int mark = 0;
 
 void uartReceive(Uart* uart);
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
     process_options(argc, argv);
     Uart uart;
     thread receive(uartReceive, &uart);
 	bool flag = true;
 
-	while (flag)
-	{
+	while (flag){
         int ally_color = ALLY_RED;
         int energy_part_rotation = CLOCKWISE;
 
@@ -54,8 +55,8 @@ int main(int argc, char *argv[])
 //            video_armor = new CameraWrapper();
             video_energy = new CameraWrapper();
         }else {
-            video_armor = new VideoWrapper("r_l_640.avi");
-            video_energy = new VideoWrapper("r_l_640.avi");
+            video_armor = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
+            video_energy = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
         }
 		if (video_energy->init()) {
 			cout << "Video source initialization successfully." << endl;
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
 
 		Mat energy_src, armor_src;
 
-		ArmorFinder armorFinder(ENEMY_BLUE, uart, "/home/xinyang/Desktop/AutoAim/tools/para/");
+		ArmorFinder armorFinder(ENEMY_BLUE, uart, PATH"/tools/para/");
 
         Energy energy(uart);
         energy.setAllyColor(ally_color);
