@@ -9,39 +9,13 @@ using std::cout;
 using std::endl;
 using namespace cv;
 
-CameraWrapper::CameraWrapper():
-        name("NULL"),
-        mode(1),
-        camera_cnts(2),
-        camera_status(-1),
-        iplImage(nullptr),
-        channel(3){
-}
-
-CameraWrapper::CameraWrapper(const std::string &n):
-        name(n),
-        mode(1),
-        camera_cnts(2),
-        camera_status(-1),
-        iplImage(nullptr),
-        channel(3){
-}
-
-CameraWrapper::CameraWrapper(int camera_mode):
-        name("NULL"),
-        mode(camera_mode),
-        camera_cnts(2),
-        camera_status(-1),
-        iplImage(nullptr),
-        channel(3){
-}
-
-CameraWrapper::CameraWrapper(const std::string &n,int camera_mode):
+CameraWrapper::CameraWrapper(int camera_mode, const std::string &n):
         name(n),
         mode(camera_mode),
         camera_cnts(2),
         camera_status(-1),
         iplImage(nullptr),
+        rgb_buffer(nullptr),
         channel(3){
 }
 
@@ -51,9 +25,9 @@ bool CameraWrapper::init() {
 
     //枚举设备，并建立设备列表
     int camera_enumerate_device_status =  CameraEnumerateDevice(camera_enum_list, &camera_cnts);
-    //cout<<"camera enumerate device status: "<<camera_enumerate_device_status<<endl;
-    //cout<<"camera number: "<<camera_cnts<<endl;
-
+    if(camera_enumerate_device_status != CAMERA_STATUS_SUCCESS){
+        LOGE("CameraEnumerateDevice fail with %d!", camera_enumerate_device_status);
+    }
     //没有连接设备
     if (camera_cnts == 0) {
         LOGE("No camera device detected!");
@@ -67,16 +41,17 @@ bool CameraWrapper::init() {
         camera_status = CameraInit(&camera_enum_list[i], -1, -1, &h_camera);
         if (camera_status != CAMERA_STATUS_SUCCESS) {
             LOGE("Camera 0 initialization failed with code %d. See camera_status.h to find the code meaning.", camera_status);
-            return false;
+            goto stop;
         }
         CameraGetFriendlyName(h_camera, camera_name);
         if(name=="NULL" || strcmp(name.data(), camera_name)==0){
             break;
         }
+stop:
         CameraUnInit(h_camera);
     }
     if(i >= camera_cnts){
-        LOGE("No device name %s!", name.data());
+        LOGE("No device name %s or device open error!!", name.data());
         return false;
     }
 
@@ -90,11 +65,11 @@ bool CameraWrapper::init() {
             tCapability.sResolutionRange.iWidthMax * 3);
     if(mode == 0){
         // 不使用自动曝光
-        CameraSetAeState(h_camera, false);
+        CameraSetAeState(h_camera, true);
         // 曝光时间10ms
-        CameraSetExposureTime(h_camera, 10000);
+//        CameraSetExposureTime(h_camera, 10000);
         // 模拟增益4
-        CameraSetAnalogGain(h_camera, 63);
+        CameraSetAnalogGain(h_camera, 64);
         // 使用预设LUT表
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
         // 抗频闪
@@ -188,6 +163,7 @@ CameraWrapper::~CameraWrapper()
 {
     CameraUnInit(h_camera);
     //注意，先反初始化后再free
-    free(rgb_buffer);
+    if(rgb_buffer != nullptr)
+        free(rgb_buffer);
 }
 

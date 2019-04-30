@@ -12,12 +12,20 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
         return false;
     }
 
-    cv::Mat roi = src.clone()(armor_box), roi_gray;
-    cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
-    cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
-    contour_area = cv::countNonZero(roi_gray);
-    if(abs(cv::countNonZero(roi_gray) - contour_area) > contour_area * 0.3){
-        return false;
+    cv::Mat roi = src.clone()(armor_box);
+    if(classifier){
+        cv::resize(roi, roi, cv::Size(48, 36));
+        if(classifier(roi) == 0){
+            return false;
+        }
+    }else{
+        cv::Mat roi_gray;
+        cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
+        cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
+        contour_area = cv::countNonZero(roi_gray);
+        if(abs(cv::countNonZero(roi_gray) - contour_area) > contour_area * 0.3){
+            return false;
+        }
     }
     return sendBoxPosition();
 }

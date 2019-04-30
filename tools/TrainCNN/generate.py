@@ -3,6 +3,9 @@ import os
 import cv2
 import random
 from forward import OUTPUT_NODES
+import sys
+import os
+from tqdm import tqdm
 # 原图像行数
 SRC_ROWS = 36
 
@@ -22,10 +25,14 @@ class DataSet:
         self.generate_data_sets(folder)
 
     def file2nparray(self, name):
-        image = cv2.imread(name)
-        image = cv2.resize(image, (SRC_COLS, SRC_ROWS))
-        image = image.astype(np.float32)
-        return image / 255.0
+        try:
+            image = cv2.imread(name)
+            image = cv2.resize(image, (SRC_COLS, SRC_ROWS))
+            image = image.astype(np.float32)
+            return image / 255.0
+        except:
+            print(name)
+            sys.exit(-1)
 
     def id2label(self, id):
         a = np.zeros([OUTPUT_NODES])
@@ -37,7 +44,7 @@ class DataSet:
         for i in range(OUTPUT_NODES):
             dir = "%s/%d" % (folder, i)
             files = os.listdir(dir)
-            for file in files:
+            for file in tqdm(files, postfix={"loading id": i}, dynamic_ncols=True):
                 if file[-3:] == "jpg":
                     if random.random() > 0.2:
                         self.train_samples.append(self.file2nparray("%s/%s" % (dir, file)))

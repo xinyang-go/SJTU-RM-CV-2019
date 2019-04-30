@@ -155,7 +155,7 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
     imageColorSplit(src, split, enemy_color);
     cv::threshold(split, src_bin, 130, 255, CV_THRESH_BINARY);
     imagePreProcess(src_bin);
-    cv::imshow("bin", src_bin);
+//    cv::imshow("bin", src_bin);
 //    cv::resize(split, split, cv::Size(640, 480));
 //    pipelineLightBlobPreprocess(pmsrc);
 //    if(!findLightBlobs(pmsrc, pm_light_blobs)){
