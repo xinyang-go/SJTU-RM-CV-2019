@@ -259,7 +259,7 @@ Classifier::Classifier(const string &folder) : state(true){
     fc2_w = load_fc_w(folder+"fc2_w");
     fc2_b = load_fc_b(folder+"fc2_b");
     if(state){
-        LOGM("Load paras success!");
+        LOGM("Load para success!");
     }
 }
 

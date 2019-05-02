@@ -1,34 +1,34 @@
-cmake_minimum_required(VERSION 3.5)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
-project(AutoAim)
-set(CMAKE_CXX_STANDARD 11)
-SET(CMAKE_BUILD_TYPE DEBUG)
+PROJECT(AutoAim)
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_BUILD_TYPE RELEASE)
+SET(CMAKE_CXX_FLAGS "-DPROJECT_DIR=\"\\\"${PROJECT_SOURCE_DIR}\\\"\"")
 
 FIND_PROGRAM(CCACHE_FOUND ccache)
 IF(CCACHE_FOUND)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-    message("< Use ccache for compiler >")
+    SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    MESSAGE("< Use ccache for compiler >")
 ENDIF()
 
 FIND_PACKAGE(OpenCV 3 REQUIRED)
 FIND_PACKAGE(Eigen3 REQUIRED)
 FIND_PACKAGE(Threads)
 
-include_directories( ${EIGEN3_INCLUDE_DIR} )
-include_directories( ${PROJECT_SOURCE_DIR}/energy/include )
-include_directories( ${PROJECT_SOURCE_DIR}/armor/include )
-include_directories( ${PROJECT_SOURCE_DIR}/others/include )
+INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/energy/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/armor/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/others/include)
 
 FILE(GLOB_RECURSE sourcefiles "others/src/*.cpp" "energy/src/*cpp" "armor/src/*.cpp")
-add_executable(run main.cpp ${sourcefiles} )
+ADD_EXECUTABLE(run main.cpp ${sourcefiles} )
 
 TARGET_LINK_LIBRARIES(run ${CMAKE_THREAD_LIBS_INIT})
 TARGET_LINK_LIBRARIES(run ${OpenCV_LIBS})
 TARGET_LINK_LIBRARIES(run ${PROJECT_SOURCE_DIR}/others/libMVSDK.so)
 
-# Todo
-# ADD_CUSTOM_TARGET(bind-monitor COMMAND "")
+ADD_CUSTOM_TARGET(train COMMAND "gnome-terminal" "-x" "bash" "-c" "\"${PROJECT_SOURCE_DIR}/tools/TrainCNN/backward.py\"" )
 
 # Todo
-# ADD_CUSTOM_TARGET(train COMMAND "")
+# ADD_CUSTOM_TARGET(bind-monitor COMMAND "")

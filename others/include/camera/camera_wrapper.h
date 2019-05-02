@@ -36,11 +36,7 @@ private:
 
 
 public:
-    CameraWrapper();
-    CameraWrapper(const std::string &n);
-    CameraWrapper(int camera_mode);
-    CameraWrapper(const std::string &n,int camera_mode);
-
+    CameraWrapper(int camera_mode=1, const std::string &n="NULL");
     ~CameraWrapper() final;
 
     bool init() final;
