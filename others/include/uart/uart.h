@@ -36,7 +36,6 @@ public:
 
     uint8_t receive();
     void receive_data();
-    bool debugUart();
 };
 
 

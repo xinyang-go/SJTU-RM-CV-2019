@@ -33,23 +33,11 @@ int mark = 0;
 
 void uartReceive(Uart* uart);
 
-thread* create_data_recv_thread(Uart *uart){
-    thread *thread1 = new thread([uart](){
-        LOGM("Start receiving!");
-        while(1){
-            uart->debugUart();
-        }
-    });
-    return thread1;
-}
-
-
 int main(int argc, char *argv[]){
     process_options(argc, argv);
     Uart uart;
     thread receive(uartReceive, &uart);
 	bool flag = true;
-//    create_data_recv_thread(&uart);
 	while (flag){
         int ally_color = ALLY_RED;
         int energy_part_rotation = CLOCKWISE;
