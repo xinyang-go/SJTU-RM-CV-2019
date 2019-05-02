@@ -31,10 +31,15 @@ static void pipelineLightBlobPreprocess(cv::Mat &src) {
 }
 
 static bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
-//    static cv::Mat src_bin;
+    static cv::Mat src_gray, src_bin;
+    if(src.type() == CV_8UC3){
+        cvtColor(src, src_gray, CV_BGR2GRAY);
+    }else if(src.type() == CV_8UC1){
+        src_gray = src.clone();
+    }
 
     std::vector<std::vector<cv::Point> > light_contours;
-    cv::findContours(src, light_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    cv::findContours(src_gray, light_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     for (auto &light_contour : light_contours) {
         cv::RotatedRect rect = cv::minAreaRect(light_contour);
         if(isValidLightBlob(rect)){
@@ -114,8 +119,8 @@ static bool findArmorBoxes(LightBlobs &light_blobs, std::vector<cv::Rect2d> &arm
             double min_x, min_y, max_x, max_y;
             min_x = fmin(rect_left.x, rect_right.x);
             max_x = fmax(rect_left.x + rect_left.width, rect_right.x + rect_right.width);
-            min_y = fmin(rect_left.y, rect_right.y) - 5;
-            max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height);
+            min_y = fmin(rect_left.y, rect_right.y) - 3;
+            max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height) + 3;
             if (min_x < 0 || max_x > 640 || min_y < 0 || max_y > 480) {
                 continue;
             }
@@ -147,31 +152,42 @@ bool judge_light_color(std::vector<LightBlob> &light, std::vector<LightBlob> &co
 }
 
 bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
-    cv::Mat split, pmsrc=src.clone(), src_bin;
-    LightBlobs light_blobs, pm_light_blobs, light_blobs_real;
-    std::vector<cv::Rect2d> armor_boxes, boxes_one, boxes_two, boxes_three;
+    cv::Mat split, src_bin;
+    LightBlobs light_blobs, light_blobs_, light_blobs_real;
+    std::vector<cv::Rect2d> armor_boxes, boxes_number[9];
+    armor_box = cv::Rect2d(0,0,0,0);
 
-//    cv::resize(src, pmsrc, cv::Size(320, 240));
-    imageColorSplit(src, split, enemy_color);
-    cv::threshold(split, src_bin, 130, 255, CV_THRESH_BINARY);
-    imagePreProcess(src_bin);
-//    cv::imshow("bin", src_bin);
-//    cv::resize(split, split, cv::Size(640, 480));
-//    pipelineLightBlobPreprocess(pmsrc);
-//    if(!findLightBlobs(pmsrc, pm_light_blobs)){
-//        return false;
-//    }
+    cv::cvtColor(src, src_gray, CV_BGR2GRAY);
+//    pipelineLightBlobPreprocess(src_gray);
+    cv::threshold(src_gray, src_bin, 120, 255, CV_THRESH_BINARY);
     if(!findLightBlobs(src_bin, light_blobs)){
         return false;
     }
-//    if(!judge_light_color(light_blobs, pm_light_blobs, light_blobs_real)){
-//        return false;
-//    }
     if(show_light_blobs){
-        showContours("blobs", split, light_blobs);
+        showContours("blobs", src_bin, light_blobs);
         cv::waitKey(1);
     }
-    if(!findArmorBoxes(light_blobs, armor_boxes)){
+
+    imageColorSplit(src, split, enemy_color);
+    imagePreProcess(split);
+    cv::threshold(split, src_bin, 120, 255, CV_THRESH_BINARY);
+    if(!findLightBlobs(src_bin, light_blobs_)){
+        return false;
+    }
+    if(show_light_blobs){
+        showContours("blobs_", src_bin, light_blobs_);
+        cv::waitKey(1);
+    }
+
+    if(!judge_light_color(light_blobs, light_blobs_, light_blobs_real)){
+        return false;
+    }
+    if(show_light_blobs){
+        showContours("blobs_real", src, light_blobs_real);
+        cv::waitKey(1);
+    }
+
+    if(!findArmorBoxes(light_blobs_real, armor_boxes)){
         return false;
     }
     if(show_armor_boxes){
@@ -183,29 +199,21 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
             cv::Mat roi = src(box).clone();
             cv::resize(roi, roi, cv::Size(48, 36));
             int c = classifier(roi);
-            switch(c){
-                case 1:
-                    boxes_one.emplace_back(box);
-                    break;
-                case 2:
-                    boxes_two.emplace_back(box);
-                    break;
-                case 3:
-                    boxes_three.emplace_back(box);
-                    break;
+            if(c){
+                boxes_number[c-1].emplace_back(box);
             }
         }
-        if(!boxes_one.empty()){
-            armor_box = boxes_one[0];
-        }else if(!boxes_two.empty()){
-            armor_box = boxes_two[0];
-        }else if(!boxes_three.empty()){
-            armor_box = boxes_three[0];
-        } else{
+        for(auto box : boxes_number){
+            if(!box.empty()){
+                armor_box = box[0];
+            }
+        }
+
+        if(armor_box == cv::Rect2d(0,0,0,0)){
             return false;
         }
-        if(show_armor_box){
-            showArmorBoxClass("class", src, boxes_one, boxes_two, boxes_three);
+        if(show_armor_boxes){
+            showArmorBoxClass("class", src, boxes_number);
         }
     }else{
         armor_box = armor_boxes[0];

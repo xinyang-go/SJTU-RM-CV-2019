@@ -1,6 +1,7 @@
 //
 // Created by xinyang on 19-3-27.
 //
+#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
@@ -40,14 +41,14 @@ void ArmorFinder::run(cv::Mat &src) {
                     tracker = TrackerToUse::create();
                     tracker->init(src_use, armor_box);
                     state = TRACKING_STATE;
-                    LOGW("into track");
+                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
                 }
             }
             break;
         case TRACKING_STATE:
             if(!stateTrackingTarget(src_use)){
                 state = SEARCHING_STATE;
-                //std::cout << "into search!" << std::endl;
+                LOGM(STR_CTR(WORD_LIGHT_YELLOW ,"into search!"));
             }
             break;
         case STANDBY_STATE:
@@ -59,11 +60,14 @@ void ArmorFinder::run(cv::Mat &src) {
 #define FOCUS_PIXAL      (0.36/0.48*640)
 
 bool ArmorFinder::sendBoxPosition() {
+    static int dx_add = 0;
     auto rect = armor_box;
-    double dx = rect.x + rect.width/2 - 320;
-    double dy = rect.y + rect.height/2 - 240;
+    double dx = rect.x + rect.width/2 - 320 - 8;
+    dx_add += dx;
+    dx = dx + dx_add * 0;
+    double dy = rect.y + rect.height/2 - 240 - 30;
     double yaw   = atan(dx / FOCUS_PIXAL) * 180 / 3.14159265459;
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / 3.14159265459;
-    uart.sendTarget(yaw, pitch, 0);
+    uart.sendTarget(yaw, -pitch, 0);
     return true;
 }

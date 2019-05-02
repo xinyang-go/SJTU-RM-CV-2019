@@ -15,7 +15,7 @@
 #include <options/options.h>
 #include <thread>
 
-//#define DO_NOT_CNT_TIME
+#define DO_NOT_CNT_TIME
 #include <log.h>
 
 #define PATH PROJECT_DIR
@@ -33,12 +33,23 @@ int mark = 0;
 
 void uartReceive(Uart* uart);
 
+thread* create_data_recv_thread(Uart *uart){
+    thread *thread1 = new thread([uart](){
+        LOGM("Start receiving!");
+        while(1){
+            uart->debugUart();
+        }
+    });
+    return thread1;
+}
+
+
 int main(int argc, char *argv[]){
     process_options(argc, argv);
     Uart uart;
     thread receive(uartReceive, &uart);
 	bool flag = true;
-
+//    create_data_recv_thread(&uart);
 	while (flag){
         int ally_color = ALLY_RED;
         int energy_part_rotation = CLOCKWISE;
@@ -55,8 +66,8 @@ int main(int argc, char *argv[]){
             video_armor = new CameraWrapper(0);
 //            video_energy = new CameraWrapper(1);
         }else {
-            video_armor = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
-            video_energy = new VideoWrapper("/home/xinyang/Desktop/Video.mp4");
+            video_armor = new VideoWrapper("/home/xinyang/Desktop/Video0.mp4");
+            video_energy = new VideoWrapper("/home/xinyang/Desktop/Video0.mp4");
         }
 		if (video_armor->init()) {
 			cout << "Video source initialization successfully." << endl;
@@ -74,11 +85,10 @@ int main(int argc, char *argv[]){
 
 		while (ok){
 		    CNT_TIME(WORD_LIGHT_CYAN, "Total", {
-                ok = video_armor->read(energy_src) && video_armor->read(armor_src);
-                if (show_origin) {
-                    imshow("enery src", energy_src);
-                    imshow("armor src", armor_src);
-                }
+		        CNT_TIME(WORD_LIGHT_PURPLE, "Read", {
+                    ok = video_armor->read(armor_src);
+//                    ok &&= video_energy->read(energy_src);
+                });
                 if (state == ENERGY_STATE) {
                     if (from_camera == 0) {
                         energy.extract(energy_src);
@@ -112,6 +122,7 @@ void uartReceive(Uart* uart){
             buffer[cnt++] = data;
             if(cnt >= 100){
 //                LOGE("data receive over flow!");
+                cnt = 0;
             }
         }
         if(cnt == 10){
@@ -131,7 +142,6 @@ void uartReceive(Uart* uart){
                     mark_yaw = curr_yaw;
                     mark_pitch = curr_pitch;
                 }
-
 //                LOGM("Marked");
             }
         }

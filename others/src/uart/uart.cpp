@@ -4,6 +4,7 @@
 
 #include <uart/uart.h>
 #include <energy/param_struct_define.h>
+#include <log.h>
 
 using std::cout;
 using std::cerr;
@@ -16,7 +17,6 @@ GMAngle_t aim;
 
 
 Uart::Uart(){
-
     fd = open("/dev/ttyUSB0", O_RDWR);
     if(fd < 0)
     {
@@ -121,6 +121,9 @@ int Uart::set_opt(int fd, int nSpeed, int nBits, char nEvent, int nStop) {
     return 0;
 }
 
+FILE *send_info=fopen("send.info", "w");
+FILE *recv_info=fopen("recv.info", "w");
+
 void Uart::sendTarget(float x, float y, float z) {
     static short x_tmp, y_tmp, z_tmp;
 
@@ -146,6 +149,13 @@ void Uart::sendTarget(float x, float y, float z) {
     buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
     buff[7] = 'e';
 
+    timeval ts;
+    gettimeofday(&ts, NULL);
+    fprintf(send_info, "%lf %f %f\n",
+            ts.tv_sec + ts.tv_usec / 1e6,
+            x, y
+    );
+
     write(fd, buff, 8);
 
 }
@@ -157,5 +167,30 @@ uint8_t Uart::receive() {
     uint8_t data;
     while(read(fd, &data, 1) < 1);
     return data;
+}
+
+void readall(int fd, void* buff, int size) {
+    int cnt = 0;
+    while ((cnt += read(fd, (char*)buff + cnt, size - cnt)) < size);
+}
+
+char readone(int fd){
+    char val;
+    while(read(fd, &val, 1) < 1);
+    return val;
+}
+
+
+
+bool Uart::debugUart() {
+    float val[3];
+    //while(readone(fd) != 's');
+    readall(fd, val, sizeof(val));
+    timeval ts;
+    gettimeofday(&ts, NULL);
+    fprintf(recv_info, "%lf %f %f %f\n",
+            ts.tv_sec + ts.tv_usec / 1e6,
+            val[0], val[1], val[2]
+    );
 }
 

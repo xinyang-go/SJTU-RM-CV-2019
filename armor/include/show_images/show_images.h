@@ -13,8 +13,7 @@
 void showArmorBoxVector(std::string windows_name, const cv::Mat &src, const std::vector<cv::Rect2d> &armor_box);
 void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor_box);
 void showContours(std::string windows_name, const cv::Mat &src, const std::vector<LightBlob> &light_blobs);
-void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::Rect2d> boxes_one,
-                       vector<cv::Rect2d> boxes_two, vector<cv::Rect2d> boxes_three);
+void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::Rect2d> boxes[10]);
 
 
 #endif /* _SHOW_IMAGES_H_ */

@@ -64,8 +64,8 @@ def forward(x, regularizer=None):
         [CONV2_KERNAL_SIZE, CONV2_KERNAL_SIZE, CONV1_OUTPUT_CHANNELS, CONV2_OUTPUT_CHANNELS]
     )
     conv2_b = get_bias([CONV2_OUTPUT_CHANNELS])
-    conv2 = tf.nn.relu(tf.nn.bias_add(conv2d(pool1, conv2_w), conv2_b))
-    pool2 = avg_pool_2x2(conv2)
+    conv2   = tf.nn.relu(tf.nn.bias_add(conv2d(pool1, conv2_w), conv2_b))
+    pool2   = avg_pool_2x2(conv2)
     vars.extend([conv2_w, conv2_b])
     nodes.extend([conv2, pool2])
 
