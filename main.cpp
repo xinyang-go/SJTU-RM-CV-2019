@@ -18,9 +18,9 @@
 //#define DO_NOT_CNT_TIME
 #include <log.h>
 
-#define PATH PROJECT_DIR
+#define PROJECT_DIR  PATH
 #define ENERGY_STATE 1
-#define ARMOR_STATE 0
+#define ARMOR_STATE  0
 
 using namespace cv;
 using namespace std;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
 
 		Mat energy_src, armor_src;
 
-		ArmorFinder armorFinder(ENEMY_BLUE, uart, PATH"/tools/para/");
+		ArmorFinder armorFinder(ENEMY_BLUE, uart, PROJECT_DIR"/tools/para/");
 
         Energy energy(uart);
         energy.setAllyColor(ally_color);
@@ -102,6 +102,7 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 
+#define RECEIVE_LOG_LEVEL LOG_NOTHING
 
 void uartReceive(Uart* uart){
     char buffer[100];
@@ -111,28 +112,28 @@ void uartReceive(Uart* uart){
         while((data=uart->receive()) != '\n'){
             buffer[cnt++] = data;
             if(cnt >= 100){
-//                LOGE("data receive over flow!");
+                LOG(RECEIVE_LOG_LEVEL, "data receive over flow!");
+                    cnt = 0;
             }
         }
         if(cnt == 10){
             if(buffer[8] == 'e'){
                 state = ENERGY_STATE;
-//                LOGM("Energy state");
+                LOG(RECEIVE_LOG_LEVEL, "Energy state");
             }else if(buffer[8] == 'a'){
                 state = ARMOR_STATE;
-//                LOGM("Armor state");
+                LOG(RECEIVE_LOG_LEVEL, "Armor state");
             }
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer+4, 4);
-//            LOGM("Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+            LOG(RECEIVE_LOG_LEVEL, "Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
             if(buffer[9] == 1){
                 if(mark == 0){
                     mark = 1;
                     mark_yaw = curr_yaw;
                     mark_pitch = curr_pitch;
                 }
-
-//                LOGM("Marked");
+                LOG(RECEIVE_LOG_LEVEL, "Marked");
             }
         }
         cnt = 0;
