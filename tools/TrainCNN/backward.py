@@ -5,6 +5,7 @@ from tqdm import tqdm
 import generate
 import forward
 import cv2
+import sys
 import numpy as np
 print("Finish!")
 
@@ -53,7 +54,7 @@ def save_para(folder, paras):
         save_bias(fp, paras[7])
 
 
-STEPS = 10000
+STEPS = 20000
 BATCH = 30
 LEARNING_RATE_BASE  = 0.01
 LEARNING_RATE_DECAY = 0.99
@@ -102,15 +103,9 @@ def train(dataset, show_bar=False):
 
             if i % 100 == 0:
                 if i % 1000 == 0:
-                    test_samples, test_labels = dataset.sample_train_sets(5000)
+                    test_samples, test_labels = dataset.sample_test_sets(5000)
                     acc = sess.run(accuracy, feed_dict={x: test_samples, y_: test_labels})
                 bar.set_postfix({"loss": loss_value, "acc": acc})
-
-
-            # if show_bar:
-            #     bar.title = "step: %d, loss: %f, acc: %f" % (step, loss_value, acc)
-            #     bar.cursor.restore()
-            #     bar.draw(value=i+1)
 
         # video = cv2.VideoCapture("/home/xinyang/Desktop/Video.mp4")
         # _ = True
@@ -147,7 +142,8 @@ def train(dataset, show_bar=False):
         #     res = sess.run(y, feed_dict={x: im})
         #     res = res.reshape([forward.OUTPUT_NODES])
         #     print(np.argmax(res))
-
+    
+        test_samples, test_labels = dataset.sample_test_sets(100)
         vars_val = sess.run(vars)
         save_para("/home/xinyang/Desktop/AutoAim/tools/para", vars_val)
         nodes_val = sess.run(nodes, feed_dict={x:test_samples})
@@ -159,4 +155,4 @@ if __name__ == "__main__":
     dataset = generate.DataSet("/home/xinyang/Desktop/DataSets/box")
     print("Finish!")
     train(dataset, show_bar=True)
-    input("Press any key to continue...")
+    input("Press any key to end...")

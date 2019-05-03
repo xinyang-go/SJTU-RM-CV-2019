@@ -41,7 +41,7 @@ CONV2_OUTPUT_CHANNELS = 10
 FC1_OUTPUT_NODES = 16
 
 # 第二层全连接宽度（输出标签类型数）
-FC2_OUTPUT_NODES = 4
+FC2_OUTPUT_NODES = 8
 
 # 输出标签类型数
 OUTPUT_NODES = FC2_OUTPUT_NODES
@@ -64,8 +64,8 @@ def forward(x, regularizer=None):
         [CONV2_KERNAL_SIZE, CONV2_KERNAL_SIZE, CONV1_OUTPUT_CHANNELS, CONV2_OUTPUT_CHANNELS]
     )
     conv2_b = get_bias([CONV2_OUTPUT_CHANNELS])
-    conv2   = tf.nn.relu(tf.nn.bias_add(conv2d(pool1, conv2_w), conv2_b))
-    pool2   = avg_pool_2x2(conv2)
+    conv2 = tf.nn.relu(tf.nn.bias_add(conv2d(pool1, conv2_w), conv2_b))
+    pool2 = avg_pool_2x2(conv2)
     vars.extend([conv2_w, conv2_b])
     nodes.extend([conv2, pool2])
 
