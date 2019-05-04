@@ -18,8 +18,7 @@ void showArmorBoxVector(std::string windows_name, const cv::Mat &src, const std:
     imshow(windows_name, image2show);
 }
 
-void showArmorBoxClass(std::string windows_name, const cv::Mat &src, vector<cv::Rect2d> boxes_one,
-        vector<cv::Rect2d> boxes_two, vector<cv::Rect2d> boxes_three){
+void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::Rect2d> boxes[10]){
     static Mat image2show;
     if (src.type() == CV_8UC1) // 黑白图像
     {
@@ -28,16 +27,17 @@ void showArmorBoxClass(std::string windows_name, const cv::Mat &src, vector<cv::
     {
         image2show = src.clone();
     }
-    for (auto &box:boxes_one) {
-        rectangle(image2show, box, Scalar(255, 0, 0), 1);
+    for(int i=0; i<10; i++){
+        if(!boxes[i].empty()){
+            for(auto box : boxes[i]){
+                char buff[2] = {0};
+                buff[0] = i + '0';
+                rectangle(image2show, box, Scalar(0, 255, 0), 1);
+                putText(image2show, buff, Point(box.x+2, box.y+2), cv::FONT_HERSHEY_TRIPLEX, 1, Scalar(255,0,0));
+            }
+        }
     }
-    for (auto &box:boxes_two) {
-        rectangle(image2show, box, Scalar(0, 255, 0), 1);
-    }
-    for (auto &box:boxes_three) {
-        rectangle(image2show, box, Scalar(0, 0, 255), 1);
-    }
-    imshow(windows_name, image2show);
+    imshow(window_names, image2show);
 }
 
 void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor_box) {

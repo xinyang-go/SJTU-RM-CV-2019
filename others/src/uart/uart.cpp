@@ -4,6 +4,7 @@
 
 #include <uart/uart.h>
 #include <energy/param_struct_define.h>
+#include <log.h>
 
 using std::cout;
 using std::cerr;
@@ -16,7 +17,6 @@ GMAngle_t aim;
 
 
 Uart::Uart(){
-
     fd = open("/dev/ttyUSB0", O_RDWR);
     if(fd < 0)
     {
@@ -150,12 +150,8 @@ void Uart::sendTarget(float x, float y, float z) {
 
 }
 
-// 's' + (x) ( 8bit + 8bit ) + (y) ( 8bit + 8bit ) + (z) ( 8bit + 8bit ) + 'e'
-
-
 uint8_t Uart::receive() {
     uint8_t data;
     while(read(fd, &data, 1) < 1);
     return data;
 }
-
