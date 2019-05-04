@@ -63,7 +63,6 @@ int main(int argc, char *argv[]) {
         }
 
         Mat energy_src, armor_src;
-
         ArmorFinder armorFinder(ENEMY_BLUE, uart, PROJECT_DIR"/tools/para/");
 
         Energy energy(uart);
