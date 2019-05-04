@@ -154,7 +154,7 @@ bool judge_light_color(std::vector<LightBlob> &light, std::vector<LightBlob> &co
 bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
     cv::Mat split, src_bin;
     LightBlobs light_blobs, light_blobs_, light_blobs_real;
-    std::vector<cv::Rect2d> armor_boxes, boxes_number[9];
+    std::vector<cv::Rect2d> armor_boxes, boxes_number[10];
     armor_box = cv::Rect2d(0,0,0,0);
 
     cv::cvtColor(src, src_gray, CV_BGR2GRAY);

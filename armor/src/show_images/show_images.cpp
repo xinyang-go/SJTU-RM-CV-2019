@@ -27,29 +27,14 @@ void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::
     {
         image2show = src.clone();
     }
-    if(!boxes[0].empty()){
-        for(auto box : boxes[0]){
-            cv::rectangle(image2show, box, Scalar(255, 0, 0), 1);
-        }
-    }else if(!boxes[1].empty()){
-        for(auto box : boxes[1]){
-            cv::rectangle(image2show, box, Scalar(0, 255, 0), 1);
-        }
-    }else if(!boxes[2].empty()){
-        for(auto box : boxes[2]){
-            cv::rectangle(image2show, box, Scalar(0, 0, 255), 1);
-        }
-    }else if(!boxes[3].empty()){
-        for(auto box : boxes[3]){
-            cv::rectangle(image2show, box, Scalar(0, 255, 255), 1);
-        }
-    }else if(!boxes[4].empty()){
-        for(auto box : boxes[4]){
-            cv::rectangle(image2show, box, Scalar(255, 0, 255), 1);
-        }
-    }else if(!boxes[5].empty()){
-        for(auto box : boxes[5]){
-            cv::rectangle(image2show, box, Scalar(255, 255, 0), 1);
+    for(int i=0; i<10; i++){
+        if(!boxes[i].empty()){
+            for(auto box : boxes[i]){
+                char buff[2] = {0};
+                buff[0] = i + '0';
+                rectangle(image2show, box, Scalar(0, 255, 0), 1);
+                putText(image2show, buff, Point(box.x+2, box.y+2), cv::FONT_HERSHEY_TRIPLEX, 1, Scalar(255,0,0));
+            }
         }
     }
     imshow(window_names, image2show);
