@@ -54,7 +54,7 @@ def save_para(folder, paras):
         save_bias(fp, paras[7])
 
 
-STEPS = 20000
+STEPS = 100000
 BATCH = 30
 LEARNING_RATE_BASE  = 0.01
 LEARNING_RATE_DECAY = 0.99
@@ -152,7 +152,7 @@ def train(dataset, show_bar=False):
 
 if __name__ == "__main__":
     print("Loading data sets...")
-    dataset = generate.DataSet("/home/xinyang/Desktop/DataSets/box")
+    dataset = generate.DataSet("/home/xinyang/Desktop/DataSets")
     print("Finish!")
     train(dataset, show_bar=True)
     input("Press any key to end...")
