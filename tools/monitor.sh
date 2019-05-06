@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # usage: monitor.sh "<the exe file's absolute path and its shell parameter>"
-# And then when ever the exe shutdonw it will be automatically restart
+# And then when ever the exe shutdown it will be automatically restart
 
 exe=$1
 while true; do
