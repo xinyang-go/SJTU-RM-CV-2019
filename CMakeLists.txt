@@ -30,5 +30,4 @@ TARGET_LINK_LIBRARIES(run ${PROJECT_SOURCE_DIR}/others/libMVSDK.so)
 
 ADD_CUSTOM_TARGET(train COMMAND "gnome-terminal" "-x" "bash" "-c" "\"${PROJECT_SOURCE_DIR}/tools/TrainCNN/backward.py\"" )
 
-# Todo
-# ADD_CUSTOM_TARGET(bind-monitor COMMAND "")
+ADD_CUSTOM_TARGET(bind-monitor COMMAND "${PROJECT_SOURCE_DIR}/tools/bind-monitor.sh" "${PROJECT_SOURCE_DIR}" "${CMAKE_BINARY_DIR}")
