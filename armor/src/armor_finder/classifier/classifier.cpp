@@ -92,7 +92,7 @@ MatrixXd Classifier::softmax(const MatrixXd &input){
     return tmp.array().exp() / tmp.array().exp().sum();
 }
 
-vector<vector<MatrixXd>> max_pool(const vector<vector<MatrixXd>> &input, int size){
+vector<vector<MatrixXd>> Classifier::max_pool(const vector<vector<MatrixXd>> &input, int size){
     vector<vector<MatrixXd>> output;
     for(int sample=0; sample<input.size(); sample++) {
         vector<MatrixXd> sub;

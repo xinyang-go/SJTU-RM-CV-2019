@@ -67,6 +67,15 @@ class DataSet:
             labels.append(self.train_labels[id])
         return np.array(samples), np.array(labels)
 
+    def sample_test_sets(self, length):
+        samples = []
+        labels = []
+        for i in range(length):
+            id = random.randint(0, len(self.test_samples)-1)
+            samples.append(self.test_samples[id])
+            labels.append(self.test_labels[id])
+        return np.array(samples), np.array(labels)
+
     def all_train_sets(self):
         return self.train_samples[:], self.train_labels[:]
 

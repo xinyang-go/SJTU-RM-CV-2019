@@ -65,11 +65,14 @@ stop:
             tCapability.sResolutionRange.iWidthMax * 3);
     if(mode == 0){
         // 不使用自动曝光
-        CameraSetAeState(h_camera, true);
+        CameraSetAeState(h_camera, false);
         // 曝光时间10ms
-//        CameraSetExposureTime(h_camera, 10000);
+        CameraSetExposureTime(h_camera, 10000);
+        double t;
+        CameraGetExposureTime(h_camera, &t);
+        LOGM("Exposure time: %lfms", t/1000.0);
         // 模拟增益4
-        CameraSetAnalogGain(h_camera, 64);
+        CameraSetAnalogGain(h_camera, 55);
         // 使用预设LUT表
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
         // 抗频闪
@@ -90,7 +93,7 @@ stop:
     /*其他的相机参数设置
     例如 CameraSetExposureTime   CameraGetExposureTime  设置/读取曝光时间
          CameraSetImageResolution  CameraGetImageResolution 设置/读取分辨率
-         CameraSetGamma、CameraSetConrast、CameraSetGain等设置图像伽马、对比度、RGB数字增益等等。
+         CameraSetGamma、CameraSetContrast、CameraSetGain等设置图像伽马、对比度、RGB数字增益等等。
          CameraGetFriendlyName    CameraSetFriendlyName 获取/设置相机名称（该名称可写入相机硬件）
     */
 
