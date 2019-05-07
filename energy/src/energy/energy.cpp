@@ -50,6 +50,9 @@ Energy::Energy(Uart &u):uart(u),
 	top = Point(640, 480);
 	bottom = Point(0, 0);
 
+	position_mode = 0;
+	last_position_mode = 0;
+
 	initEnergyPartParam();
 }
 

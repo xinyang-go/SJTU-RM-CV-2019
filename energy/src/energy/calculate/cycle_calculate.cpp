@@ -58,7 +58,7 @@ void Energy::cycleLeastFit()
     radius = 0.0f;
     if (all_armor_centers.size() < 3)
     {
-        cout<<"Cannot calculate a circle"<<endl;
+//        cout<<"Cannot calculate a circle"<<endl;
         return;
     }
 

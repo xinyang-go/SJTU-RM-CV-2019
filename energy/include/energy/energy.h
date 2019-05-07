@@ -60,6 +60,8 @@ private:
 	double phi;//电机yaw轴应旋转的角度
 	float yaw_rotation;
 	float pitch_rotation;
+	int position_mode;
+	int last_position_mode;
     int isLeftVertexFound, isTopVertexFound, isRightVertexFound, isBottomVertexFound;
 
 	std::vector<EnergyPart> fans;

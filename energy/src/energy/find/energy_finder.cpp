@@ -71,6 +71,7 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
     StructingElementErodeDilate(src_bin);
+//    StructingElementClose(src_bin,10,10);
     imshow("armor struct",src_bin);
 
 	findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
