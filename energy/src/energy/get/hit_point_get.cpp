@@ -12,7 +12,7 @@ using std::vector;
 
 void Energy::getHitPoint(){
     int hit_position = 1000;
-    int limit_angle = 3;
+    int limit_angle = 6;
     int angle_interval = 60;
 
     if(energy_part_rotation==1){    //顺时针
@@ -20,33 +20,45 @@ void Energy::getHitPoint(){
             hit_point.x = cycle_center.x + static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y + static_cast<int>(radius * sqrt(3) / 2);
             hit_position = -1*angle_interval;
+            position_mode = 1;
+//            cout<<"666"<<'\t'<<hit_position<<endl;
+
         }
-        if(target_armor>=angle_interval && target_armor<angle_interval+limit_angle){
+        else if(target_armor>=angle_interval && target_armor<angle_interval+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius);
             hit_point.y = cycle_center.y;
             hit_position = 0;
+            position_mode = 2;
         }
-        if(target_armor>=angle_interval*2 && target_armor<=angle_interval*2+limit_angle){
+        else if(target_armor>=angle_interval*2 && target_armor<=angle_interval*2+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y - static_cast<int>(radius * sqrt(3) / 2);
             hit_position = angle_interval;
+            position_mode = 3;
         }
-        if(target_armor>=-180 && target_armor<-180+limit_angle){
+        else if(target_armor>=-180 && target_armor<-180+limit_angle){
             hit_point.x = cycle_center.x - static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y - static_cast<int>(radius * sqrt(3) / 2);
             hit_position = 2*angle_interval;
+            position_mode = 4;
         }
-        if(target_armor>=-2*angle_interval&&target_armor<-2*angle_interval+limit_angle){
+        else if(target_armor>=-2*angle_interval&&target_armor<-2*angle_interval+limit_angle){
             hit_point.x = cycle_center.x - static_cast<int>(radius);
             hit_point.y = cycle_center.y;
             hit_position = 180;
+            position_mode = 5;
         }
-        if(target_armor>=-1*angle_interval&&target_armor<-1*angle_interval+limit_angle) {
+        else if(target_armor>=-1*angle_interval&&target_armor<-1*angle_interval+limit_angle) {
             hit_point.x = cycle_center.x - static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y + static_cast<int>(radius * sqrt(3) / 2);
             hit_position = -2 * angle_interval;
+            position_mode = 6;
         }
-        else return;
+        else{
+//            last_hit_position = 2000;
+            position_mode = 0;
+            return;
+        }
     }
 
     if(energy_part_rotation==-1){    //逆时针
@@ -54,38 +66,84 @@ void Energy::getHitPoint(){
             hit_point.x = cycle_center.x - static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y - static_cast<int>(radius * sqrt(3) / 2);
             hit_position = 2*angle_interval;
+            position_mode = 1;
         }
-        if(target_armor>=angle_interval && target_armor<angle_interval+limit_angle){
+        else if(target_armor>=angle_interval && target_armor<angle_interval+limit_angle){
             hit_point.x = cycle_center.x - static_cast<int>(radius);
             hit_point.y = cycle_center.y;
             hit_position = 180;
+            position_mode = 2;
         }
-        if(target_armor>=angle_interval*2 && target_armor<=angle_interval*2+limit_angle){
+        else if(target_armor>=angle_interval*2 && target_armor<=angle_interval*2+limit_angle){
             hit_point.x = cycle_center.x - static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y + static_cast<int>(radius * sqrt(3) / 2);
             hit_position = -2*angle_interval;
+            position_mode = 3;
         }
-        if(target_armor>=-180 && target_armor<-180+limit_angle){
+        else if(target_armor>=-180 && target_armor<-180+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y + static_cast<int>(radius * sqrt(3) / 2);
             hit_position = -1*angle_interval;
+            position_mode = 4;
         }
-        if(target_armor>=-2*angle_interval&&target_armor<-2*angle_interval+limit_angle){
+        else if(target_armor>=-2*angle_interval&&target_armor<-2*angle_interval+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius);
             hit_point.y = cycle_center.y;
             hit_position = 0;
+            position_mode = 5;
         }
-        if(target_armor>=-1*angle_interval&&target_armor<-1*angle_interval+limit_angle){
+        else if(target_armor>=-1*angle_interval&&target_armor<-1*angle_interval+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y - static_cast<int>(radius * sqrt(3) / 2);
             hit_position = angle_interval;
+            position_mode = 6;
         }
-        else return;
+        else{
+//            last_hit_position = 2000;
+            position_mode = 0;
+            return;
+        }
     }
 
-    cout<<"hit position: "<<hit_position<<endl;
 
-    isSendTarget = true;
+//    cout<<"last: "<<last_position_mode<<'\t'<<"now: "<<position_mode<<endl;
+
+    if(position_mode!=0 && position_mode!=last_position_mode){
+//        last_hit_position = hit_position;
+        last_position_mode = position_mode;
+        isSendTarget = true;
+        cout<<"hit position: "<<hit_position<<endl;
+        return;
+    }
+    else if(position_mode == 0){
+//        last_hit_position = hit_position;
+//        last_position_mode = position_mode;
+        isSendTarget = false;
+        return;
+    }
+    else{
+//        last_hit_position = hit_position;
+        last_position_mode = position_mode;
+        isSendTarget = false;
+        return;
+    }
+
+//    if(hit_position>360&&last_hit_position>360){
+//        isSendTarget = false;
+//        return;
+//    }
+
+//    if(fabs(hit_position - last_hit_position) < 15||fabs(hit_position - last_hit_position) > 345 && fabs(hit_position - last_hit_position) <= 360){
+//        last_hit_position = hit_position;
+//        isSendTarget = false;
+//        return;
+//    }
+//    else{
+//        last_hit_position = hit_position;
+//        isSendTarget = true;
+//        cout<<"hit position: "<<hit_position<<endl;
+//        return;
+//    }
 
 //    double rad = static_cast<double>(energy_part_rotation * energy_part_param_.RPM
 //                * energy_part_param_.HIT_TIME * 360 / 60);
@@ -93,6 +151,12 @@ void Energy::getHitPoint(){
 }
 
 bool Energy::changeTarget(){
-    return !(pointDistance(target_center, last_target_center) < 25 || fabs(target_position - last_target_position) < 30
-             ||fabs(target_position - last_target_position) > 330);
+    if(fabs(target_position - last_target_position) < 30||fabs(target_position - last_target_position) > 330){
+        last_target_position = target_position;
+        return false;
+    }
+    else{
+        last_target_position = target_position;
+        return true;
+    }
 }

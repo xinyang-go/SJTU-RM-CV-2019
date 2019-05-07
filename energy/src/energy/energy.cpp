@@ -22,6 +22,7 @@ Energy::Energy(Uart &u):uart(u),
 	hit_point = Point(0,0);
 	target_position = -1;
 	last_target_position = -1;
+    last_hit_position = 20000;
 	target_armor = -1;
 	radius = 0;
 
@@ -48,6 +49,9 @@ Energy::Energy(Uart &u):uart(u),
 	right = Point(0, 0);
 	top = Point(640, 480);
 	bottom = Point(0, 0);
+
+	position_mode = 0;
+	last_position_mode = 0;
 
 	initEnergyPartParam();
 }

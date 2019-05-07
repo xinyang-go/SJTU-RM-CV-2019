@@ -79,10 +79,10 @@ stop:
 //        CameraSetAntiFlick(h_camera, true);
     }
     else if(mode == 1){
-        // 使用自动曝光
-        CameraSetAeState(h_camera, true);
+        // 不使用自动曝光
+        CameraSetAeState(h_camera, false);
         // 抗频闪
-        CameraSetAntiFlick(h_camera, true);
+//        CameraSetAntiFlick(h_camera, true);
     }
 
     /*让SDK进入工作模式，开始接收来自相机发送的图像

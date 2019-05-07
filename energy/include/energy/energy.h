@@ -49,6 +49,7 @@ private:
 	double radius;
 	double target_position;
 	double last_target_position;
+	double last_hit_position;
 	float target_armor;
 	int ally_color_;
 	int energy_part_rotation;
@@ -59,6 +60,8 @@ private:
 	double phi;//电机yaw轴应旋转的角度
 	float yaw_rotation;
 	float pitch_rotation;
+	int position_mode;
+	int last_position_mode;
     int isLeftVertexFound, isTopVertexFound, isRightVertexFound, isBottomVertexFound;
 
 	std::vector<EnergyPart> fans;
@@ -122,7 +125,7 @@ private:
 	void splitBayerBG(cv::Mat &src, cv::Mat &blue, cv::Mat &red);
 	void imagePreprocess(cv::Mat &src);
 
-	void StructingElementClose(cv::Mat &src);
+	void StructingElementClose(cv::Mat &src,int length, int width);
 	void StructingElementErodeDilate(cv::Mat &src);
 
 };

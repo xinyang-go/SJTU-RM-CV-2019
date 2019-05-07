@@ -13,7 +13,7 @@ void Energy::initEnergyPartParam() {
     energy_part_param_.RPM = 10;
     energy_part_param_.HIT_TIME = 1.14;
 
-	energy_part_param_.GRAY_THRESH = 220;
+	energy_part_param_.GRAY_THRESH = 240;
 	energy_part_param_.SPLIT_GRAY_THRESH = 60;
 	energy_part_param_.FAN_GRAY_THRESH = 75;
 	energy_part_param_.ARMOR_GRAY_THRESH = 80;
@@ -30,9 +30,9 @@ void Energy::initEnergyPartParam() {
 	energy_part_param_.ARMOR_CONTOUR_AREA_MAX = 100000;
 	energy_part_param_.ARMOR_CONTOUR_AREA_MIN = 0;
 	energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 30;
-	energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 20;
-	energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 60;
-	energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 50;
+	energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 15;
+	energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 50;
+	energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 45;
 	energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX = 3;
 	energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN = 1;
 

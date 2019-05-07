@@ -12,12 +12,13 @@ extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
 extern int mark;
 
 int Energy::run(cv::Mat &src){
-//    imshow("src",src);
+    imshow("src",src);
     fans.clear();
     armors.clear();
     fanPosition.clear();
     armorPosition.clear();
     gimble_zero_points.clear();
+    isSendTarget = false;
 
     if(mark==0)return 0;
 
@@ -48,26 +49,27 @@ int Energy::run(cv::Mat &src){
     if(armors_cnt != fans_cnt+1) return 0;
 
     getAllArmorCenters();
-    cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
+//    cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
 
-    cycle_center = cv::Point(214,305);
-    radius = 114.695;
-    attack_distance = ATTACK_DISTANCE * 123.323 / radius;
+//    cycle_center = cv::Point(335, 246);
+//    radius = 116.936;
+    attack_distance = ATTACK_DISTANCE * 120/ radius;
 
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);
     findTarget(fanPosition, armorPosition, target_armor);
-    cout << "The target armor's position is " << target_armor << endl;
-    cout<<"The target armor center is: "<<target_center<<endl;
+//    cout << "The target armor's position is " << target_armor << endl;
+//    cout<<"The target armor center is: "<<target_center<<endl;
 
     getHitPoint();
-    hit_point = target_center;
-    cout << "The hit point position is " << hit_point << endl;
-//    hit_point = cycle_center;
+//    hit_point = target_center;
+//    cout << "The hit point position is " << hit_point << endl;
 
-//    if(!isSendTarget)return 0;
 
+    if(!isSendTarget)return 0;
+//    cout<<"send"<<endl;
+    cout<<"position mode: "<<position_mode<<endl;
 
     gimbleRotation();
 
