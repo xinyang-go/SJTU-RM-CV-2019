@@ -35,6 +35,8 @@ void save_video_file(cv::Mat &src){
 
 #define SAVE_DIR "/home/sjturm/Desktop/labelled/"
 
+bool save_label_error_flag = false;
+
 int get_labelled_cnt(){
     FILE *fp = fopen(SAVE_DIR"info.txt", "r");
     int cnt=0;
@@ -50,18 +52,20 @@ void save_labelled_cnt(int cnt){
 }
 
 void save_labelled_image(cv::Mat &src, cv::Rect2d box){
-    static int cnt=get_labelled_cnt();
-    char name[50];
-    sprintf(name, SAVE_DIR"%d.jpg", cnt);
-    cv::imwrite(name, src);
-    sprintf(name, SAVE_DIR"%d.txt", cnt);
-    FILE *fp = fopen(name, "w");
-    if(fp == NULL){
-        LOGW("Can't create file: %s!\nStop saving!", name);
-        save_labelled = false;
-        return;
+    if(!save_label_error_flag) {
+        static int cnt = get_labelled_cnt();
+        char name[50];
+        sprintf(name, SAVE_DIR"%d.jpg", cnt);
+        cv::imwrite(name, src);
+        sprintf(name, SAVE_DIR"%d.txt", cnt);
+        FILE *fp = fopen(name, "w");
+        if (fp == NULL) {
+            LOGW("Can't create file: %s!\nStop saving!", name);
+            save_label_error_flag = true;
+            return;
+        }
+        fprintf(fp, "%lf %lf %lf %lf\n", box.x, box.y, box.width, box.height);
+        fclose(fp);
+        save_labelled_cnt(cnt);
     }
-    fprintf(fp, "%lf %lf %lf %lf\n", box.x, box.y, box.width, box.height);
-    fclose(fp);
-    save_labelled_cnt(cnt);
 }

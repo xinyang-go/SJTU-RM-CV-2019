@@ -36,7 +36,7 @@ void uartReceive(Uart *uart);
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
     Uart uart;
-//    thread receive(uartReceive, &uart);
+    thread receive(uartReceive, &uart);
     bool flag = true;
 
     while (flag) {
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
         WrapperHead *video_armor;
         WrapperHead *video_energy;
         if (from_camera) {
-            video_armor = new CameraWrapper(0);
+            video_armor = new CameraWrapper(0, "armor");
 //            video_energy = new CameraWrapper(1, "energy");
         } else {
             video_armor = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
@@ -63,13 +63,18 @@ int main(int argc, char *argv[]) {
         }
 
         Mat energy_src, armor_src;
+        for(int i=0; i<10; i++){
+            video_armor->read(armor_src);
+//            video_energy->read(armor_src);
+        }
+
         ArmorFinder armorFinder(ENEMY_BLUE, uart, PROJECT_DIR"/tools/para/");
 
         Energy energy(uart);
         energy.setAllyColor(ally_color);
         energy.setRotation(energy_part_rotation);
 
-        bool ok = true;
+        bool ok = video_armor->read(armor_src) /*&& video_energy->read(armor_src)*/;
 
         while (ok) {
             CNT_TIME(WORD_LIGHT_CYAN, "Total", {
@@ -88,7 +93,7 @@ int main(int argc, char *argv[]) {
                         imshow("armor src", armor_src);
                     }
                     CNT_TIME(WORD_LIGHT_BLUE, "Armor Time", {
-                            armorFinder.run(armor_src);
+                        armorFinder.run(armor_src);
                     });
                 }
                 if (waitKey(1) == 'q') {
@@ -104,7 +109,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-#define RECEIVE_LOG_LEVEL LOG_NOTHING
+#define RECEIVE_LOG_LEVEL LOG_MSG
 
 void uartReceive(Uart *uart) {
     char buffer[100];

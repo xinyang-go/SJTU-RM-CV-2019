@@ -57,7 +57,7 @@ void ArmorFinder::run(cv::Mat &src) {
     }
 }
 
-#define FOCUS_PIXAL      (800)
+#define FOCUS_PIXAL      (600)
 
 bool ArmorFinder::sendBoxPosition() {
     static int dx_add = 0;
@@ -68,7 +68,7 @@ bool ArmorFinder::sendBoxPosition() {
     double dy = rect.y + rect.height/2 - 240 - 30;
     double yaw   = atan(dx / FOCUS_PIXAL) * 180 / 3.14159265459;
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / 3.14159265459;
-    cout << yaw << endl;
+//    cout << yaw << endl;
     uart.sendTarget(yaw, -pitch, 0);
     return true;
 }

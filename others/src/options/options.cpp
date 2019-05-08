@@ -6,6 +6,7 @@
 #include <log.h>
 #include <cstring>
 
+#ifndef FIX_OPTIONS
 bool show_armor_box = false;
 bool show_armor_boxes = false;
 bool show_light_blobs = false;
@@ -66,3 +67,6 @@ void process_options(int argc, char *argv[]){
         }
     }
 }
+#else
+void process_options(int argc, char *argv[]){};
+#endif /* FIX_OPTIONS */
