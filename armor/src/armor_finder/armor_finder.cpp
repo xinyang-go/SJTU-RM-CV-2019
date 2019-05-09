@@ -1,7 +1,7 @@
 //
 // Created by xinyang on 19-3-27.
 //
-#define LOG_LEVEL LOG_NONE
+//#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
@@ -49,7 +49,7 @@ void ArmorFinder::run(cv::Mat &src) {
             }
             break;
         case TRACKING_STATE:
-            if(++tracking_cnt<100 && !stateTrackingTarget(src_use)){
+            if(++tracking_cnt>100 || !stateTrackingTarget(src_use)){
                 state = SEARCHING_STATE;
                 LOGM(STR_CTR(WORD_LIGHT_YELLOW ,"into search!"));
             }
