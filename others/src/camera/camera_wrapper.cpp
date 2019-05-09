@@ -72,7 +72,7 @@ stop:
         CameraGetExposureTime(h_camera, &t);
         LOGM("Exposure time: %lfms", t/1000.0);
         // 模拟增益4
-        CameraSetAnalogGain(h_camera, 60);
+        CameraSetAnalogGain(h_camera, 63);
         // 使用预设LUT表
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
         // 抗频闪

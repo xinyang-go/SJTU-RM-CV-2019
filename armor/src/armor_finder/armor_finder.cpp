@@ -8,12 +8,13 @@
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
 
-ArmorFinder::ArmorFinder(EnemyColor color, Uart &u, string paras_folder) :
+ArmorFinder::ArmorFinder(EnemyColor color, Uart &u, string paras_folder, const bool &use) :
             uart(u),
             enemy_color(color),
             state(STANDBY_STATE),
             classifier(std::move(paras_folder)),
-            contour_area(0)
+            contour_area(0),
+            use_classifier(use)
             {
 }
 
@@ -32,7 +33,7 @@ void ArmorFinder::run(cv::Mat &src) {
         case SEARCHING_STATE:
             if(stateSearchingTarget(src_use)){
                 if((armor_box & cv::Rect2d(0, 0, 640, 480)) == armor_box) {
-                    if(!classifier){
+                    if(!classifier && use_classifier){
                         cv::Mat roi = src_use.clone()(armor_box), roi_gray;
                         cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
                         cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);

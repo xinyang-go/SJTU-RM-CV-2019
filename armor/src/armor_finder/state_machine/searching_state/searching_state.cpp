@@ -194,7 +194,7 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
         showArmorBoxVector("boxes", split, armor_boxes);
         cv::waitKey(1);
     }
-    if(classifier){
+    if(classifier && use_classifier){
         for(auto box : armor_boxes){
             cv::Mat roi = src(box).clone();
             cv::resize(roi, roi, cv::Size(48, 36));
