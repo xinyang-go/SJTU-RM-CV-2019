@@ -30,6 +30,7 @@ int state = ARMOR_STATE;
 float curr_yaw = 0, curr_pitch = 0;
 float mark_yaw = 0, mark_pitch = 0;
 int mark = 0;
+bool use_classifier = false;
 
 void uartReceive(Uart *uart);
 
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
             video_energy->read(armor_src);
         }
 
-        ArmorFinder armorFinder(ENEMY_BLUE, uart, PROJECT_DIR"/tools/para/");
+        ArmorFinder armorFinder(ENEMY_BLUE, uart, PROJECT_DIR"/tools/para/", use_classifier);
 
         Energy energy(uart);
         energy.setAllyColor(ally_color);
@@ -119,6 +120,7 @@ int main(int argc, char *argv[]) {
 void uartReceive(Uart *uart) {
     char buffer[100];
     int cnt = 0;
+    LOGM("data receive start!");
     while (true) {
         char data;
         while ((data = uart->receive()) != '\n') {
@@ -128,13 +130,21 @@ void uartReceive(Uart *uart) {
                 cnt = 0;
             }
         }
-        if (cnt == 10) {
+//        LOGM("%d", cnt);
+        if (cnt == 11) {
             if (buffer[8] == 'e') {
                 state = ENERGY_STATE;
                 LOG(RECEIVE_LOG_LEVEL, "Energy state");
             } else if (buffer[8] == 'a') {
                 state = ARMOR_STATE;
                 LOG(RECEIVE_LOG_LEVEL, "Armor state");
+            }
+            if (buffer[10] == 0){
+                use_classifier = false;
+                LOG(RECEIVE_LOG_LEVEL, "Classifier off!");
+            } else if(buffer[10] == 1){
+                use_classifier = true;
+                LOG(RECEIVE_LOG_LEVEL, "Classifier on!");
             }
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer + 4, 4);

@@ -16,7 +16,7 @@ typedef enum{
 
 class ArmorFinder{
 public:
-    ArmorFinder(EnemyColor color, Uart &u, string paras_folder);
+    ArmorFinder(EnemyColor color, Uart &u, string paras_folder, const bool &use);
     ~ArmorFinder() = default;
 
 private:
@@ -36,6 +36,7 @@ private:
 
     int  contour_area;
     Uart &uart;
+    const bool &use_classifier;
 
     bool stateSearchingTarget(cv::Mat &src);
     bool stateTrackingTarget(cv::Mat &src);
