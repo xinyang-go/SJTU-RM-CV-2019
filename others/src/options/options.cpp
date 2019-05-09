@@ -6,7 +6,6 @@
 #include <log.h>
 #include <cstring>
 
-#ifndef FIX_OPTIONS
 bool show_armor_box = false;
 bool show_armor_boxes = false;
 bool show_light_blobs = false;
@@ -15,6 +14,7 @@ bool save_labelled = false;
 bool run_with_camera = false;
 bool save_video = false;
 bool collect_data = false;
+bool wait_uart = false;
 
 void process_options(int argc, char *argv[]){
     if(argc >= 2){
@@ -61,12 +61,12 @@ void process_options(int argc, char *argv[]){
             }else if(strcmp(argv[i], "--collect-data") == 0){
                 collect_data = true;
                 LOGM("Enable data collection!");
+            }else if(strcmp(argv[i], "--wait-uart") == 0){
+                wait_uart = true;
+                LOGM("Wait uart until available!");
             }else{
                 LOGW("Unknown option: %s. Use --help to see options.", argv[i]);
             }
         }
     }
 }
-#else
-void process_options(int argc, char *argv[]){};
-#endif /* FIX_OPTIONS */

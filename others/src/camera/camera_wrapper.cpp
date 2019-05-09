@@ -40,14 +40,13 @@ bool CameraWrapper::init() {
     for(i=0; i<camera_cnts; i++){
         camera_status = CameraInit(&camera_enum_list[i], -1, -1, &h_camera);
         if (camera_status != CAMERA_STATUS_SUCCESS) {
-            LOGE("Camera 0 initialization failed with code %d. See camera_status.h to find the code meaning.", camera_status);
-            goto stop;
+            CameraUnInit(h_camera);
+            continue;
         }
         CameraGetFriendlyName(h_camera, camera_name);
         if(name=="NULL" || strcmp(name.data(), camera_name)==0){
             break;
         }
-stop:
         CameraUnInit(h_camera);
     }
     if(i >= camera_cnts){
@@ -72,7 +71,7 @@ stop:
         CameraGetExposureTime(h_camera, &t);
         LOGM("Exposure time: %lfms", t/1000.0);
         // 模拟增益4
-        CameraSetAnalogGain(h_camera, 60);
+        CameraSetAnalogGain(h_camera, 63);
         // 使用预设LUT表
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
         // 抗频闪

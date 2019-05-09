@@ -4,6 +4,7 @@
 
 #include <uart/uart.h>
 #include <energy/param_struct_define.h>
+#include <options/options.h>
 #include <log.h>
 
 using std::cout;
@@ -17,11 +18,14 @@ GMAngle_t aim;
 
 
 Uart::Uart(){
-    fd = open("/dev/ttyUSB0", O_RDWR);
-    if(fd < 0)
-    {
-        cerr<<"open port error"<<endl;
-        return;
+    if(wait_uart){
+        while((fd = open("/dev/ttyUSB0", O_RDWR)) < 0);
+    }else{
+        fd = open("/dev/ttyUSB0", O_RDWR);
+        if(fd < 0) {
+            cerr<<"open port error"<<endl;
+            return;
+        }
     }
 
     if(set_opt(fd, 115200, 8, 'N', 1) < 0 )
@@ -146,8 +150,12 @@ void Uart::sendTarget(float x, float y, float z) {
     buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
     buff[7] = 'e';
 
-    write(fd, buff, 8);
-
+    int cnt=0;
+    while((cnt+=write(fd, buff+cnt, 8-cnt))!=-1 && cnt<8);
+    if(cnt==-1 && wait_uart){
+        LOGE("Uart send fail, the uart device may offline! Restart!");
+        exit(-1);
+    }
 }
 
 uint8_t Uart::receive() {
