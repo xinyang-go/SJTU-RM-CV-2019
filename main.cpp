@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
             delete video_armor;
             delete video_energy;
             cout << "Program fails. Restarting" << endl;
+            continue;
         }
 
         Mat energy_src, armor_src;
