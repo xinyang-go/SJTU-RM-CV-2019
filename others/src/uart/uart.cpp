@@ -7,33 +7,51 @@
 #include <options/options.h>
 #include <log.h>
 
-using std::cout;
-using std::cerr;
-using std::clog;
-using std::dec;
-using std::endl;
-using std::hex;
+using namespace std;
 
 GMAngle_t aim;
 
+string get_uart_dev_name(){
+    FILE* ls = popen("ls /dev/ttyUSB* --color=never", "r");
+    char name[20] = {0};
+    fscanf(ls, "%s", name);
+    return name;
+}
 
 Uart::Uart(){
     if(wait_uart){
-        while((fd = open("/dev/ttyUSB0", O_RDWR)) < 0);
+        string name;
+        do{
+            name = get_uart_dev_name();
+            if(name == ""){
+                continue;
+            }
+        }while((fd=open(name.data(), O_RDWR)) < 0);
     }else{
-        fd = open("/dev/ttyUSB0", O_RDWR);
+        string name = get_uart_dev_name();
+        if(name == ""){
+            cerr<<"open port error"<<endl;
+            return;
+        }
+        fd = open(name.data(), O_RDWR);
         if(fd < 0) {
             cerr<<"open port error"<<endl;
             return;
         }
     }
 
+//    fd = open("/dev/ttyUSB1", O_RDWR);
+//    if(fd < 0) {
+//        cerr<<"open port error"<<endl;
+//        return;
+//    }
+
     if(set_opt(fd, 115200, 8, 'N', 1) < 0 )
     {
         cerr<<"set opt error"<<endl;
         return;
     }
-    cout<<"uart port success"<<endl;
+    cout << "uart port success" << endl;
 
     buff[0] = 's';
     buff[1] = '+';
