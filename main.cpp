@@ -26,7 +26,7 @@ using namespace cv;
 using namespace std;
 
 
-int state = ARMOR_STATE;
+int state = ENERGY_STATE;
 float curr_yaw = 0, curr_pitch = 0;
 float mark_yaw = 0, mark_pitch = 0;
 int mark = 0;
@@ -126,7 +126,7 @@ void uartReceive(Uart *uart) {
         while ((data = uart->receive()) != '\n') {
             buffer[cnt++] = data;
             if (cnt >= 100) {
-                LOG(RECEIVE_LOG_LEVEL, "data receive over flow!");
+//                LOG(RECEIVE_LOG_LEVEL, "data receive over flow!");
                 cnt = 0;
             }
         }
@@ -134,28 +134,28 @@ void uartReceive(Uart *uart) {
         if (cnt == 11) {
             if (buffer[8] == 'e') {
                 state = ENERGY_STATE;
-                LOG(RECEIVE_LOG_LEVEL, "Energy state");
+//                LOG(RECEIVE_LOG_LEVEL, "Energy state");
             } else if (buffer[8] == 'a') {
                 state = ARMOR_STATE;
-                LOG(RECEIVE_LOG_LEVEL, "Armor state");
+//                LOG(RECEIVE_LOG_LEVEL, "Armor state");
             }
             if (buffer[10] == 0){
                 use_classifier = false;
-                LOG(RECEIVE_LOG_LEVEL, "Classifier off!");
+//                LOG(RECEIVE_LOG_LEVEL, "Classifier off!");
             } else if(buffer[10] == 1){
                 use_classifier = true;
-                LOG(RECEIVE_LOG_LEVEL, "Classifier on!");
+//                LOG(RECEIVE_LOG_LEVEL, "Classifier on!");
             }
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer + 4, 4);
-            LOG(RECEIVE_LOG_LEVEL, "Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+//            LOG(RECEIVE_LOG_LEVEL, "Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
             if (buffer[9] == 1) {
                 if (mark == 0) {
                     mark = 1;
                     mark_yaw = curr_yaw;
                     mark_pitch = curr_pitch;
                 }
-                LOG(RECEIVE_LOG_LEVEL, "Marked");
+//                LOG(RECEIVE_LOG_LEVEL, "Marked");
             }
         }
         cnt = 0;

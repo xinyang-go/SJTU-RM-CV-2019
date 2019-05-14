@@ -19,7 +19,7 @@ void Energy::getHitPoint(){
         if(target_armor>=0 && target_armor<=limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y + static_cast<int>(radius * sqrt(3) / 2);
-            hit_position = -1*angle_interval;
+            hit_position = -1*angle_interval;//-60
             position_mode = 1;
 //            cout<<"666"<<'\t'<<hit_position<<endl;
 
@@ -27,31 +27,31 @@ void Energy::getHitPoint(){
         else if(target_armor>=angle_interval && target_armor<angle_interval+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius);
             hit_point.y = cycle_center.y;
-            hit_position = 0;
+            hit_position = 0;//0
             position_mode = 2;
         }
         else if(target_armor>=angle_interval*2 && target_armor<=angle_interval*2+limit_angle){
             hit_point.x = cycle_center.x + static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y - static_cast<int>(radius * sqrt(3) / 2);
-            hit_position = angle_interval;
+            hit_position = angle_interval;//60
             position_mode = 3;
         }
         else if(target_armor>=-180 && target_armor<-180+limit_angle){
             hit_point.x = cycle_center.x - static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y - static_cast<int>(radius * sqrt(3) / 2);
-            hit_position = 2*angle_interval;
+            hit_position = 2*angle_interval;//120
             position_mode = 4;
         }
         else if(target_armor>=-2*angle_interval&&target_armor<-2*angle_interval+limit_angle){
             hit_point.x = cycle_center.x - static_cast<int>(radius);
             hit_point.y = cycle_center.y;
-            hit_position = 180;
+            hit_position = 180;//180
             position_mode = 5;
         }
         else if(target_armor>=-1*angle_interval&&target_armor<-1*angle_interval+limit_angle) {
             hit_point.x = cycle_center.x - static_cast<int>(radius / 2);
             hit_point.y = cycle_center.y + static_cast<int>(radius * sqrt(3) / 2);
-            hit_position = -2 * angle_interval;
+            hit_position = -2 * angle_interval;//-120
             position_mode = 6;
         }
         else{
