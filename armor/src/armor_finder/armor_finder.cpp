@@ -1,7 +1,7 @@
 //
 // Created by xinyang on 19-3-27.
 //
-#define LOG_LEVEL LOG_NONE
+//#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
@@ -19,6 +19,7 @@ ArmorFinder::ArmorFinder(EnemyColor color, Uart &u, string paras_folder, const b
 }
 
 void ArmorFinder::run(cv::Mat &src) {
+    static int tracking_cnt = 0;
     cv::Mat src_use;
     src_use = src.clone();
     cv::cvtColor(src_use, src_gray, CV_RGB2GRAY);
@@ -42,12 +43,13 @@ void ArmorFinder::run(cv::Mat &src) {
                     tracker = TrackerToUse::create();
                     tracker->init(src_use, armor_box);
                     state = TRACKING_STATE;
+                    tracking_cnt = 0;
                     LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
                 }
             }
             break;
         case TRACKING_STATE:
-            if(!stateTrackingTarget(src_use)){
+            if(++tracking_cnt>100 || !stateTrackingTarget(src_use)){
                 state = SEARCHING_STATE;
                 LOGM(STR_CTR(WORD_LIGHT_YELLOW ,"into search!"));
             }

@@ -30,14 +30,14 @@ int state = ENERGY_STATE;
 float curr_yaw = 0, curr_pitch = 0;
 float mark_yaw = 0, mark_pitch = 0;
 int mark = 0;
-bool use_classifier = false;
+bool use_classifier = true;
 
 void uartReceive(Uart *uart);
 
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
     Uart uart;
-    thread receive(uartReceive, &uart);
+//    thread receive(uartReceive, &uart);
     bool flag = true;
 
     while (flag) {
@@ -53,24 +53,25 @@ int main(int argc, char *argv[]) {
         WrapperHead *video_armor;
         WrapperHead *video_energy;
         if (from_camera) {
-            video_armor = new CameraWrapper(0, "armor");
-            video_energy = new CameraWrapper(1, "energy");
+            video_armor = new CameraWrapper(0/*, "armor"*/);
+//            video_energy = new CameraWrapper(1, "energy");
         } else {
             video_armor = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
             video_energy = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
         }
-        if (video_armor->init() && video_energy->init()) {
+        if (video_armor->init()/* && video_energy->init()*/) {
             cout << "Video source initialization successfully." << endl;
         } else {
             delete video_armor;
             delete video_energy;
             cout << "Program fails. Restarting" << endl;
+            continue;
         }
 
         Mat energy_src, armor_src;
         for(int i=0; i<10; i++){
             video_armor->read(armor_src);
-            video_energy->read(armor_src);
+//            video_energy->read(armor_src);
         }
 
         ArmorFinder armorFinder(ENEMY_BLUE, uart, PROJECT_DIR"/tools/para/", use_classifier);
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
         energy.setAllyColor(ally_color);
         energy.setRotation(energy_part_rotation);
 
-        bool ok = video_armor->read(armor_src) && video_energy->read(armor_src);
+        bool ok = video_armor->read(armor_src)/* && video_energy->read(armor_src)*/;
 
         while (ok) {
             CNT_TIME(WORD_LIGHT_CYAN, "Total", {

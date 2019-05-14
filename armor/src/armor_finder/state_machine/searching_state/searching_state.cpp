@@ -117,10 +117,10 @@ static bool findArmorBoxes(LightBlobs &light_blobs, std::vector<cv::Rect2d> &arm
             cv::Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
             cv::Rect2d rect_right = light_blobs.at(static_cast<unsigned long>(j)).rect.boundingRect();
             double min_x, min_y, max_x, max_y;
-            min_x = fmin(rect_left.x, rect_right.x);
-            max_x = fmax(rect_left.x + rect_left.width, rect_right.x + rect_right.width);
-            min_y = fmin(rect_left.y, rect_right.y) - 3;
-            max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height) + 3;
+            min_x = fmin(rect_left.x, rect_right.x) - 4;
+            max_x = fmax(rect_left.x + rect_left.width, rect_right.x + rect_right.width) + 4;
+            min_y = fmin(rect_left.y, rect_right.y) - 4;
+            max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height) + 4;
             if (min_x < 0 || max_x > 640 || min_y < 0 || max_y > 480) {
                 continue;
             }
