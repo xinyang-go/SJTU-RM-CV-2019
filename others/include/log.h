@@ -6,7 +6,6 @@
 #define _LOG_H_
 
 #include <stdio.h>
-#include <sys/time.h>
 
 /************** Define the control code *************/
 #define START_CTR           "\033[0"
@@ -125,17 +124,29 @@
                                             __FILE__, __LINE__, ##__VA_ARGS__)
 
 /******************** the time counter API ************************/
-#if LOG_LEVEL > LOG_NONE && (!defined(DO_NOT_CNT_TIME))
-    #define CNT_TIME(str_ctrs, tag, codes, ...) do{\
-        timeval ts, te; \
-        gettimeofday(&ts, NULL); \
-        codes; \
-        gettimeofday(&te, NULL); \
-        LOGM(STR_CTR(str_ctrs, tag": %fms"), ## __VA_ARGS__, (te.tv_sec-ts.tv_sec)*1000.0 + (te.tv_usec-ts.tv_usec)/1000.0); \
-    }while(0)
+#if !defined(DO_NOT_CNT_TIME) && LOG_LEVEL > LOG_NONE
+	#ifdef Windows
+		#include <Windows.h>
+		#define CNT_TIME(tag, codes, ...) do{ \
+			static SYSTEMTIME ts, te; \
+			GetLocalTime(&ts); \
+			codes; \
+			GetLocalTime(&te); \
+			LOGM(tag": %dms", (te.wSecond-ts.wSecond)*1000+(te.wMilliseconds-ts.wMilliseconds)); \
+		}while (0)
+	#else
+		#include <sys/time.h>
+		#define CNT_TIME(tag, codes, ...) do{ \
+			static timeval ts, te; \
+			gettimeofday(&ts); \
+			codes; \
+			gettimeofday(&te); \
+			LOGM(tag": %.1lfms", (te.tv_sec-ts.tv_sec)*1000.0+(te.tv_usec-ts.tv_usec)/1000.0); \
+		}while (0)
+	#endif
 #else
-    #define CNT_TIME(str_ctrs, tag, codes, ...) codes
+	#define CNT_TIME(tag, codes, ...) codes
 #endif
 #else /* _LOG_H_ */
     #warning "Multiple include of log.h, some settings may not work."
-#endif /* _LOG_H_ */
+#endif /* _LOG_H_ */ 

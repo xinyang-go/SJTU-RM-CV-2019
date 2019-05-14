@@ -30,6 +30,7 @@ typedef void** LPVOID;
 typedef unsigned char UCHAR;
 typedef void* HMODULE;
 
+
 #define TRUE 1
 #define FALSE 0
 //图像查表变换的方式

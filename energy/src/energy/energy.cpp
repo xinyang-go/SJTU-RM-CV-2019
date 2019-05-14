@@ -8,7 +8,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-Energy::Energy(Uart &u):uart(u),
+Energy::Energy(Serial &u, int &ally_color):serial(u),ally_color_(ally_color),
         src_blue(SRC_HEIGHT, SRC_WIDTH, CV_8UC1),
         src_red(SRC_HEIGHT, SRC_WIDTH, CV_8UC1)
 {

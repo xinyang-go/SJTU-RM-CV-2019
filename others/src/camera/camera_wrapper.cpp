@@ -4,6 +4,9 @@
 
 #include <camera/camera_wrapper.h>
 #include <log.h>
+#include <options/options.h>
+
+using namespace std;
 
 using std::cout;
 using std::endl;
@@ -22,20 +25,16 @@ CameraWrapper::CameraWrapper(int camera_mode, const std::string &n):
 
 bool CameraWrapper::init() {
     CameraSdkInit(1);
-
-    //枚举设备，并建立设备列表
-    int camera_enumerate_device_status =  CameraEnumerateDevice(camera_enum_list, &camera_cnts);
+	int camera_enumerate_device_status = CameraEnumerateDevice(camera_enum_list, &camera_cnts);
     if(camera_enumerate_device_status != CAMERA_STATUS_SUCCESS){
         LOGE("CameraEnumerateDevice fail with %d!", camera_enumerate_device_status);
     }
-    //没有连接设备
     if (camera_cnts == 0) {
         LOGE("No camera device detected!");
         return false;
     }else if(camera_cnts >= 1){
         LOGM("%d camera device detected!", camera_cnts);
     }
-    //相机初始化。初始化成功后，才能调用任何其他相机相关的操作接口
     int i;
     for(i=0; i<camera_cnts; i++){
         camera_status = CameraInit(&camera_enum_list[i], -1, -1, &h_camera);
@@ -54,15 +53,26 @@ bool CameraWrapper::init() {
         return false;
     }
 
-    //获得相机的特性描述结构体。该结构体中包含了相机可设置的各种参数的范围信息。决定了相关函数的参数
-    CameraGetCapability(h_camera, &tCapability);
-
-    // set resolution to 320*240
-    // CameraSetImageResolution(hCamera, &(tCapability.pImageSizeDesc[2]));
+	auto status = CameraGetCapability(h_camera, &tCapability);
+	if (status != CAMERA_STATUS_SUCCESS) {
+		cout << "CameraGetCapability return error code " << status << endl;
+		return false;
+	}
 
     rgb_buffer = (unsigned char *)malloc(tCapability.sResolutionRange.iHeightMax *
             tCapability.sResolutionRange.iWidthMax * 3);
-    if(mode == 0){
+	char filepath[200];
+	sprintf(filepath, PROJECT_DIR"/others/%s.Config", name.data());
+	if (CameraReadParameterFromFile(h_camera, filepath) != CAMERA_STATUS_SUCCESS) {
+		LOGE("Load parameter %s from file fail!", filepath);
+		return false;
+	}
+	if (CameraLoadParameter(h_camera, PARAMETER_TEAM_A) != CAMERA_STATUS_SUCCESS) {
+		LOGE("CameraLoadParameter %s fail!", filepath);
+		return false;
+	}
+	LOGM("successfully loaded %s!", filepath);
+/*    if(mode == 0){
         // 不使用自动曝光
         CameraSetAeState(h_camera, false);
         // 曝光时间10ms
@@ -71,7 +81,7 @@ bool CameraWrapper::init() {
         CameraGetExposureTime(h_camera, &t);
         LOGM("Exposure time: %lfms", t/1000.0);
         // 模拟增益4
-        CameraSetAnalogGain(h_camera, 63);
+        CameraSetAnalogGain(h_camera, 64);
         // 使用预设LUT表
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
         // 抗频闪
@@ -83,7 +93,7 @@ bool CameraWrapper::init() {
         // 抗频闪
 //        CameraSetAntiFlick(h_camera, true);
     }
-
+*/
     /*让SDK进入工作模式，开始接收来自相机发送的图像
     数据。如果当前相机是触发模式，则需要接收到
     触发帧以后才会更新图像。    */
@@ -95,7 +105,7 @@ bool CameraWrapper::init() {
          CameraSetGamma、CameraSetContrast、CameraSetGain等设置图像伽马、对比度、RGB数字增益等等。
          CameraGetFriendlyName    CameraSetFriendlyName 获取/设置相机名称（该名称可写入相机硬件）
     */
-
+	cout << tCapability.sIspCapacity.bMonoSensor << endl;
     if (tCapability.sIspCapacity.bMonoSensor) {
         channel = 1;
         CameraSetIspOutFormat(h_camera, CAMERA_MEDIA_TYPE_MONO8);
@@ -140,18 +150,15 @@ bool CameraWrapper::readRaw(cv::Mat &src) {
 }
 
 bool CameraWrapper::readProcessed(cv::Mat &src) {
-    if (CameraGetImageBuffer(h_camera, &frame_info, &pby_buffer, 1000) == CAMERA_STATUS_SUCCESS){
-        CameraImageProcess(h_camera, pby_buffer, rgb_buffer, &frame_info);  // this function is super slow, better not to use it.
+//	cerr << "Get-1" << endl;
+	if (CameraGetImageBuffer(h_camera, &frame_info, &pby_buffer, 1000) == CAMERA_STATUS_SUCCESS){
+		CameraImageProcess(h_camera, pby_buffer, rgb_buffer, &frame_info);  // this function is super slow, better not to use it.
         if (iplImage) {
             cvReleaseImageHeader(&iplImage);
         }
-
         iplImage = cvCreateImageHeader(cvSize(frame_info.iWidth, frame_info.iHeight), IPL_DEPTH_8U, channel);
-
         cvSetData(iplImage, rgb_buffer, frame_info.iWidth * channel);  //此处只是设置指针，无图像块数据拷贝，不需担心转换效率
-
         src = cv::cvarrToMat(iplImage).clone();
-
         //在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
         //否则再次调用CameraGetImageBuffer时，程序将被挂起一直阻塞，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer
         CameraReleaseImageBuffer(h_camera, pby_buffer);

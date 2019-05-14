@@ -7,7 +7,7 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/tracking.hpp>
-#include <uart/uart.h>
+#include <serial/serial.h>
 #include <armor_finder/classifier/classifier.h>
 
 typedef enum{
@@ -16,7 +16,7 @@ typedef enum{
 
 class ArmorFinder{
 public:
-    ArmorFinder(EnemyColor color, Uart &u, string paras_folder, const bool &use);
+    ArmorFinder(EnemyColor &color, Serial &u, string paras_folder, const bool &use);
     ~ArmorFinder() = default;
 
 private:
@@ -26,7 +26,7 @@ private:
         SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;
 
-    EnemyColor enemy_color;
+    const EnemyColor &enemy_color;
     State state;
     cv::Rect2d armor_box;
     cv::Ptr<cv::Tracker> tracker;
@@ -35,7 +35,7 @@ private:
     Classifier classifier;
 
     int  contour_area;
-    Uart &uart;
+	Serial &serial;
     const bool &use_classifier;
 
     bool stateSearchingTarget(cv::Mat &src);
@@ -51,7 +51,7 @@ struct LightBlob {
     double length;
 
     explicit LightBlob(cv::RotatedRect &r) : rect(r) {
-        length = std::max(rect.size.height, rect.size.width);
+        length = max(rect.size.height, rect.size.width);
     };
     bool operator<(LightBlob &l2) { return this->rect.center.x < l2.rect.center.x; }
     bool operator<=(LightBlob &l2) { return this->rect.center.x <= l2.rect.center.x; }

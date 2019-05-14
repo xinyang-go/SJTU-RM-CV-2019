@@ -103,7 +103,7 @@ def train(dataset, show_bar=False):
 
             if i % 100 == 0:
                 if i % 1000 == 0:
-                    test_samples, test_labels = dataset.sample_test_sets(5000)
+                    test_samples, test_labels = dataset.sample_test_sets(1000)
                     acc = sess.run(accuracy, feed_dict={x: test_samples, y_: test_labels})
                 bar.set_postfix({"loss": loss_value, "acc": acc})
 
