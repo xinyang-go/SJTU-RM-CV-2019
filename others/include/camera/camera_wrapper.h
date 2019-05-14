@@ -14,7 +14,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "camera/wrapper_head.h"
-#include "camera/camera_api.h"
+#include "camera/CameraApi.h"
 
 class CameraWrapper: public WrapperHead {
 private:

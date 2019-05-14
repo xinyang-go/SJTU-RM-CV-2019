@@ -14,19 +14,19 @@
 #include <sys/timeb.h>
 #include "energy/constant.h"
 #include "energy/param_struct_define.h"
-#include "uart/uart.h"
+#include "serial/serial.h"
 
 using std::vector;
 
 class Energy {
 public:
-	Energy(Uart &u);
+	Energy(Serial &u, int &ally_color);
 	~Energy();
 	int run(cv::Mat &src);
 
     cv::Point2f uart_hit_point;
 	clock_t start;
-	Uart &uart;
+	Serial &serial;
 
     void setAllyColor(int color);
     void setRotation(int rotation);
@@ -51,7 +51,7 @@ private:
 	double last_target_position;
 	double last_hit_position;
 	float target_armor;
-	int ally_color_;
+	int &ally_color_;
 	int energy_part_rotation;
 	float attack_distance;
 	int send_cnt;

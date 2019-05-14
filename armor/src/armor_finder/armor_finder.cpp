@@ -1,15 +1,15 @@
 //
 // Created by xinyang on 19-3-27.
 //
-//#define LOG_LEVEL LOG_NONE
+#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
 
-ArmorFinder::ArmorFinder(EnemyColor color, Uart &u, string paras_folder, const bool &use) :
-            uart(u),
+ArmorFinder::ArmorFinder(EnemyColor &color, Serial &u, string paras_folder, const bool &use) :
+            serial(u),
             enemy_color(color),
             state(STANDBY_STATE),
             classifier(std::move(paras_folder)),
@@ -62,16 +62,47 @@ void ArmorFinder::run(cv::Mat &src) {
 
 #define FOCUS_PIXAL      (600)
 
+bool sendTarget(Serial& serial, double x, double y, double z) {
+	static short x_tmp, y_tmp, z_tmp;
+	static time_t last_time = time(nullptr);
+	static int fps;
+	uint8_t buff[8];
+
+	static SYSTEMTIME ts, te;
+	GetLocalTime(&te);
+	printf("Interval: %d\n", (te.wSecond - ts.wSecond) * 1000 + (te.wMilliseconds - ts.wMilliseconds));
+	ts = te;
+
+	time_t t = time(nullptr);
+	if (last_time != t) {
+		last_time = t;
+		cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+		fps = 0;
+	}
+	fps += 1;
+
+	x_tmp = static_cast<short>(x * (32768 - 1) / 100);
+	y_tmp = static_cast<short>(y * (32768 - 1) / 100);
+	z_tmp = static_cast<short>(z * (32768 - 1) / 1000);
+
+	buff[0] = 's';
+	buff[1] = static_cast<char>((x_tmp >> 8) & 0xFF);
+	buff[2] = static_cast<char>((x_tmp >> 0) & 0xFF);
+	buff[3] = static_cast<char>((y_tmp >> 8) & 0xFF);
+	buff[4] = static_cast<char>((y_tmp >> 0) & 0xFF);
+	buff[5] = static_cast<char>((z_tmp >> 8) & 0xFF);
+	buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
+	buff[7] = 'e';
+	
+	return serial.WriteData(buff, sizeof(buff));
+}
+
 bool ArmorFinder::sendBoxPosition() {
-    static int dx_add = 0;
     auto rect = armor_box;
-    double dx = rect.x + rect.width/2 - 320 - 8;
-    dx_add += dx;
-    dx = dx + dx_add * 0;
+    double dx = rect.x + rect.width/2 - 320;
     double dy = rect.y + rect.height/2 - 240 - 30;
     double yaw   = atan(dx / FOCUS_PIXAL) * 180 / 3.14159265459;
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / 3.14159265459;
 //    cout << yaw << endl;
-    uart.sendTarget(yaw, -pitch, 0);
-    return true;
+    return sendTarget(serial, yaw, -pitch, 0);
 }
