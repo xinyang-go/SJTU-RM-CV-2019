@@ -124,8 +124,8 @@
                                             __FILE__, __LINE__, ##__VA_ARGS__)
 
 /******************** the time counter API ************************/
-#ifndef DO_NOT_CNT_TIME && LOG_LEVEL > LOG_NONE
-	#ifdef WIN32
+#if !defined(DO_NOT_CNT_TIME) && LOG_LEVEL > LOG_NONE
+	#ifdef Windows
 		#include <Windows.h>
 		#define CNT_TIME(tag, codes, ...) do{ \
 			static SYSTEMTIME ts, te; \

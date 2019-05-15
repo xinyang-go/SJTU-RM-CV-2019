@@ -14,7 +14,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "camera/wrapper_head.h"
-#include "camera/CameraApi.h"
+#ifdef Windows
+    #include "camera/CameraApi.h"
+#elif defined(Linux)
+    #include "camera/camera_api.h"
+#endif
 
 class CameraWrapper: public WrapperHead {
 private:

@@ -5,7 +5,7 @@
 #ifndef _ADDITIONS_H_
 #define _ADDITIONS_H_
 
-#include <uart/uart.h>
+#include <serial/serial.h>
 #include <opencv2/core.hpp>
 #include <thread>
 

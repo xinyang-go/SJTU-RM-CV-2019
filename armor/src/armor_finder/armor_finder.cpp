@@ -68,11 +68,6 @@ bool sendTarget(Serial& serial, double x, double y, double z) {
 	static int fps;
 	uint8_t buff[8];
 
-	static SYSTEMTIME ts, te;
-	GetLocalTime(&te);
-	printf("Interval: %d\n", (te.wSecond - ts.wSecond) * 1000 + (te.wMilliseconds - ts.wMilliseconds));
-	ts = te;
-
 	time_t t = time(nullptr);
 	if (last_time != t) {
 		last_time = t;

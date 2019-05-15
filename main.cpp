@@ -37,7 +37,7 @@ void uartReceive(Serial *uart);
 
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
-	Serial uart(3, 115200);
+  	Serial uart(115200);
     thread receive(uartReceive, &uart);
     bool flag = true;
 
@@ -118,12 +118,11 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-#define RECEIVE_LOG_LEVEL LOG_MSG
+#define RECEIVE_LOG_LEVEL LOG_NOTHING
 
 char uartReadByte(Serial &uart) {
-	while (uart.GetBytesInCOM() == 0);
 	char byte;
-	if (uart.ReadData((uint8_t*)& byte, 1) == false) {
+	if (uart.ReadData((uint8_t*)&byte, 1) == false) {
 		LOGE("serial error!");
 	}
 	return byte;
@@ -138,45 +137,45 @@ void uartReceive(Serial* uart) {
         while ((data = uartReadByte(*uart)) != '\n') {
             buffer[cnt++] = data;
             if (cnt >= 100) {
-                //LOG(RECEIVE_LOG_LEVEL, "data receive over flow!");
+                LOG(RECEIVE_LOG_LEVEL, "data receive over flow!");
                 cnt = 0;
             }
         }
-        //LOGM("%d", cnt);
+        LOGM("%d", cnt);
         if (cnt == 12) {
             if (buffer[8] == 'e') {
                 state = ENERGY_STATE;
-                //LOG(RECEIVE_LOG_LEVEL, "Energy state");
+                LOG(RECEIVE_LOG_LEVEL, "Energy state");
             } else if (buffer[8] == 'a') {
                 state = ARMOR_STATE;
-                //LOG(RECEIVE_LOG_LEVEL, "Armor state");
+                LOG(RECEIVE_LOG_LEVEL, "Armor state");
             }
             if (buffer[10] == 0){
                 use_classifier = false;
-                //LOG(RECEIVE_LOG_LEVEL, "Classifier off!");
+                LOG(RECEIVE_LOG_LEVEL, "Classifier off!");
             } else if(buffer[10] == 1){
                 use_classifier = true;
-                //LOG(RECEIVE_LOG_LEVEL, "Classifier on!");
+                LOG(RECEIVE_LOG_LEVEL, "Classifier on!");
             }
 			if (buffer[11] == ENEMY_BLUE) {
-				//LOG(RECEIVE_LOG_LEVEL, "ENEMY_BLUE!");
+				LOG(RECEIVE_LOG_LEVEL, "ENEMY_BLUE!");
 				ally_color = ALLY_RED;
 				enemy_color = ENEMY_BLUE;
 			} else if (buffer[11] == ENEMY_RED) {
-				//LOG(RECEIVE_LOG_LEVEL, "ENEMY_RED!");
+				LOG(RECEIVE_LOG_LEVEL, "ENEMY_RED!");
 				ally_color = ALLY_BLUE;
 				enemy_color = ENEMY_RED;
 			}
             memcpy(&curr_yaw, buffer, 4);
             memcpy(&curr_pitch, buffer + 4, 4);
-            //LOG(RECEIVE_LOG_LEVEL, "Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
+            LOG(RECEIVE_LOG_LEVEL, "Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
             if (buffer[9] == 1) {
                 if (mark == 0) {
                     mark = 1;
                     mark_yaw = curr_yaw;
                     mark_pitch = curr_pitch;
                 }
-                //LOG(RECEIVE_LOG_LEVEL, "Marked");
+                LOG(RECEIVE_LOG_LEVEL, "Marked");
             }
         }
         cnt = 0;

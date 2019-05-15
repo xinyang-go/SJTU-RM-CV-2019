@@ -31,6 +31,7 @@ typedef unsigned char UCHAR;
 #define HMODULE void*
 
 
+
 #define TRUE 1
 #define FALSE 0
 //图像查表变换的方式

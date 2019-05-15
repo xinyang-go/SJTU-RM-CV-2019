@@ -4,9 +4,11 @@
 using namespace std;
 #include <iostream>
 
-Serial::Serial(UINT portNo, UINT  baud, char  parity, UINT  databits, UINT stopsbits, DWORD dwCommEvents) :
+#ifdef Windows
+
+Serial::Serial(UINT  baud, char  parity, UINT  databits, UINT stopsbits, DWORD dwCommEvents) :
 hComm(INVALID_HANDLE_VALUE),
-portNo(portNo),
+portNo(3),
 parity(parity),
 databits(databits),
 stopsbits(stopsbits),
@@ -40,12 +42,12 @@ bool Serial::openPort(UINT  portNo) {
 	char szPort[50];
 	sprintf_s(szPort, "COM%d", portNo);
 
-	/** ´ò¿ªÖ¸¶¨µÄ´®¿Ú */
-	hComm = CreateFileA(szPort,	      /** Éè±¸Ãû,COM1,COM2µÈ */
-		GENERIC_READ | GENERIC_WRITE, /** ·ÃÎÊÄ£Ê½,¿ÉÍ¬Ê±¶ÁĞ´ */
-		0,                            /** ¹²ÏíÄ£Ê½,0±íÊ¾²»¹²Ïí */
-		NULL,                         /** °²È«ĞÔÉèÖÃ,Ò»°ãÊ¹ÓÃNULL */
-		OPEN_EXISTING,                /** ¸Ã²ÎÊı±íÊ¾Éè±¸±ØĞë´æÔÚ,·ñÔò´´½¨Ê§°Ü */
+	/** æ‰“å¼€æŒ‡å®šçš„ä¸²å£ */
+	hComm = CreateFileA(szPort,	      /** è®¾å¤‡å,COM1,COM2ç­‰ */
+		GENERIC_READ | GENERIC_WRITE, /** è®¿é—®æ¨¡å¼,å¯åŒæ—¶è¯»å†™ */
+		0,                            /** å…±äº«æ¨¡å¼,0è¡¨ç¤ºä¸å…±äº« */
+		NULL,                         /** å®‰å…¨æ€§è®¾ç½®,ä¸€èˆ¬ä½¿ç”¨NULL */
+		OPEN_EXISTING,                /** è¯¥å‚æ•°è¡¨ç¤ºè®¾å¤‡å¿…é¡»å­˜åœ¨,å¦åˆ™åˆ›å»ºå¤±è´¥ */
 		0,
 		0);
 
@@ -53,7 +55,7 @@ bool Serial::openPort(UINT  portNo) {
 }
 
 void Serial::ClosePort() {
-	/** Èç¹ûÓĞ´®¿Ú±»´ò¿ª£¬¹Ø±ÕËü */
+	/** å¦‚æœæœ‰ä¸²å£è¢«æ‰“å¼€ï¼Œå…³é—­å®ƒ */
 	if (hComm != INVALID_HANDLE_VALUE) {
 		CloseHandle(hComm);
 		hComm = INVALID_HANDLE_VALUE;
@@ -61,7 +63,7 @@ void Serial::ClosePort() {
 }
 
 bool Serial::InitPort(UINT  portNo, UINT baud, char parity, UINT databits, UINT stopsbits, DWORD dwCommEvents) {
-	/** ÁÙÊ±±äÁ¿,½«ÖÆ¶¨²ÎÊı×ª»¯Îª×Ö·û´®ĞÎÊ½,ÒÔ¹¹ÔìDCB½á¹¹ */
+	/** ä¸´æ—¶å˜é‡,å°†åˆ¶å®šå‚æ•°è½¬åŒ–ä¸ºå­—ç¬¦ä¸²å½¢å¼,ä»¥æ„é€ DCBç»“æ„ */
 	char szDCBparam[50];
 	sprintf_s(szDCBparam, "baud=%d parity=%c data=%d stop=%d", baud, parity, databits, stopsbits);
 	
@@ -85,40 +87,40 @@ bool Serial::InitPort(UINT  portNo, UINT baud, char parity, UINT databits, UINT 
 
 	DCB  dcb;
 	if (bIsSuccess)	{
-		/** »ñÈ¡µ±Ç°´®¿ÚÅäÖÃ²ÎÊı,²¢ÇÒ¹¹Ôì´®¿ÚDCB²ÎÊı */
+		/** è·å–å½“å‰ä¸²å£é…ç½®å‚æ•°,å¹¶ä¸”æ„é€ ä¸²å£DCBå‚æ•° */
 		bIsSuccess = GetCommState(hComm, &dcb);
 		bIsSuccess = BuildCommDCB(szDCBparam, &dcb);
 		if (!bIsSuccess) {
 			
 			cout << "Create dcb fail with "<< GetLastError() << endl;
 		}
-		/** ¿ªÆôRTS flow¿ØÖÆ */
+		/** å¼€å¯RTS flowæ§åˆ¶ */
 		dcb.fRtsControl = RTS_CONTROL_ENABLE;
 	}
 
 	if (bIsSuccess)	{
-		/** Ê¹ÓÃDCB²ÎÊıÅäÖÃ´®¿Ú×´Ì¬ */
+		/** ä½¿ç”¨DCBå‚æ•°é…ç½®ä¸²å£çŠ¶æ€ */
 		bIsSuccess = SetCommState(hComm, &dcb);
 		if (!bIsSuccess) {
 			cout << "SetCommState error!" << endl;
 		}
 	}
 
-	/**  Çå¿Õ´®¿Ú»º³åÇø */
+	/**  æ¸…ç©ºä¸²å£ç¼“å†²åŒº */
 	PurgeComm(hComm, PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_TXABORT);
 
 	return bIsSuccess;
 }
 
 UINT Serial::GetBytesInCOM() const {
-	DWORD dwError = 0;  /** ´íÎóÂë */
-	COMSTAT  comstat;   /** COMSTAT½á¹¹Ìå,¼ÇÂ¼Í¨ĞÅÉè±¸µÄ×´Ì¬ĞÅÏ¢ */
+	DWORD dwError = 0;  /** é”™è¯¯ç  */
+	COMSTAT  comstat;   /** COMSTATç»“æ„ä½“,è®°å½•é€šä¿¡è®¾å¤‡çš„çŠ¶æ€ä¿¡æ¯ */
 	memset(&comstat, 0, sizeof(COMSTAT));
 
 	UINT BytesInQue = 0;
-	/** ÔÚµ÷ÓÃReadFileºÍWriteFileÖ®Ç°,Í¨¹ı±¾º¯ÊıÇå³ıÒÔÇ°ÒÅÁôµÄ´íÎó±êÖ¾ */
+	/** åœ¨è°ƒç”¨ReadFileå’ŒWriteFileä¹‹å‰,é€šè¿‡æœ¬å‡½æ•°æ¸…é™¤ä»¥å‰é—ç•™çš„é”™è¯¯æ ‡å¿— */
 	if (ClearCommError(hComm, &dwError, &comstat)) {
-		BytesInQue = comstat.cbInQue; /** »ñÈ¡ÔÚÊäÈë»º³åÇøÖĞµÄ×Ö½ÚÊı */
+		BytesInQue = comstat.cbInQue; /** è·å–åœ¨è¾“å…¥ç¼“å†²åŒºä¸­çš„å­—èŠ‚æ•° */
 	}
 
 	return BytesInQue;
@@ -130,13 +132,13 @@ bool Serial::WriteData(const unsigned char* pData, unsigned int length) {
 		return false;
 	}
 
-	/** Ïò»º³åÇøĞ´ÈëÖ¸¶¨Á¿µÄÊı¾İ */
+	/** å‘ç¼“å†²åŒºå†™å…¥æŒ‡å®šé‡çš„æ•°æ® */
 	BOOL   bResult = TRUE;
 	DWORD  BytesToSend = 0;
 	bResult = WriteFile(hComm, pData, length, &BytesToSend, NULL);
 	if (!bResult) {
 		DWORD dwError = GetLastError();
-		/** Çå¿Õ´®¿Ú»º³åÇø */
+		/** æ¸…ç©ºä¸²å£ç¼“å†²åŒº */
 		PurgeComm(hComm, PURGE_RXCLEAR | PURGE_RXABORT);
 		ErrorHandler();
 		return false;
@@ -150,17 +152,17 @@ bool Serial::ReadData(unsigned char *buffer,  unsigned int length) {
 		return false;
 	}
 
-	/** ´Ó»º³åÇø¶ÁÈ¡length×Ö½ÚµÄÊı¾İ */
+	/** ä»ç¼“å†²åŒºè¯»å–lengthå­—èŠ‚çš„æ•°æ® */
 	BOOL  bResult = TRUE;
 	DWORD totalRead = 0, onceRead = 0;
 	while (totalRead < length) {
 		bResult = ReadFile(hComm, buffer, length-totalRead, &onceRead, NULL);
 		totalRead += onceRead;
 		if ((!bResult)) {
-			/** »ñÈ¡´íÎóÂë,¿ÉÒÔ¸ù¾İ¸Ã´íÎóÂë²é³ö´íÎóÔ­Òò */
+			/** è·å–é”™è¯¯ç ,å¯ä»¥æ ¹æ®è¯¥é”™è¯¯ç æŸ¥å‡ºé”™è¯¯åŸå›  */
 			DWORD dwError = GetLastError();
 
-			/** Çå¿Õ´®¿Ú»º³åÇø */
+			/** æ¸…ç©ºä¸²å£ç¼“å†²åŒº */
 			PurgeComm(hComm, PURGE_RXCLEAR | PURGE_RXABORT);
 			ErrorHandler();
 			return false;
@@ -168,3 +170,156 @@ bool Serial::ReadData(unsigned char *buffer,  unsigned int length) {
 	}
 	return bResult;
 }
+
+#else defined(Linux)
+
+#include <string.h>
+
+using namespace std;
+
+string get_uart_dev_name(){
+    FILE* ls = popen("ls /dev/ttyUSB* --color=never", "r");
+    char name[20] = {0};
+    fscanf(ls, "%s", name);
+    return name;
+}
+
+Serial::Serial(int nSpeed, char nEvent, int nBits, int nStop) :
+nSpeed(nSpeed), nEvent(nEvent), nBits(nBits), nStop(nStop){
+    if(wait_uart){
+        LOGM("Wait for serial be ready!");
+        while(InitPort(nSpeed, nEvent, nBits, nStop) == false);
+        LOGM("Port set successfully!");
+    }else{
+        if(InitPort(nSpeed, nEvent, nBits, nStop)){
+            LOGM("Port set successfully!");
+        }else{
+            LOGE("Port set fail!");
+        }
+    }
+}
+
+Serial::~Serial() {
+    close(fd);
+    fd = -1;
+}
+
+bool Serial::InitPort(int nSpeed, char nEvent, int nBits, int nStop){
+    string name = get_uart_dev_name();
+    if(name == ""){
+        return false;
+    }
+    if((fd=open(name.data(), O_RDWR)) < 0){
+        return false;
+    }
+    if(set_opt(fd, nSpeed, nEvent, nBits, nStop) < 0){
+        return false;
+    }
+    return true;
+}
+
+//int GetBytesInCOM() const {
+//
+//}
+
+bool Serial::WriteData(const unsigned char* pData, unsigned int length){
+    int cnt=0, curr=0;
+    while((curr=write(fd, pData+cnt, length-cnt))>0 && (cnt+=curr)<length);
+    if(cnt < 0){
+        LOGE("Serial offline!");
+        close(fd);
+        if(wait_uart){
+            InitPort(nSpeed, nEvent, nBits, nStop);
+        }
+    }
+}
+
+bool Serial::ReadData(unsigned char* buffer, unsigned int length){
+    int cnt=0, curr=0;
+    while((curr=read(fd, buffer+cnt, length-cnt))>0 && (cnt+=curr)<length);
+    if(cnt < 0){
+        LOGE("Serial offline!");
+        close(fd);
+        if(wait_uart){
+            InitPort(nSpeed, nEvent, nBits, nStop);
+        }
+    }
+}
+
+int Serial::set_opt(int fd, int nSpeed, char nEvent, int nBits, int nStop) {
+    termios newtio{}, oldtio{};
+    if (tcgetattr(fd, &oldtio) != 0) {
+        perror("SetupSerial 1");
+        return -1;
+    }
+    bzero(&newtio, sizeof(newtio));
+    newtio.c_cflag |= CLOCAL | CREAD;
+    newtio.c_cflag &= ~CSIZE;
+
+    switch (nBits) {
+        case 7:
+            newtio.c_cflag |= CS7;break;
+        case 8:
+            newtio.c_cflag |= CS8;break;
+        default:break;
+    }
+
+    switch (nEvent) {
+        case 'O':  //å¥‡æ ¡éªŒ
+            newtio.c_cflag |= PARENB;
+            newtio.c_cflag |= PARODD;
+            newtio.c_iflag |= (INPCK | ISTRIP);
+            break;
+        case 'E':  //å¶æ ¡éªŒ
+            newtio.c_iflag |= (INPCK | ISTRIP);
+            newtio.c_cflag |= PARENB;
+            newtio.c_cflag &= ~PARODD;
+            break;
+        case 'N':  //æ— æ ¡éªŒ
+            newtio.c_cflag &= ~PARENB;
+            break;
+        default:break;
+    }
+
+    switch (nSpeed) {
+        case 2400:
+            cfsetispeed(&newtio, B2400);
+            cfsetospeed(&newtio, B2400);
+            break;
+        case 4800:
+            cfsetispeed(&newtio, B4800);
+            cfsetospeed(&newtio, B4800);
+            break;
+        case 9600:
+            cfsetispeed(&newtio, B9600);
+            cfsetospeed(&newtio, B9600);
+            break;
+        case 115200:
+            cfsetispeed(&newtio, B115200);
+            cfsetospeed(&newtio, B115200);
+            break;
+        default:
+            cfsetispeed(&newtio, B9600);
+            cfsetospeed(&newtio, B9600);
+            break;
+    }
+
+    if (nStop == 1) {
+        newtio.c_cflag &= ~CSTOPB;
+    } else if (nStop == 2) {
+        newtio.c_cflag |= CSTOPB;
+    }
+
+    newtio.c_cc[VTIME] = 0;
+    newtio.c_cc[VMIN] = 0;
+    tcflush(fd, TCIFLUSH);
+    if ((tcsetattr(fd, TCSANOW, &newtio)) != 0) {
+        perror("com set error");
+        return -1;
+    }
+    printf("set done!\n");
+
+    return 0;
+}
+
+#endif /* switch os */
