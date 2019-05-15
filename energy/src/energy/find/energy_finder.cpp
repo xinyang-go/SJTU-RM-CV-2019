@@ -19,7 +19,8 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 	std::vector<vector<Point> > fan_contours;
 
 	StructingElementClose(src_bin,6,6);
-	imshow("fan struct",src_bin);
+
+//	imshow("fan struct",src_bin);
 
 	findContours(src_bin, fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -72,7 +73,7 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
 
     StructingElementErodeDilate(src_bin);
 //    StructingElementClose(src_bin,10,10);
-    imshow("armor struct",src_bin);
+//    imshow("armor struct",src_bin);
 
 	findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
     findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);

@@ -72,6 +72,9 @@ bool CameraWrapper::init() {
 		return false;
 	}
 	LOGM("successfully loaded %s!", filepath);
+	double t;
+	CameraGetExposureTime(h_camera, &t);
+	LOGM("Exposure time: %lfms", t / 1000.0);
 /*    if(mode == 0){
         // 不使用自动曝光
         CameraSetAeState(h_camera, false);

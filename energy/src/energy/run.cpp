@@ -20,7 +20,7 @@ int Energy::run(cv::Mat &src){
     gimble_zero_points.clear();
     isSendTarget = false;
 
-    if(mark==0)return 0;
+    //if(mark==0)return 0;
 
 //    if(all_armor_centers.size()>200)all_armor_centers.clear();
 //    if(first_armor_centers.size()>200)first_armor_centers.clear();
@@ -30,7 +30,7 @@ int Energy::run(cv::Mat &src){
 //    imshow("img_preprocess",src);
 
     threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
-    imshow("bin",src);
+//    imshow("bin",src);
 
 
     fans_cnt = findFan(src, fans, last_fans_cnt);
@@ -54,7 +54,10 @@ int Energy::run(cv::Mat &src){
 
 //    cycle_center = cv::Point(335, 246);
 //    radius = 116.936;
-    attack_distance = ATTACK_DISTANCE * 120/ radius;
+//    attack_distance = ATTACK_DISTANCE * 120/ radius;
+
+	attack_distance = 794 + 1245 * 75 * (1/radius - 1/113.9);
+//	cout << "attack distance: " << attack_distance << endl;
 
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);

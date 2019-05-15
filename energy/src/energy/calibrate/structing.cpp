@@ -28,14 +28,14 @@ void Energy::StructingElementErodeDilate(cv::Mat &src) {
 //    imshow("dilate_1", src);
 
     erode(src,src, element_erode_1);
-    imshow("erode_1", src);
+//    imshow("erode_1", src);
 
     dilate(src, src, element_dilate_2);
-    imshow("dilate_2", src);
+//    imshow("dilate_2", src);
 
     erode(src,src, element_erode_2);
-    imshow("erode_2", src);
+//    imshow("erode_2", src);
 
     dilate(src, src, element_dilate_3);
-    imshow("dilate_3", src);
+//    imshow("dilate_3", src);
 }
