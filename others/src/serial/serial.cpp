@@ -1,8 +1,11 @@
 #include <serial/serial.h>
 #include <options/options.h>
-#include <log.h>
-using namespace std;
 #include <iostream>
+
+#define LOG_LEVEL LOG_NONE
+#include <log.h>
+
+using namespace std;
 
 #ifdef Windows
 
@@ -171,7 +174,7 @@ bool Serial::ReadData(unsigned char *buffer,  unsigned int length) {
 	return bResult;
 }
 
-#else defined(Linux)
+#elif defined(Linux)
 
 #include <string.h>
 

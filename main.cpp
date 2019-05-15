@@ -141,7 +141,6 @@ void uartReceive(Serial* uart) {
                 cnt = 0;
             }
         }
-        LOGM("%d", cnt);
         if (cnt == 12) {
             if (buffer[8] == 'e') {
                 state = ENERGY_STATE;
