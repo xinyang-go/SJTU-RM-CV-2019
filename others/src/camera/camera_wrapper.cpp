@@ -72,28 +72,9 @@ bool CameraWrapper::init() {
 		return false;
 	}
 	LOGM("successfully loaded %s!", filepath);
-/*    if(mode == 0){
-        // 不使用自动曝光
-        CameraSetAeState(h_camera, false);
-        // 曝光时间10ms
-        CameraSetExposureTime(h_camera, 10000);
-        double t;
-        CameraGetExposureTime(h_camera, &t);
-        LOGM("Exposure time: %lfms", t/1000.0);
-        // 模拟增益4
-        CameraSetAnalogGain(h_camera, 64);
-        // 使用预设LUT表
-        CameraSetLutMode(h_camera, LUTMODE_PRESET);
-        // 抗频闪
-//        CameraSetAntiFlick(h_camera, true);
-    }
-    else if(mode == 1){
-        // 不使用自动曝光
-        CameraSetAeState(h_camera, false);
-        // 抗频闪
-//        CameraSetAntiFlick(h_camera, true);
-    }
-*/
+	double t;
+	CameraGetExposureTime(h_camera, &t);
+	LOGM("Exposure time: %lfms", t / 1000.0);
     /*让SDK进入工作模式，开始接收来自相机发送的图像
     数据。如果当前相机是触发模式，则需要接收到
     触发帧以后才会更新图像。    */

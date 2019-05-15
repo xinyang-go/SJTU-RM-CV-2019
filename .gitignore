@@ -1,4 +1,5 @@
 cmake-build-debug
+build
 .idea
 tools/TrainCNN/.idea
 tools/TrainCNN/__pycache__

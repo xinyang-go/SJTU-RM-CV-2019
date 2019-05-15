@@ -37,7 +37,7 @@ void uartReceive(Serial *uart);
 
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
-	Serial uart(115200);
+  	Serial uart(115200);
     thread receive(uartReceive, &uart);
     bool flag = true;
 

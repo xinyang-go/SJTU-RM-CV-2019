@@ -14,21 +14,22 @@ typedef unsigned int UINT;
 typedef unsigned long long UINT64;
 typedef int BOOL;
 typedef unsigned char BYTE;
-typedef unsigned int DWORD;
+#define DWORD unsigned int
 typedef void* PVOID;
-typedef void* HWND;
-typedef char* LPCTSTR;
+#define HWND typedef void*
+#define LPCTSTR char*
 typedef unsigned short USHORT;
 typedef short SHORT;
 typedef unsigned char* LPBYTE;
 typedef char CHAR;
-typedef short WORD;
-typedef INT HANDLE;
-typedef void VOID;
+#define WORD short
+#define HANDLE INT
+#define VOID void
 typedef unsigned long ULONG;
-typedef void** LPVOID;
+#define LPVOID void**
 typedef unsigned char UCHAR;
-typedef void* HMODULE;
+#define HMODULE void*
+
 
 
 #define TRUE 1
