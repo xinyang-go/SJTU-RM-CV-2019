@@ -3,6 +3,7 @@
 //
 #include <iostream>
 #include <opencv2/core/core.hpp>
+#include <fstream>
 
 #include <energy/energy.h>
 #include <serial/serial.h>
@@ -25,7 +26,7 @@ using namespace cv;
 using namespace std;
 
 
-int state = ARMOR_STATE;
+int state = ENERGY_STATE;
 float curr_yaw = 0, curr_pitch = 0;
 float mark_yaw = 0, mark_pitch = 0;
 int mark = 0;
@@ -42,7 +43,49 @@ int main(int argc, char *argv[]) {
     bool flag = true;
 
     while (flag) {
-        
+        VideoWriter armor_video_writer, energy_video_writer;
+
+        if (state == ARMOR_STATE) {
+            string armor_filename_prefix = "../armor_video/";
+            ifstream in_1(armor_filename_prefix + "cnt.txt");
+            int cnt_1 = 0;
+            if (in_1.is_open())
+            {
+                in_1 >> cnt_1;
+                in_1.close();
+            }
+            string armor_file_name = armor_filename_prefix + std::to_string(cnt_1) + ".avi";
+            //cout << "recording video to " << armor_file_name << endl;
+            cnt_1++;
+            ofstream out_1(armor_filename_prefix + "cnt.txt");
+            if (out_1.is_open()) {
+                out_1 << cnt_1 << endl;
+                out_1.close();
+            }
+            armor_video_writer.open(armor_file_name, CV_FOURCC('P', 'I', 'M', '1'), 90, cv::Size(640, 480), true);
+        }
+
+        if (state == ENERGY_STATE) {
+            string energy_filename_prefix = "../energy_video/";
+            ifstream in_2(energy_filename_prefix + "cnt.txt");
+            int cnt_2 = 0;
+            if (in_2.is_open())
+            {
+                in_2 >> cnt_2;
+                in_2.close();
+            }
+            string energy_file_name = energy_filename_prefix + std::to_string(cnt_2) + ".avi";
+            //cout << "recording video to " << armor_file_name << endl;
+            cnt_2++;
+            ofstream out_2(energy_filename_prefix + "cnt.txt");
+            if (out_2.is_open()) {
+                out_2 << cnt_2 << endl;
+                out_2.close();
+            }
+            energy_video_writer.open(energy_file_name, CV_FOURCC('P', 'I', 'M', '1'), 90, cv::Size(640, 480), false);
+        }
+
+
         int energy_part_rotation = CLOCKWISE;
 
         int from_camera = 1;
@@ -57,8 +100,8 @@ int main(int argc, char *argv[]) {
             video_armor = new CameraWrapper(0, "armor");
             video_energy = new CameraWrapper(1, "energy");
         } else {
-            video_armor = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
-            video_energy = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
+            video_armor = new VideoWrapper("r_l_640.avi");
+            video_energy = new VideoWrapper("r_l_640.avi");
         }
         if (video_armor->init() && video_energy->init()) {
             cout << "Video source initialization successfully." << endl;
@@ -87,6 +130,7 @@ int main(int argc, char *argv[]) {
             CNT_TIME("Total", {
                 if (state == ENERGY_STATE) {
                     ok = video_energy->read(energy_src);
+                    energy_video_writer.write(energy_src);
                     if (show_origin) {
                         imshow("energy src", energy_src);
                     }
@@ -96,6 +140,7 @@ int main(int argc, char *argv[]) {
                     energy.run(energy_src);
                 } else {
                     ok = video_armor->read(armor_src);
+                    armor_video_writer.write(armor_src);
 					flip(armor_src, armor_src, 0);
                     if (show_origin) {
                         imshow("armor src", armor_src);
