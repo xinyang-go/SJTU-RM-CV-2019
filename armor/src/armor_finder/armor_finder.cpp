@@ -8,7 +8,7 @@
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
 
-ArmorFinder::ArmorFinder(EnemyColor &color, Serial &u, string paras_folder, const bool &use) :
+ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, string paras_folder, const uint8_t &use) :
             serial(u),
             enemy_color(color),
             state(STANDBY_STATE),

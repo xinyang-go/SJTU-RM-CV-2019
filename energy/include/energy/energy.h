@@ -15,12 +15,13 @@
 #include "energy/constant.h"
 #include "energy/param_struct_define.h"
 #include "serial/serial.h"
+#include "additions/additions.h"
 
 using std::vector;
 
 class Energy {
 public:
-	Energy(Serial &u, int &ally_color);
+	Energy(Serial &u, uint8_t &enemy_color);
 	~Energy();
 	int run(cv::Mat &src);
 
@@ -28,7 +29,7 @@ public:
 	clock_t start;
 	Serial &serial;
 
-    void setAllyColor(int color);
+//    void setAllyColor(int color);
     void setRotation(int rotation);
 
 	void extract(cv::Mat &src);
@@ -51,7 +52,7 @@ private:
 	double last_target_position;
 	double last_hit_position;
 	float target_armor;
-	int &ally_color_;
+	uint8_t &ally_color;
 	int energy_part_rotation;
 	float attack_distance;
 	int send_cnt;

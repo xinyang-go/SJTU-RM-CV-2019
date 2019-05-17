@@ -8,7 +8,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-Energy::Energy(Serial &u, int &ally_color):serial(u),ally_color_(ally_color),
+Energy::Energy(Serial &u, uint8_t &enemy_color):serial(u),ally_color(enemy_color),
         src_blue(SRC_HEIGHT, SRC_WIDTH, CV_8UC1),
         src_red(SRC_HEIGHT, SRC_WIDTH, CV_8UC1)
 {
@@ -26,7 +26,7 @@ Energy::Energy(Serial &u, int &ally_color):serial(u),ally_color_(ally_color),
 	target_armor = -1;
 	radius = 0;
 
-    ally_color_ = ALLY_RED;
+//    ally_color = ALLY_RED;
     energy_part_rotation = CLOCKWISE;
     attack_distance = ATTACK_DISTANCE;
 	count = 1;
@@ -58,11 +58,11 @@ Energy::Energy(Serial &u, int &ally_color):serial(u),ally_color_(ally_color),
 
 Energy::~Energy() = default;
 
-
-void Energy::setAllyColor(int color)
-{
-    ally_color_ = color;
-}
+//
+//void Energy::setAllyColor(int color)
+//{
+//    ally_color_ = color;
+//}
 
 void Energy::setRotation(int rotation){
 	energy_part_rotation = rotation;

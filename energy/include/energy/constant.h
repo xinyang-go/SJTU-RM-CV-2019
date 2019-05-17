@@ -4,10 +4,12 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
+#include "additions/additions.h"
+
 #define d2r (CV_PI / 180.0)
 
-const int ALLY_BLUE = 123;
-const int ALLY_RED = 456;
+const int ALLY_BLUE = ENEMY_RED;
+const int ALLY_RED = ENEMY_BLUE;
 const int SRC_WIDTH_CAMERA = 640;
 const int SRC_HEIGHT_CAMERA = 480;
 const int SRC_WIDTH = 320;

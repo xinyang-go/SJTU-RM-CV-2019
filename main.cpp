@@ -4,7 +4,6 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <fstream>
-
 #include <energy/energy.h>
 #include <serial/serial.h>
 #include <energy/param_struct_define.h>
@@ -14,84 +13,44 @@
 #include <camera/wrapper_head.h>
 #include <armor_finder/armor_finder.h>
 #include <options/options.h>
+#include <additions/additions.h>
 #include <thread>
 
 #define DO_NOT_CNT_TIME
+
 #include <log.h>
 
-#define ENERGY_STATE 1
-#define ARMOR_STATE  0
+#define ENERGY_STATE 'e'
+#define ARMOR_STATE  'a'
 
 using namespace cv;
 using namespace std;
 
-
-int state = ENERGY_STATE;
-float curr_yaw = 0, curr_pitch = 0;
-float mark_yaw = 0, mark_pitch = 0;
-int mark = 0;
-EnemyColor enemy_color = ENEMY_BLUE;
-int ally_color = ALLY_RED;
-bool use_classifier = true;
-
-void uartReceive(Serial *uart);
+mcu_data mcuData = {
+        .curr_yaw = 0,
+        .curr_pitch = 0,
+        .state = ENERGY_STATE,
+        .mark = 0,
+        .use_classifier = 0,
+        .enemy_color = ENEMY_BLUE
+};
 
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
-  	Serial uart(115200);
-    thread receive(uartReceive, &uart);
-    bool flag = true;
+    Serial serial(115200);
+    thread receive(uartReceive, &serial);
 
-    while (flag) {
+    int from_camera = 1;
+    if (!run_with_camera) {
+        cout << "Input 1 for camera, 0 for video files" << endl;
+        cin >> from_camera;
+    }
+
+    while (true) {
         VideoWriter armor_video_writer, energy_video_writer;
-
-        if (state == ARMOR_STATE) {
-            string armor_filename_prefix = "../armor_video/";
-            ifstream in_1(armor_filename_prefix + "cnt.txt");
-            int cnt_1 = 0;
-            if (in_1.is_open())
-            {
-                in_1 >> cnt_1;
-                in_1.close();
-            }
-            string armor_file_name = armor_filename_prefix + std::to_string(cnt_1) + ".avi";
-            //cout << "recording video to " << armor_file_name << endl;
-            cnt_1++;
-            ofstream out_1(armor_filename_prefix + "cnt.txt");
-            if (out_1.is_open()) {
-                out_1 << cnt_1 << endl;
-                out_1.close();
-            }
-            armor_video_writer.open(armor_file_name, CV_FOURCC('P', 'I', 'M', '1'), 90, cv::Size(640, 480), true);
-        }
-
-        if (state == ENERGY_STATE) {
-            string energy_filename_prefix = "../energy_video/";
-            ifstream in_2(energy_filename_prefix + "cnt.txt");
-            int cnt_2 = 0;
-            if (in_2.is_open())
-            {
-                in_2 >> cnt_2;
-                in_2.close();
-            }
-            string energy_file_name = energy_filename_prefix + std::to_string(cnt_2) + ".avi";
-            //cout << "recording video to " << armor_file_name << endl;
-            cnt_2++;
-            ofstream out_2(energy_filename_prefix + "cnt.txt");
-            if (out_2.is_open()) {
-                out_2 << cnt_2 << endl;
-                out_2.close();
-            }
-            energy_video_writer.open(energy_file_name, CV_FOURCC('P', 'I', 'M', '1'), 90, cv::Size(640, 480), false);
-        }
-
-
-        int energy_part_rotation = CLOCKWISE;
-
-        int from_camera = 1;
-        if (!run_with_camera) {
-            cout << "Input 1 for camera, 0 for video files" << endl;
-            cin >> from_camera;
+        if (save_video) {
+            initVideoWriter(armor_video_writer, PROJECT_DIR"/armor_video/");
+            initVideoWriter(energy_video_writer, PROJECT_DIR"/energy_video/");
         }
 
         WrapperHead *video_armor;
@@ -100,128 +59,100 @@ int main(int argc, char *argv[]) {
             video_armor = new CameraWrapper(0, "armor");
             video_energy = new CameraWrapper(1, "energy");
         } else {
-            video_armor = new VideoWrapper("r_l_640.avi");
-            video_energy = new VideoWrapper("r_l_640.avi");
+            video_armor = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
+            video_energy = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
         }
-        if (video_armor->init() && video_energy->init()) {
-            cout << "Video source initialization successfully." << endl;
+        if (video_armor->init()) {
+            LOGM("video_armor source initialization successfully.");
         } else {
+            LOGW("video_armor source unavailable!");
             delete video_armor;
+            video_armor = nullptr;
+        }
+        if (video_energy->init()) {
+            LOGM("video_energy source initialization successfully.");
+        } else {
+            LOGW("video_energy source unavailable!");
             delete video_energy;
-            cout << "Program fails. Restarting" << endl;
-            continue;
+            video_energy = nullptr;
         }
 
         Mat energy_src, armor_src;
-        for(int i=0; i<10; i++){
-            video_armor->read(armor_src);
-            video_energy->read(armor_src);
+        for (int i = 0; i < 10; i++) {
+            if (video_armor) {
+                video_armor->read(armor_src);
+            }
+            if (video_energy) {
+                video_energy->read(armor_src);
+            }
         }
 
-        ArmorFinder armorFinder(enemy_color, uart, PROJECT_DIR"/tools/para/", use_classifier);
+        ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
 
-        Energy energy(uart, ally_color);
+        Energy energy(serial, mcuData.enemy_color);
 //        energy.setAllyColor(ally_color);
-        energy.setRotation(energy_part_rotation);
+        energy.setRotation(CLOCKWISE);
 
-		bool ok = video_armor->read(armor_src) && video_energy->read(armor_src);
-
-        while (ok) {
+        bool ok = true;
+        do {
             CNT_TIME("Total", {
-                if (state == ENERGY_STATE) {
-                    ok = video_energy->read(energy_src);
-                    energy_video_writer.write(energy_src);
-                    if (show_origin) {
-                        imshow("energy src", energy_src);
+                if (mcuData.state == ENERGY_STATE) {
+                    if (video_energy) {
+                        ok = video_energy->read(energy_src);
+                        if (!ok) {
+                            delete video_energy;
+                            video_energy = nullptr;
+                        }
+                        if(save_video){
+                            energy_video_writer.write(energy_src);
+                        }
+                        if (show_origin) {
+                            imshow("energy src", energy_src);
+                        }
+                        if (from_camera == 0) {
+                            energy.extract(energy_src);
+                        }
+                        energy.run(energy_src);
+                    } else {
+                        video_energy = new CameraWrapper(1, "energy");
+                        if(!video_energy->init()){
+                            delete video_energy;
+                            video_energy = nullptr;
+                        }
                     }
-                    if (from_camera == 0) {
-                        energy.extract(energy_src);
+
+                } else if (mcuData.state == ARMOR_STATE) {
+                    if (video_armor) {
+                        ok = video_armor->read(armor_src);
+                        if (!ok) {
+                            delete video_armor;
+                            video_armor = nullptr;
+                        }
+                        if(save_video){
+                            armor_video_writer.write(armor_src);
+                        }
+                        flip(armor_src, armor_src, 0);
+                        if (show_origin) {
+                            imshow("armor src", armor_src);
+                        }
+                        CNT_TIME("Armor Time", {
+                            armorFinder.run(armor_src);
+                        });
+                    } else {
+                        video_armor = new CameraWrapper(0, "armor");
+                        if(!video_armor->init()){
+                            delete video_armor;
+                            video_armor = nullptr;
+                        }
                     }
-                    energy.run(energy_src);
-                } else {
-                    ok = video_armor->read(armor_src);
-                    armor_video_writer.write(armor_src);
-					flip(armor_src, armor_src, 0);
-                    if (show_origin) {
-                        imshow("armor src", armor_src);
-                    }
-                    CNT_TIME("Armor Time", {
-                        armorFinder.run(armor_src);
-                    });
-                }
-                if (waitKey(1) == 'q') {
-                    flag = false;
-                    break;
                 }
             });
-        }
+        } while (ok);
+
         delete video_armor;
         delete video_energy;
         cout << "Program fails. Restarting" << endl;
     }
-
     return 0;
 }
 
-#define RECEIVE_LOG_LEVEL LOG_NOTHING
-
-char uartReadByte(Serial &uart) {
-	char byte;
-	if (uart.ReadData((uint8_t*)&byte, 1) == false) {
-		LOGE("serial error!");
-	}
-	return byte;
-}
-
-void uartReceive(Serial* uart) {
-    char buffer[100];
-    int cnt = 0;
-    LOGM("data receive start!");
-    while (true) {
-        char data;
-        while ((data = uartReadByte(*uart)) != '\n') {
-            buffer[cnt++] = data;
-            if (cnt >= 100) {
-                LOG(RECEIVE_LOG_LEVEL, "data receive over flow!");
-                cnt = 0;
-            }
-        }
-        if (cnt == 12) {
-            if (buffer[8] == 'e') {
-                state = ENERGY_STATE;
-                LOG(RECEIVE_LOG_LEVEL, "Energy state");
-            } else if (buffer[8] == 'a') {
-                state = ARMOR_STATE;
-                LOG(RECEIVE_LOG_LEVEL, "Armor state");
-            }
-            if (buffer[10] == 0){
-                use_classifier = false;
-                LOG(RECEIVE_LOG_LEVEL, "Classifier off!");
-            } else if(buffer[10] == 1){
-                use_classifier = true;
-                LOG(RECEIVE_LOG_LEVEL, "Classifier on!");
-            }
-			if (buffer[11] == ENEMY_BLUE) {
-				LOG(RECEIVE_LOG_LEVEL, "ENEMY_BLUE!");
-				ally_color = ALLY_RED;
-				enemy_color = ENEMY_BLUE;
-			} else if (buffer[11] == ENEMY_RED) {
-				LOG(RECEIVE_LOG_LEVEL, "ENEMY_RED!");
-				ally_color = ALLY_BLUE;
-				enemy_color = ENEMY_RED;
-			}
-            memcpy(&curr_yaw, buffer, 4);
-            memcpy(&curr_pitch, buffer + 4, 4);
-            LOG(RECEIVE_LOG_LEVEL, "Get yaw:%f pitch:%f", curr_yaw, curr_pitch);
-            if (buffer[9] == 1) {
-                if (mark == 0) {
-                    mark = 1;
-                    mark_yaw = curr_yaw;
-                    mark_pitch = curr_pitch;
-                }
-                LOG(RECEIVE_LOG_LEVEL, "Marked");
-            }
-        }
-        cnt = 0;
-    }
-}

@@ -8,8 +8,9 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
-extern int mark;
+//extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
+//extern int mark;
+
 
 int Energy::run(cv::Mat &src){
     imshow("src",src);
@@ -78,10 +79,11 @@ int Energy::run(cv::Mat &src){
 
     sendTargetByUart(yaw_rotation, pitch_rotation, attack_distance);
     cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
-    cout<<"curr_yaw: "<<curr_yaw<<'\t'<<"curr_pitch: "<<curr_pitch<<endl;
-    cout<<"mark_yaw: "<<mark_yaw<<'\t'<<"mark_pitch: "<<mark_pitch<<endl;
+    cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
+    cout<<"mark_yaw: "<<mcuData.mark_yaw<<'\t'<<"mark_pitch: "<<mcuData.mark_pitch<<endl;
 
 //    cout<<"send_cnt: "<<send_cnt<<endl;
+
 
 }
 

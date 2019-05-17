@@ -21,7 +21,7 @@ static void splitBayerBG(cv::Mat &src, cv::Mat &blue, cv::Mat &red) {
     }
 }
 
-void imageColorSplit(cv::Mat &src_input, cv::Mat &split, EnemyColor color) {
+void imageColorSplit(cv::Mat &src_input, cv::Mat &split, uint8_t color) {
     cv::Mat blue(240, 320, CV_8UC1), red(240, 320, CV_8UC1);
     if(src_input.type() == CV_8UC1){
         splitBayerBG(src_input, blue, red);

@@ -9,14 +9,11 @@
 #include <opencv2/tracking.hpp>
 #include <serial/serial.h>
 #include <armor_finder/classifier/classifier.h>
-
-typedef enum{
-    ENEMY_BLUE, ENEMY_RED
-} EnemyColor;
+#include "additions/additions.h"
 
 class ArmorFinder{
 public:
-    ArmorFinder(EnemyColor &color, Serial &u, string paras_folder, const bool &use);
+    ArmorFinder(uint8_t &color, Serial &u, string paras_folder, const uint8_t &use);
     ~ArmorFinder() = default;
 
 private:
@@ -26,7 +23,7 @@ private:
         SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;
 
-    const EnemyColor &enemy_color;
+    const uint8_t &enemy_color;
     State state;
     cv::Rect2d armor_box;
     cv::Ptr<cv::Tracker> tracker;
@@ -36,7 +33,7 @@ private:
 
     int  contour_area;
 	Serial &serial;
-    const bool &use_classifier;
+    const uint8_t &use_classifier;
 
     bool stateSearchingTarget(cv::Mat &src);
     bool stateTrackingTarget(cv::Mat &src);

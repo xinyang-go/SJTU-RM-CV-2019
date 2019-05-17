@@ -32,7 +32,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/armor/include)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/others/include)
 
 FILE(GLOB_RECURSE sourcefiles "others/src/*.cpp" "energy/src/*cpp" "armor/src/*.cpp")
-ADD_EXECUTABLE(${BIN_NAME} main.cpp ${sourcefiles} )
+ADD_EXECUTABLE(${BIN_NAME} main.cpp ${sourcefiles} others/include/additions/additions.h)
 
 TARGET_LINK_LIBRARIES(${BIN_NAME} ${CMAKE_THREAD_LIBS_INIT})
 TARGET_LINK_LIBRARIES(${BIN_NAME} ${OpenCV_LIBS})
