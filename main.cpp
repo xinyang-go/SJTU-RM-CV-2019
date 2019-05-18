@@ -42,15 +42,7 @@ int main(int argc, char *argv[]) {
     Serial serial(115200);
 	uint8_t last_state = mcuData.state;
     thread receive(uartReceive, &serial);
-
-	thread change([&]() {
-		while (true) {
-			Sleep(10000);
-			if (mcuData.state == ARMOR_STATE) mcuData.state = ENERGY_STATE;
-			else if (mcuData.state == ENERGY_STATE)mcuData.state = ARMOR_STATE;
-			cout << "state changed to " << mcuData.state << endl;
-		}
-	});
+    bool keep = true;
 
     int from_camera = 1;
     if (!run_with_camera) {
@@ -58,7 +50,7 @@ int main(int argc, char *argv[]) {
         cin >> from_camera;
     }
 
-    while (true) {
+    while (keep) {
         VideoWriter armor_video_writer, energy_video_writer;
         if (save_video) {
             initVideoWriter(armor_video_writer, PROJECT_DIR"/armor_video/");
@@ -111,7 +103,6 @@ int main(int argc, char *argv[]) {
                 if (mcuData.state == ENERGY_STATE) {
 					if (last_state == ARMOR_STATE) {
 						energy.setEnergyRotationInit();
-						cout << "set" << endl;
 					}
 					last_state = mcuData.state;
                     if (video_energy) {
@@ -166,9 +157,9 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
-				waitKey(1);
-				
-				
+				if(waitKey(1) == 'q'){
+				    keep = false;
+				}
             });
         } while (ok);
 
