@@ -71,14 +71,16 @@ def forward(x, regularizer=None):
     pool_shape = pool2.get_shape().as_list()
     node = pool_shape[1] * pool_shape[2] * pool_shape[3]
     reshaped = tf.reshape(pool2, [-1, node])
+#    reshaped = tf.nn.dropout(reshaped, 0.1)
 
-    fc1_w = tf.nn.dropout(get_weight([node, FC1_OUTPUT_NODES], regularizer), 0.1)
+    fc1_w = get_weight([node, FC1_OUTPUT_NODES], regularizer)
     fc1_b = get_bias([FC1_OUTPUT_NODES])
     fc1   = tf.nn.relu(tf.matmul(reshaped, fc1_w) + fc1_b)
+#    fc1   = tf.nn.dropout(fc1, 0.2)
     vars.extend([fc1_w, fc1_b])
     nodes.extend([fc1])
 
-    fc2_w = tf.nn.dropout(get_weight([FC1_OUTPUT_NODES, FC2_OUTPUT_NODES], regularizer), 0.1)
+    fc2_w = get_weight([FC1_OUTPUT_NODES, FC2_OUTPUT_NODES], regularizer)
     fc2_b = get_bias([FC2_OUTPUT_NODES])
     fc2   = tf.nn.softmax(tf.matmul(fc1, fc2_w) + fc2_b)
     vars.extend([fc2_w, fc2_b])

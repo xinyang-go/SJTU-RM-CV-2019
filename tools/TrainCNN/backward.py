@@ -75,7 +75,7 @@ def train(dataset, show_bar=False):
     learning_rate = tf.train.exponential_decay(
         LEARNING_RATE_BASE,
         global_step,
-        len(dataset.train_samples) / BATCH,
+        len(dataset.train_samples) / BATCH / 5,
         LEARNING_RATE_DECAY,
         staircase=False)
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss, global_step=global_step)
