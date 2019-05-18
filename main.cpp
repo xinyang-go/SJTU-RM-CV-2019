@@ -27,18 +27,30 @@ using namespace cv;
 using namespace std;
 
 mcu_data mcuData = {
-        .curr_yaw = 0,
-        .curr_pitch = 0,
-        .state = ENERGY_STATE,
-        .mark = 0,
-        .use_classifier = 0,
-        .enemy_color = ENEMY_BLUE
+        0,
+        0,
+        ARMOR_STATE,
+        0,
+        0,
+        ENEMY_BLUE,
 };
+
+
 
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
     Serial serial(115200);
+	uint8_t last_state = mcuData.state;
     thread receive(uartReceive, &serial);
+
+	thread change([&]() {
+		while (true) {
+			Sleep(10000);
+			if (mcuData.state == ARMOR_STATE) mcuData.state = ENERGY_STATE;
+			else if (mcuData.state == ENERGY_STATE)mcuData.state = ARMOR_STATE;
+			cout << "state changed to " << mcuData.state << endl;
+		}
+	});
 
     int from_camera = 1;
     if (!run_with_camera) {
@@ -59,8 +71,8 @@ int main(int argc, char *argv[]) {
             video_armor = new CameraWrapper(0, "armor");
             video_energy = new CameraWrapper(1, "energy");
         } else {
-            video_armor = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
-            video_energy = new VideoWrapper("/home/xinyang/Desktop/DataSets/video/blue_4.mp4");
+            video_armor = new VideoWrapper("E:/Robomaster/RM_auto-aim/build/r_l_640.avi");
+            video_energy = new VideoWrapper("E:/Robomaster/RM_auto-aim/build/r_l_640.avi");
         }
         if (video_armor->init()) {
             LOGM("video_armor source initialization successfully.");
@@ -83,7 +95,7 @@ int main(int argc, char *argv[]) {
                 video_armor->read(armor_src);
             }
             if (video_energy) {
-                video_energy->read(armor_src);
+                video_energy->read(energy_src);
             }
         }
 
@@ -97,6 +109,11 @@ int main(int argc, char *argv[]) {
         do {
             CNT_TIME("Total", {
                 if (mcuData.state == ENERGY_STATE) {
+					if (last_state == ARMOR_STATE) {
+						energy.setEnergyRotationInit();
+						cout << "set" << endl;
+					}
+					last_state = mcuData.state;
                     if (video_energy) {
                         ok = video_energy->read(energy_src);
                         if (!ok) {
@@ -110,6 +127,8 @@ int main(int argc, char *argv[]) {
                             imshow("energy src", energy_src);
                         }
                         if (from_camera == 0) {
+							cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
+							imshow("resize", energy_src);
                             energy.extract(energy_src);
                         }
                         energy.run(energy_src);
@@ -122,6 +141,7 @@ int main(int argc, char *argv[]) {
                     }
 
                 } else if (mcuData.state == ARMOR_STATE) {
+					last_state = mcuData.state;
                     if (video_armor) {
                         ok = video_armor->read(armor_src);
                         if (!ok) {
@@ -146,6 +166,9 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
+				waitKey(1);
+				
+				
             });
         } while (ok);
 

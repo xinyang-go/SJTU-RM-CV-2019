@@ -20,8 +20,6 @@ struct mcu_data{
     uint8_t mark;
     uint8_t use_classifier;
     uint8_t enemy_color;
-    float mark_yaw;
-    float mark_pitch;
 };
 
 extern mcu_data mcuData;

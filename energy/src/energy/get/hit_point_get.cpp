@@ -118,13 +118,13 @@ void Energy::getHitPoint(){
     }
 }
 
-bool Energy::changeTarget(){
-    if(fabs(target_position - last_target_position) < 30||fabs(target_position - last_target_position) > 330){
-        last_target_position = target_position;
-        return false;
-    }
-    else{
-        last_target_position = target_position;
-        return true;
-    }
-}
+//bool Energy::changeTarget(){
+//    if(fabs(target_position - last_target_position) < 30||fabs(target_position - last_target_position) > 330){
+//        last_target_position = target_position;
+//        return false;
+//    }
+//    else{
+//        last_target_position = target_position;
+//        return true;
+//    }
+//}

@@ -30,20 +30,20 @@ void uartReceive(Serial* pSerial) {
     }
 }
 
-void initVideoWriter(cv::VideoWriter& video, const std::string &armor_filename_prefix){
-    std::ifstream in_1(armor_filename_prefix + "cnt.txt");
-    int cnt_1 = 0;
-    if (in_1.is_open())
+void initVideoWriter(cv::VideoWriter& video, const std::string &filename_prefix){
+    std::ifstream in(filename_prefix + "cnt.txt");
+    int cnt = 0;
+    if (in.is_open())
     {
-        in_1 >> cnt_1;
-        in_1.close();
+        in >> cnt;
+        in.close();
     }
-    std::string armor_file_name = armor_filename_prefix + std::to_string(cnt_1) + ".avi";
-    cnt_1++;
-    std::ofstream out_1(armor_filename_prefix + "cnt.txt");
-    if (out_1.is_open()) {
-        out_1 << cnt_1 << std::endl;
-        out_1.close();
+    std::string armor_file_name = filename_prefix + std::to_string(cnt) + ".avi";
+    cnt++;
+    std::ofstream out(filename_prefix + "cnt.txt");
+    if (out.is_open()) {
+        out << cnt << std::endl;
+        out.close();
     }
     video.open(armor_file_name, CV_FOURCC('P', 'I', 'M', '1'), 90, cv::Size(640, 480), true);
 }

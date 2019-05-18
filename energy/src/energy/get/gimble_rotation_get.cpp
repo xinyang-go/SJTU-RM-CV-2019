@@ -9,15 +9,27 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
+void Energy::changeMark() {
+	if (mcuData.mark == 0 && last_mark == 1) {
+		last_mark = mcuData.mark;
+		origin_yaw = mcuData.curr_yaw;
+		origin_pitch = mcuData.curr_pitch;
+		isMark = true;
+	}
+	else if (mcuData.state == 1) {
+		last_mark = mcuData.mark;
+		isMark = true;
+	}
+	else {
+		last_mark = mcuData.mark;
+		isMark = false;
+	}
+}
 
 
 void Energy::gimbleRotation(){
 	cv::Point2f real_hit_point;
     stretch(hit_point, real_hit_point);
-
-	float origin_yaw = -0.13; 
-	float origin_pitch = 13.18;
 
 	/*origin_yaw = mark_yaw;
 	origin_pitch = mark_pitch;*/

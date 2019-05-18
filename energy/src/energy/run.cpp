@@ -18,10 +18,11 @@ int Energy::run(cv::Mat &src){
     armors.clear();
     fanPosition.clear();
     armorPosition.clear();
-    gimble_zero_points.clear();
+//    gimble_zero_points.clear();
     isSendTarget = false;
 
-    //if(mark==0)return 0;
+	changeMark();
+	if (isMark)return 0;
 
 //    if(all_armor_centers.size()>200)all_armor_centers.clear();
 //    if(first_armor_centers.size()>200)first_armor_centers.clear();
@@ -57,7 +58,7 @@ int Energy::run(cv::Mat &src){
 //    radius = 116.936;
 //    attack_distance = ATTACK_DISTANCE * 120/ radius;
 
-	attack_distance = 794 + 1245 * 75 * (1/radius - 1/113.9);
+	attack_distance = 794 + 1245 * 75 * (1/radius - 1/115.6);
 //	cout << "attack distance: " << attack_distance << endl;
 
     getFanPosition(fanPosition, fans, cycle_center, radius);
@@ -66,21 +67,24 @@ int Energy::run(cv::Mat &src){
 //    cout << "The target armor's position is " << target_armor << endl;
 //    cout<<"The target armor center is: "<<target_center<<endl;
 
+	if (energy_rotation_init) {
+		initRotation();
+		return 0;
+	}
+
     getHitPoint();
 //    hit_point = target_center;
 //    cout << "The hit point position is " << hit_point << endl;
-
-
-    if(!isSendTarget)return 0;
+    
 //    cout<<"send"<<endl;
     cout<<"position mode: "<<position_mode<<endl;
 
     gimbleRotation();
+	if (!isSendTarget)return 0;
 
     sendTargetByUart(yaw_rotation, pitch_rotation, attack_distance);
     cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
     cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
-    cout<<"mark_yaw: "<<mcuData.mark_yaw<<'\t'<<"mark_pitch: "<<mcuData.mark_pitch<<endl;
 
 //    cout<<"send_cnt: "<<send_cnt<<endl;
 

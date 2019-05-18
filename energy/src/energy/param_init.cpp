@@ -8,6 +8,66 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+void Energy::initEnergy() {
+	isSendTarget = false;
+	isMark = false;
+
+	fans_cnt = 0;
+	armors_cnt = 0;
+	cycle_center = Point(0, 0);
+	target_center = Point(0, 0);
+	last_target_center = Point(0, 0);
+	hit_point = Point(0, 0);
+	target_position = -1000;
+	last_target_position = -1000;
+	last_hit_position = 20000;
+	target_armor = -1000;
+	radius = 0;
+
+	//    ally_color = ALLY_RED;
+	energy_part_rotation = CLOCKWISE;
+	attack_distance = ATTACK_DISTANCE;
+	count = 1;
+	last_fans_cnt = 0;
+	last_armors_cnt = 0;
+	send_cnt = 0;
+
+	//rectified_focal_length = 1000;
+	//theta = 0;
+	//phi = 0;
+	yaw_rotation = 0;
+	pitch_rotation = 0;
+	last_mark = 0;
+	origin_yaw = -0.13;
+	origin_pitch = 13.18;
+
+	isLeftVertexFound = -1;
+	isTopVertexFound = -1;
+	isRightVertexFound = -1;
+	isBottomVertexFound = -1;
+
+	left = Point(640, 480);
+	right = Point(0, 0);
+	top = Point(640, 480);
+	bottom = Point(0, 0);
+
+	position_mode = 0;
+	last_position_mode = 0;
+
+	energy_rotation_init = false;
+
+	fans.clear();
+	armors.clear();
+	fanPosition.clear();
+	armorPosition.clear();
+	Armor_center.clear();
+	first_armor_centers.clear();
+	all_armor_centers.clear();
+
+	clockwise_rotation_init_cnt = 0;
+	anticlockwise_rotation_init_cnt = 0;
+}
+
 void Energy::initEnergyPartParam() {
 
     energy_part_param_.RPM = 10;
@@ -49,3 +109,25 @@ void Energy::initEnergyPartParam() {
 }
 
 
+void Energy::initRotation() {
+	target_position = target_armor;
+	cout << "target position: " << target_position << '\t' << "last target position: " << last_target_position << endl;
+	if (target_position >= -180 && last_target_position >= -180 && fabs(target_position - last_target_position) < 30) {
+		if (target_position < last_target_position) clockwise_rotation_init_cnt++;
+		else if (target_position > last_target_position) anticlockwise_rotation_init_cnt++;
+	}
+
+	if (clockwise_rotation_init_cnt == 5) {
+		energy_part_rotation = CLOCKWISE;
+		cout << "rotation: " << energy_part_rotation << endl;
+		energy_rotation_init = false;
+	}
+	else if (anticlockwise_rotation_init_cnt == 5) {
+		energy_part_rotation = ANTICLOCKWISE;
+		cout << "rotation: " << energy_part_rotation << endl;
+		energy_rotation_init = false;
+	}
+	//else cout << clockwise_rotation_init_cnt << endl;
+
+	last_target_position = target_position;
+}

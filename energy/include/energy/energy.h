@@ -31,6 +31,7 @@ public:
 
 //    void setAllyColor(int color);
     void setRotation(int rotation);
+	void setEnergyRotationInit();
 
 	void extract(cv::Mat &src);
 
@@ -42,6 +43,7 @@ private:
 	EnergyPartParam energy_part_param_;
 	LiftHeight lift_height_;
 	bool isSendTarget;
+	bool isMark;
 	int fans_cnt;
 	int armors_cnt;
 	int count;
@@ -61,13 +63,18 @@ private:
 	double phi;//电机yaw轴应旋转的角度
 	float yaw_rotation;
 	float pitch_rotation;
+	uint8_t last_mark;
 	int position_mode;
 	int last_position_mode;
     int isLeftVertexFound, isTopVertexFound, isRightVertexFound, isBottomVertexFound;
+	bool energy_rotation_init;
+	int clockwise_rotation_init_cnt;
+	int anticlockwise_rotation_init_cnt;
+	float origin_yaw, origin_pitch;
 
 	std::vector<EnergyPart> fans;
 	std::vector<EnergyPart> armors;
-    std::vector<EnergyPart> gimble_zero_points;
+ //   std::vector<EnergyPart> gimble_zero_points;
 
 	cv::Point cycle_center;
 	cv::Point target_center;
@@ -81,9 +88,9 @@ private:
     cv::Point left, right, top, bottom;
 	cv::Mat src_blue, src_red, src_green;
     
-
-
+	void initEnergy();
 	void initEnergyPartParam();
+	void initRotation();
 
 	int findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans_cnt);
 	int findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_armors_cnt);
@@ -121,6 +128,7 @@ private:
 
     void getHitPoint();
 	bool changeTarget();
+	void changeMark();
     void gimbleRotation();
 
 	void splitBayerBG(cv::Mat &src, cv::Mat &blue, cv::Mat &red);
