@@ -234,7 +234,9 @@ bool Serial::WriteData(const unsigned char* pData, unsigned int length){
         if(wait_uart){
             InitPort(nSpeed, nEvent, nBits, nStop);
         }
+        return false;
     }
+    return true;
 }
 
 bool Serial::ReadData(unsigned char* buffer, unsigned int length){
@@ -246,7 +248,9 @@ bool Serial::ReadData(unsigned char* buffer, unsigned int length){
         if(wait_uart){
             InitPort(nSpeed, nEvent, nBits, nStop);
         }
+        return false;
     }
+    return true;
 }
 
 int Serial::set_opt(int fd, int nSpeed, char nEvent, int nBits, int nStop) {
