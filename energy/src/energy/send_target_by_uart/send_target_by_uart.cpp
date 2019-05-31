@@ -2,20 +2,22 @@
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include "energy/energy.h"
+#include <iostream>
+using namespace std;
 
 bool sendTarget(Serial& serial, float x, float y, float z) {
 	static short x_tmp, y_tmp, z_tmp;
-	static time_t last_time = time(nullptr);
-	static int fps;
+//	static time_t last_time = time(nullptr);
+//	static int fps;
 	uint8_t buff[8];
 
-	time_t t = time(nullptr);
-	if (last_time != t) {
-		last_time = t;
-		std::cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << std::endl;
-		fps = 0;
-	}
-	fps += 1;
+//	time_t t = time(nullptr);
+//	if (last_time != t) {
+//		last_time = t;
+//		std::cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << std::endl;
+//		fps = 0;
+//	}
+//	fps += 1;
 
 	x_tmp = static_cast<short>(x * (32768 - 1) / 100);
 	y_tmp = static_cast<short>(y * (32768 - 1) / 100);
@@ -39,6 +41,7 @@ void Energy::sendTargetByUart(float x, float y, float z) {
 //    }
     sendTarget(serial, x, y, z);
     send_cnt+=1;
+//    cout<<"send"<<endl;
 }
 
 

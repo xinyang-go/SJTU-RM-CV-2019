@@ -36,9 +36,9 @@ void imageColorSplit(cv::Mat &src_input, cv::Mat &split, uint8_t color) {
         resize(channels.at(0), blue, cv::Size(640, 480));
         resize(channels.at(2), red, cv::Size(640, 480));
         if(color == ENEMY_RED){
-            split = red - blue;
+            split = red;// - blue;
         }else if(color == ENEMY_BLUE){
-            split = blue - red;
+            split = blue;// - red;
         }
     }
 
@@ -47,17 +47,17 @@ void imageColorSplit(cv::Mat &src_input, cv::Mat &split, uint8_t color) {
 void imagePreProcess(cv::Mat &src) {
 //    cv::medianBlur(src, src, 5);
 
-    static cv::Mat kernel_erode = getStructuringElement(cv::MORPH_RECT, cv::Size(1, 4));
+    static cv::Mat kernel_erode = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
     erode(src, src, kernel_erode);
 
-    static cv::Mat kernel_dilate = getStructuringElement(cv::MORPH_RECT, cv::Size(2, 4));
+    static cv::Mat kernel_dilate = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
     dilate(src, src, kernel_dilate);
 
-    static cv::Mat kernel_erode2 = getStructuringElement(cv::MORPH_RECT, cv::Size(2, 4));
-    erode(src, src, kernel_erode2);
-
-    static cv::Mat kernel_dilate2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 6));
+    static cv::Mat kernel_dilate2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
     dilate(src, src, kernel_dilate2);
+
+    static cv::Mat kernel_erode2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
+    erode(src, src, kernel_erode2);
 
     float alpha = 1.5;
     int beta = 0;

@@ -31,18 +31,15 @@ mcu_data mcuData = {
         0,
         ARMOR_STATE,
         0,
-        0,
-        ENEMY_BLUE,
+        1,
+        ENEMY_RED,
 };
-
-
 
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
     Serial serial(115200);
 	uint8_t last_state = mcuData.state;
     thread receive(uartReceive, &serial);
-    bool keep = true;
 
     int from_camera = 1;
     if (!run_with_camera) {
@@ -50,7 +47,7 @@ int main(int argc, char *argv[]) {
         cin >> from_camera;
     }
 
-    while (keep) {
+    while (true) {
         VideoWriter armor_video_writer, energy_video_writer;
         if (save_video) {
             initVideoWriter(armor_video_writer, PROJECT_DIR"/armor_video/");
@@ -63,8 +60,13 @@ int main(int argc, char *argv[]) {
             video_armor = new CameraWrapper(0, "armor");
             video_energy = new CameraWrapper(1, "energy");
         } else {
-            video_armor = new VideoWrapper("E:/Robomaster/RM_auto-aim/build/r_l_640.avi");
-            video_energy = new VideoWrapper("E:/Robomaster/RM_auto-aim/build/r_l_640.avi");
+//            string armor_video, energy_video;
+//            lastVideo(armor_video, PROJECT_DIR"/armor_video/");
+//            video_armor = new VideoWrapper(armor_video);
+//            lastVideo(energy_video, PROJECT_DIR"/energy_video/");
+//            video_energy = new VideoWrapper(energy_video);
+            video_armor = new VideoWrapper("/home/sjturm/Desktop/valid_video/armor/65.avi");
+            video_energy = new VideoWrapper("/home/sjturm/Desktop/valid_video/energy/121.avi");
         }
         if (video_armor->init()) {
             LOGM("video_armor source initialization successfully.");
@@ -98,11 +100,13 @@ int main(int argc, char *argv[]) {
         energy.setRotation(CLOCKWISE);
 
         bool ok = true;
+        cout<<"start running"<<endl;
         do {
             CNT_TIME("Total", {
                 if (mcuData.state == ENERGY_STATE) {
 					if (last_state == ARMOR_STATE) {
 						energy.setEnergyRotationInit();
+						cout << "set" << endl;
 					}
 					last_state = mcuData.state;
                     if (video_energy) {
@@ -112,17 +116,22 @@ int main(int argc, char *argv[]) {
                             video_energy = nullptr;
                         }
                         if(save_video){
-                            energy_video_writer.write(energy_src);
+                            Mat energy_save = energy_src.clone();
+                            cvtColor(energy_save,energy_save,COLOR_GRAY2BGR);
+                            energy_video_writer.write(energy_save);
+//                            cout<<energy_src.type()<<endl;
+//                            LOGM(STR_CTR(WORD_GREEN,"Save ENERGY!"));
                         }
                         if (show_origin) {
                             imshow("energy src", energy_src);
                         }
-                        if (from_camera == 0) {
-							cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
-							imshow("resize", energy_src);
-                            energy.extract(energy_src);
-                        }
+//                        if (from_camera == 0) {
+//							cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
+//							imshow("resize", energy_src);
+//                            energy.extract(energy_src);
+//                        }
                         energy.run(energy_src);
+//                        waitKey(1);
                     } else {
                         video_energy = new CameraWrapper(1, "energy");
                         if(!video_energy->init()){
@@ -141,8 +150,10 @@ int main(int argc, char *argv[]) {
                         }
                         if(save_video){
                             armor_video_writer.write(armor_src);
+//                            cout<<armor_src.type()<<endl;
+//                            LOGM(STR_CTR(WORD_GREEN,"Save ARMOR!"));
                         }
-                        flip(armor_src, armor_src, 0);
+//                        flip(armor_src, armor_src, 0);
                         if (show_origin) {
                             imshow("armor src", armor_src);
                         }
@@ -157,9 +168,8 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
-				if(waitKey(1) == 'q'){
-				    keep = false;
-				}
+//                cout<<last_state<<endl;
+                waitKey(1);
             });
         } while (ok);
 

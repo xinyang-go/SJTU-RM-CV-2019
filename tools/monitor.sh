@@ -10,5 +10,5 @@ while true; do
 		exec $exe &
 		echo "restart $exe"
 	fi
-	sleep 2
+	sleep 0.5
 done

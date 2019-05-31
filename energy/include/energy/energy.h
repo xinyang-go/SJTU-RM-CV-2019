@@ -16,12 +16,14 @@
 #include "energy/param_struct_define.h"
 #include "serial/serial.h"
 #include "additions/additions.h"
+#include "options/options.h"
+
 
 using std::vector;
 
 class Energy {
 public:
-	Energy(Serial &u, uint8_t &enemy_color);
+	Energy(Serial &u, uint8_t &color);
 	~Energy();
 	int run(cv::Mat &src);
 
@@ -54,6 +56,7 @@ private:
 	double last_target_position;
 	double last_hit_position;
 	float target_armor;
+    float last_target_armor;
 	uint8_t &ally_color;
 	int energy_part_rotation;
 	float attack_distance;
@@ -70,7 +73,12 @@ private:
 	bool energy_rotation_init;
 	int clockwise_rotation_init_cnt;
 	int anticlockwise_rotation_init_cnt;
+	float red_origin_yaw, red_origin_pitch;
+	float blue_origin_yaw, blue_origin_pitch;
 	float origin_yaw, origin_pitch;
+	float target_cnt;
+    bool target_cnt_flag;
+    bool save_new_mark;
 
 	std::vector<EnergyPart> fans;
 	std::vector<EnergyPart> armors;

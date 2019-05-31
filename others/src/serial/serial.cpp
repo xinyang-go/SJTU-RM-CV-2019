@@ -2,7 +2,7 @@
 #include <options/options.h>
 #include <iostream>
 
-#define LOG_LEVEL LOG_NONE
+//#define LOG_LEVEL LOG_NONE
 #include <log.h>
 
 using namespace std;

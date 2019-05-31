@@ -61,6 +61,7 @@ bool CameraWrapper::init() {
 
     rgb_buffer = (unsigned char *)malloc(tCapability.sResolutionRange.iHeightMax *
             tCapability.sResolutionRange.iWidthMax * 3);
+#ifdef Windows
 	char filepath[200];
 	sprintf(filepath, PROJECT_DIR"/others/%s.Config", name.data());
 	if (CameraReadParameterFromFile(h_camera, filepath) != CAMERA_STATUS_SUCCESS) {
@@ -72,6 +73,15 @@ bool CameraWrapper::init() {
 		return false;
 	}
 	LOGM("successfully loaded %s!", filepath);
+#elif defined(Linux)
+    CameraSetAeState(h_camera, false);
+    CameraSetExposureTime(h_camera, 17*1000);
+    CameraSetAnalogGain(h_camera, 60);
+    if(mode == 0){
+        CameraSetGain(h_camera, 140, 140, 140);
+        CameraSetLutMode(h_camera, LUTMODE_PRESET);
+    }
+#endif
 	double t;
 	CameraGetExposureTime(h_camera, &t);
 	LOGM("Exposure time: %lfms", t / 1000.0);

@@ -41,13 +41,6 @@ class DataSet:
 
     def generate_data_sets(self, folder):
         sets = []
-        mini = 1000000
-        for i in range(OUTPUT_NODES):
-            dir = "%s/%d" % (folder, i)
-            files = os.listdir(dir)
-            if mini > len(files):
-                mini = len(files)
-
         for i in range(OUTPUT_NODES):
             dir = "%s/%d" % (folder, i)
             files = os.listdir(dir)

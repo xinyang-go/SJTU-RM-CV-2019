@@ -2,6 +2,7 @@
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include "energy/energy.h"
+#include "log.h"
 
 using namespace cv;
 using std::cout;
@@ -22,6 +23,7 @@ void Energy::initEnergy() {
 	last_target_position = -1000;
 	last_hit_position = 20000;
 	target_armor = -1000;
+    last_target_armor = -1000;
 	radius = 0;
 
 	//    ally_color = ALLY_RED;
@@ -38,8 +40,14 @@ void Energy::initEnergy() {
 	yaw_rotation = 0;
 	pitch_rotation = 0;
 	last_mark = 0;
-	origin_yaw = -0.13;
-	origin_pitch = 13.18;
+
+    red_origin_yaw = -0.35;
+    red_origin_pitch = 15.11719;
+    blue_origin_yaw = -0.439453;
+    blue_origin_pitch = 15.688477;
+
+	target_cnt = 0;
+    target_cnt_flag = true;
 
 	isLeftVertexFound = -1;
 	isTopVertexFound = -1;
@@ -111,23 +119,23 @@ void Energy::initEnergyPartParam() {
 
 void Energy::initRotation() {
 	target_position = target_armor;
-	cout << "target position: " << target_position << '\t' << "last target position: " << last_target_position << endl;
+//	cout << "target position: " << target_position << '\t' << "last target position: " << last_target_position << endl;
 	if (target_position >= -180 && last_target_position >= -180 && fabs(target_position - last_target_position) < 30) {
 		if (target_position < last_target_position) clockwise_rotation_init_cnt++;
 		else if (target_position > last_target_position) anticlockwise_rotation_init_cnt++;
 	}
 
-	if (clockwise_rotation_init_cnt == 5) {
+	if (clockwise_rotation_init_cnt == 30) {
 		energy_part_rotation = CLOCKWISE;
 		cout << "rotation: " << energy_part_rotation << endl;
 		energy_rotation_init = false;
 	}
-	else if (anticlockwise_rotation_init_cnt == 5) {
+	else if (anticlockwise_rotation_init_cnt == 30) {
 		energy_part_rotation = ANTICLOCKWISE;
 		cout << "rotation: " << energy_part_rotation << endl;
 		energy_rotation_init = false;
 	}
-	//else cout << clockwise_rotation_init_cnt << endl;
+//	else cout << clockwise_rotation_init_cnt <<'\t'<<anticlockwise_rotation_init_cnt<< endl;
 
 	last_target_position = target_position;
 }

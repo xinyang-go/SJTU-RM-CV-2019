@@ -43,9 +43,14 @@ public:
     bool sendBoxPosition();
 };
 
-struct LightBlob {
+#define BLOB_RED ENEMY_RED
+#define BLOB_BLUE ENEMY_BLUE
+
+class LightBlob {
+public:
     cv::RotatedRect rect;
     double length;
+    uint8_t BlobColor;
 
     explicit LightBlob(cv::RotatedRect &r) : rect(r) {
         length = max(rect.size.height, rect.size.width);

@@ -138,9 +138,9 @@
 		#include <sys/time.h>
 		#define CNT_TIME(tag, codes, ...) do{ \
 			static timeval ts, te; \
-			gettimeofday(&ts); \
+			gettimeofday(&ts, NULL); \
 			codes; \
-			gettimeofday(&te); \
+			gettimeofday(&te, NULL); \
 			LOGM(tag": %.1lfms", (te.tv_sec-ts.tv_sec)*1000.0+(te.tv_usec-ts.tv_usec)/1000.0); \
 		}while (0)
 	#endif

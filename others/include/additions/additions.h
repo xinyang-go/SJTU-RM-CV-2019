@@ -25,6 +25,7 @@ struct mcu_data{
 extern mcu_data mcuData;
 
 void uartReceive(Serial *pSerial);
-void initVideoWriter(cv::VideoWriter& video, const std::string &armor_filename_prefix);
+void initVideoWriter(cv::VideoWriter& video, const std::string &filename_prefix);
+void lastVideo(std::string &video_name, const std::string &filename_prefix);
 
 #endif /* _ADDITIONS_H_ */

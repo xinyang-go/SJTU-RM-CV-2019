@@ -31,7 +31,7 @@ static void pipelineLightBlobPreprocess(cv::Mat &src) {
 }
 
 static bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
-    static cv::Mat src_gray, src_bin;
+    static cv::Mat src_gray;
     if(src.type() == CV_8UC3){
         cvtColor(src, src_gray, CV_BGR2GRAY);
     }else if(src.type() == CV_8UC1){
@@ -77,7 +77,10 @@ bool lengthRatioJudge(const LightBlob &light_blob_i, const LightBlob &light_blob
             && light_blob_i.length / light_blob_j.length > 0.5);
 }
 
-bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
+bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j, uint8_t enemy_color) {
+    if(light_blob_i.BlobColor != enemy_color || light_blob_j.BlobColor != enemy_color){
+        return false;
+    }
     if(!lengthRatioJudge(light_blob_i, light_blob_j)){
 //        std::cout << "lengthRatioJudge" << std::endl;
         return false;
@@ -108,10 +111,10 @@ double centerDistance(const cv::Rect2d &box){
     return dx*dx + dy*dy;
 }
 
-static bool findArmorBoxes(LightBlobs &light_blobs, std::vector<cv::Rect2d> &armor_boxes) {
+static bool findArmorBoxes(LightBlobs &light_blobs, std::vector<cv::Rect2d> &armor_boxes, uint8_t enemy_color) {
     for (int i = 0; i < light_blobs.size() - 1; ++i) {
         for (int j = i + 1; j < light_blobs.size(); ++j) {
-            if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j))) {
+            if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j), enemy_color)) {
                 continue;
             }
             cv::Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
@@ -151,6 +154,33 @@ bool judge_light_color(std::vector<LightBlob> &light, std::vector<LightBlob> &co
     return !result.empty();
 }
 
+void get_blob_color(const cv::Mat &src, std::vector<LightBlob> &blobs) {
+    for(auto &blob : blobs){
+        auto region = blob.rect.boundingRect();
+        region.x -= fmax(2, region.width * 0.1);
+        region.y -= fmax(2, region.height * 0.05);
+        region.width += 2 * fmax(2, region.width * 0.1);
+        region.height += 2 * fmax(2, region.height * 0.05);
+        region &= cv::Rect(0, 0, 640, 480);
+        cv::Mat roi = src(region);
+        long long int red_cnt = 0, blue_cnt = 0;
+        for(int row=0; row<roi.rows; row++){
+            for(int col=0; col<roi.cols; col++){
+                red_cnt += roi.at<cv::Vec3b>(row, col)[2];
+                blue_cnt += roi.at<cv::Vec3b>(row, col)[0];
+            }
+        }
+        if(red_cnt > blue_cnt){
+            blob.BlobColor = BLOB_RED;
+        }else{
+            blob.BlobColor = BLOB_BLUE;
+        }
+    }
+}
+
+int prior_red[] = {0, 2, 3, 4, 1, 5, 7, 8, 9, 6};
+int prior_blue[]= {5, 7, 8, 9, 6, 0, 2, 3, 4, 1};
+
 bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
     cv::Mat split, src_bin;
     LightBlobs light_blobs, light_blobs_, light_blobs_real;
@@ -159,35 +189,39 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
 
     cv::cvtColor(src, src_gray, CV_BGR2GRAY);
 //    pipelineLightBlobPreprocess(src_gray);
-    cv::threshold(src_gray, src_bin, 120, 255, CV_THRESH_BINARY);
+    cv::threshold(src_gray, src_bin, 170, 255, CV_THRESH_BINARY);
+//    imshow("gray bin", src_bin);
     if(!findLightBlobs(src_bin, light_blobs)){
         return false;
     }
     if(show_light_blobs){
-        showContours("blobs", src_bin, light_blobs);
+        showContours("blobs_gray", src_bin, light_blobs);
         cv::waitKey(1);
     }
 
     imageColorSplit(src, split, enemy_color);
+//    imshow("split123",split);
     imagePreProcess(split);
-    cv::threshold(split, src_bin, 120, 255, CV_THRESH_BINARY);
+//    imshow("split",split);
+    cv::threshold(split, src_bin, 170, 255, CV_THRESH_BINARY);
     if(!findLightBlobs(src_bin, light_blobs_)){
         return false;
     }
     if(show_light_blobs){
-        showContours("blobs_", src_bin, light_blobs_);
+        showContours("blobs_split", src_bin, light_blobs_);
         cv::waitKey(1);
     }
 
     if(!judge_light_color(light_blobs, light_blobs_, light_blobs_real)){
         return false;
     }
+    get_blob_color(src, light_blobs_real);
     if(show_light_blobs){
         showContours("blobs_real", src, light_blobs_real);
         cv::waitKey(1);
     }
 
-    if(!findArmorBoxes(light_blobs_real, armor_boxes)){
+    if(!findArmorBoxes(light_blobs_real, armor_boxes, enemy_color)){
         return false;
     }
     if(show_armor_boxes){
@@ -203,12 +237,23 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
                 boxes_number[c-1].emplace_back(box);
             }
         }
-        for(auto box : boxes_number){
-            if(!box.empty()){
-                armor_box = box[0];
+        if(enemy_color == ENEMY_BLUE) {
+            for(auto id : prior_blue){
+                if(!boxes_number[id].empty()){
+                    armor_box = boxes_number[id][0];
+                    break;
+                }
             }
+        }else if(enemy_color == ENEMY_RED) {
+            for(auto id : prior_red){
+                if(!boxes_number[id].empty()){
+                    armor_box = boxes_number[id][0];
+                    break;
+                }
+            }
+        }else{
+            LOGE("enemy_color ERROR!");
         }
-
         if(armor_box == cv::Rect2d(0,0,0,0)){
             return false;
         }

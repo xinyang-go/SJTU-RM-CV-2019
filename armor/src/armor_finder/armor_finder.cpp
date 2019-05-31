@@ -94,8 +94,8 @@ bool sendTarget(Serial& serial, double x, double y, double z) {
 
 bool ArmorFinder::sendBoxPosition() {
     auto rect = armor_box;
-    double dx = rect.x + rect.width/2 - 320;
-    double dy = rect.y + rect.height/2 - 240 - 30;
+    double dx = rect.x + rect.width/2 - 320 - 10;
+    double dy = rect.y + rect.height/2 - 240 - 20;
     double yaw   = atan(dx / FOCUS_PIXAL) * 180 / 3.14159265459;
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / 3.14159265459;
 //    cout << yaw << endl;

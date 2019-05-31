@@ -2,6 +2,7 @@
 // Created by xixiliadorabarry on 3/5/19.
 //
 #include "energy/energy.h"
+#include "log.h"
 
 using namespace cv;
 using std::cout;
@@ -13,7 +14,7 @@ using std::vector;
 
 
 int Energy::run(cv::Mat &src){
-    imshow("src",src);
+//    imshow("src",src);
     fans.clear();
     armors.clear();
     fanPosition.clear();
@@ -23,6 +24,7 @@ int Energy::run(cv::Mat &src){
 
 	changeMark();
 	if (isMark)return 0;
+//	cout<<"yaw"<<origin_yaw<<endl;
 
 //    if(all_armor_centers.size()>200)all_armor_centers.clear();
 //    if(first_armor_centers.size()>200)first_armor_centers.clear();
@@ -48,8 +50,34 @@ int Energy::run(cv::Mat &src){
 
     if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src, fans, armors);
 
-    if(armors_cnt != fans_cnt+1) return 0;
 
+    if(armors_cnt>=4 && fans_cnt>=3) {
+        FILE *fp = fopen(PROJECT_DIR"/Mark/mark.txt", "w");
+        if (fp) {
+            fprintf(fp, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
+            fclose(fp);
+            save_new_mark = false;
+        }
+        FILE *fp_all = fopen(PROJECT_DIR"/Mark/mark_all.txt", "a");
+        if (fp_all) {
+            fprintf(fp_all, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
+            fclose(fp_all);
+        }
+    }
+    if(armors_cnt==5){
+        FILE *fp_best = fopen(PROJECT_DIR"/Mark/mark_best.txt", "a");
+        if(fp_best){
+            fprintf(fp_best, "yaw: %f, pitch: %f\n",origin_yaw, origin_pitch);
+            fclose(fp_best);
+        }
+    }
+//    cout<<"armors_cnt: "<<armors_cnt<<"fans_cnt: "<<fans_cnt<<endl;
+//    cout<<"armors_cnt: "<<armors_cnt<<"fans_cnt: "<<fans_cnt<<endl;
+//    if(armors_cnt != fans_cnt+1)
+//    {
+//        return 0;
+//    }
+    //cout<<"clock: "<<energy_part_rotation<<endl;
     getAllArmorCenters();
 //    cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
     cycleLeastFit();
@@ -58,8 +86,11 @@ int Energy::run(cv::Mat &src){
 //    radius = 116.936;
 //    attack_distance = ATTACK_DISTANCE * 120/ radius;
 
-	attack_distance = 794 + 1245 * 75 * (1/radius - 1/115.6);
+//	attack_distance = 674 + 1286 * 75 * (1/radius - 1/133.85);
+//	cout<<"radius"<<radius<<endl;
 //	cout << "attack distance: " << attack_distance << endl;
+//    attack_distance = 752;//单项赛
+    attack_distance = 718;
 
     getFanPosition(fanPosition, fans, cycle_center, radius);
     getArmorPosition(armorPosition, armors, cycle_center, radius);
@@ -67,6 +98,7 @@ int Energy::run(cv::Mat &src){
 //    cout << "The target armor's position is " << target_armor << endl;
 //    cout<<"The target armor center is: "<<target_center<<endl;
 
+//    cout<<target_armor<<endl;
 	if (energy_rotation_init) {
 		initRotation();
 		return 0;
@@ -77,14 +109,18 @@ int Energy::run(cv::Mat &src){
 //    cout << "The hit point position is " << hit_point << endl;
     
 //    cout<<"send"<<endl;
-    cout<<"position mode: "<<position_mode<<endl;
+//    cout<<"position mode: "<<position_mode<<endl;
 
     gimbleRotation();
-	if (!isSendTarget)return 0;
+    if(changeTarget())target_cnt++;
 
-    sendTargetByUart(yaw_rotation, pitch_rotation, attack_distance);
-    cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
-    cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
+//	if (!isSendTarget)return 0;
+    sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
+
+//    cout<<target_cnt<<endl;
+
+//    cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
+//    cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
 
 //    cout<<"send_cnt: "<<send_cnt<<endl;
 
