@@ -71,7 +71,8 @@ void showContours(std::string windows_name, const cv::Mat &src, const std::vecto
             rectangle(image2show, light_blob.rect.boundingRect(), Scalar(0,0,255), 3);
         if(light_blob.BlobColor == BLOB_BLUE)
             rectangle(image2show, light_blob.rect.boundingRect(), Scalar(255,0,0), 3);
-
+        else
+            rectangle(image2show, light_blob.rect.boundingRect(), Scalar(0,255,0), 3);
     }
     imshow(windows_name, image2show);
 }

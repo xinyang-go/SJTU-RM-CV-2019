@@ -52,7 +52,7 @@ public:
     double length;
     uint8_t BlobColor;
 
-    explicit LightBlob(cv::RotatedRect &r) : rect(r) {
+    LightBlob(cv::RotatedRect &r) : rect(r) {
         length = max(rect.size.height, rect.size.width);
     };
     bool operator<(LightBlob &l2) { return this->rect.center.x < l2.rect.center.x; }

@@ -12,15 +12,48 @@
 typedef std::vector<LightBlob> LightBlobs;
 
 static double lw_rate(const cv::RotatedRect &rect){
-    return (rect.size.height > rect.size.width)?
-           (rect.size.height / rect.size.width):
-           (rect.size.width / rect.size.height);
+    return rect.size.height>rect.size.width ?
+    rect.size.height / rect.size.width :
+    rect.size.width / rect.size.height ;
 }
 
-static bool isValidLightBlob(const cv::RotatedRect &rect){
-    return (lw_rate(rect) > 1.2) &&
-           ((rect.size.width * rect.size.height) < 3000) &&
-           ((rect.size.width * rect.size.height) > 1);
+bool rectangleContainPoint(cv::RotatedRect rectangle, cv::Point2f point)
+{
+    //转化为轮廓
+    cv::Point2f corners[4];
+    rectangle.points(corners);
+    cv::Point2f *lastItemPointer = (corners+sizeof corners/sizeof corners[0]);
+    vector<cv::Point2f> contour(corners,lastItemPointer);
+    //判断
+    double indicator = pointPolygonTest(contour,point,true);
+    return indicator >= 0;
+}
+/// Todo: 下面的函数可以有性能优化，暂时未做。
+static double nonZeroRateOfRotateRect(const cv::Mat &bin, const cv::RotatedRect &rorect){
+    auto rect = rorect.boundingRect();
+    if(rect.x < 0 || rect.y < 0 || rect.x+rect.width > bin.cols || rect.y+rect.height > bin.rows){
+//        cout << "break" << endl;
+        return 0;
+    }
+    auto roi=bin(rect);
+    int cnt=0;
+    for(int r=0; r<roi.rows; r++){
+        for(int c=0; c<roi.cols; c++){
+            if(rectangleContainPoint(rorect, cv::Point(c+rect.x, r+rect.y))){
+                if(roi.at<uint8_t>(r, c)){
+                    cnt++;
+                }
+            }
+        }
+    }
+    return double(cnt) / rorect.size.area();
+}
+
+static bool isValidLightBlob(const cv::Mat &bin, const cv::RotatedRect &rect){
+    return (lw_rate(rect) > 1.5) &&
+//           (rect.size.width*rect.size.height < 3000) &&
+           (rect.size.width*rect.size.height > 1) &&
+           (nonZeroRateOfRotateRect(bin, rect) > 0.8);
 }
 
 static void pipelineLightBlobPreprocess(cv::Mat &src) {
@@ -39,10 +72,11 @@ static bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
     }
 
     std::vector<std::vector<cv::Point> > light_contours;
-    cv::findContours(src_gray, light_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    cv::findContours(src_gray, light_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+
     for (auto &light_contour : light_contours) {
         cv::RotatedRect rect = cv::minAreaRect(light_contour);
-        if(isValidLightBlob(rect)){
+        if(isValidLightBlob(src_gray, rect)){
             light_blobs.emplace_back(rect);
         }
     }
@@ -199,22 +233,23 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
         cv::waitKey(1);
     }
 
-    imageColorSplit(src, split, enemy_color);
-//    imshow("split123",split);
-    imagePreProcess(split);
-//    imshow("split",split);
-    cv::threshold(split, src_bin, 170, 255, CV_THRESH_BINARY);
-    if(!findLightBlobs(src_bin, light_blobs_)){
-        return false;
-    }
-    if(show_light_blobs){
-        showContours("blobs_split", src_bin, light_blobs_);
-        cv::waitKey(1);
-    }
-
-    if(!judge_light_color(light_blobs, light_blobs_, light_blobs_real)){
-        return false;
-    }
+//    imageColorSplit(src, split, enemy_color);
+////    imshow("split123",split);
+//    imagePreProcess(split);
+////    imshow("split",split);
+//    cv::threshold(split, src_bin, 170, 255, CV_THRESH_BINARY);
+//    if(!findLightBlobs(src_bin, light_blobs_)){
+//        return false;
+//    }
+//    if(show_light_blobs){
+//        showContours("blobs_split", src_bin, light_blobs_);
+//        cv::waitKey(1);
+//    }
+//
+//    if(!judge_light_color(light_blobs, light_blobs_, light_blobs_real)){
+//        return false;
+//    }
+    light_blobs_real = light_blobs;
     get_blob_color(src, light_blobs_real);
     if(show_light_blobs){
         showContours("blobs_real", src, light_blobs_real);
@@ -225,7 +260,7 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
         return false;
     }
     if(show_armor_boxes){
-        showArmorBoxVector("boxes", split, armor_boxes);
+        showArmorBoxVector("boxes", src, armor_boxes);
         cv::waitKey(1);
     }
     if(classifier && use_classifier){
