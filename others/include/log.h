@@ -80,20 +80,25 @@
 #ifndef LOG_LINK_COLOR
     #define LOG_LINK_COLOR          LINE_CODE WORD_BLUE
 #endif
+
+/********************** log place *************************/
+#ifndef LOG_OUT
+    #define LOG_OUT stdout
+#endif
 /******************** The log API *************************/
-#define LOG_0(format, ...)          printf(format, ##__VA_ARGS__)
+#define LOG_0(format, ...)          fprintf(LOG_OUT, format, ##__VA_ARGS__)
 #if LOG_LEVEL >= LOG_ERROR
-    #define LOG_1(format, ...)      printf(format, ##__VA_ARGS__)
+    #define LOG_1(format, ...)      fprintf(LOG_OUT, format, ##__VA_ARGS__)
 #else
     #define LOG_1(format, ...)      ((void)0)
 #endif
 #if LOG_LEVEL >= LOG_WARNING
-    #define LOG_2(format, ...)      printf(format, ##__VA_ARGS__)
+    #define LOG_2(format, ...)      fprintf(LOG_OUT, format, ##__VA_ARGS__)
 #else
     #define LOG_2(format, ...)      ((void)0)
 #endif
 #if LOG_LEVEL >= LOG_MSG
-    #define LOG_3(format, ...)      printf(format, ##__VA_ARGS__)
+    #define LOG_3(format, ...)      fprintf(LOG_OUT, format, ##__VA_ARGS__)
 #else
     #define LOG_3(format, ...)      ((void)0)
 #endif
