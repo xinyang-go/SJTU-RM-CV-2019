@@ -60,7 +60,9 @@ void ArmorFinder::run(cv::Mat &src) {
     }
 }
 
-#define FOCUS_PIXAL      (600)
+#define FOCUS_PIXAL_8MM  (1488)
+#define FOCUS_PIXAL_5MM  (917)
+#define FOCUS_PIXAL      FOCUS_PIXAL_5MM
 
 bool sendTarget(Serial& serial, double x, double y, double z) {
 	static short x_tmp, y_tmp, z_tmp;
