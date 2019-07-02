@@ -46,4 +46,4 @@ ELSE ()
     MESSAGE(STATUS "Unsupport platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF()
 
-ADD_CUSTOM_TARGET(bind-monitor COMMAND "${PROJECT_SOURCE_DIR}/tools/bind-monitor.sh" "${PROJECT_SOURCE_DIR}" "${CMAKE_BINARY_DIR}")
+ADD_CUSTOM_TARGET(create-startup COMMAND "${PROJECT_SOURCE_DIR}/tools/create-startup.sh" "${PROJECT_SOURCE_DIR}" "${CMAKE_BINARY_DIR}")

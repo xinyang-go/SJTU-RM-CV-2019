@@ -32,7 +32,7 @@ mcu_data mcuData = {
         ARMOR_STATE,
         0,
         1,
-        ENEMY_BLUE,
+        ENEMY_RED,
 };
 
 int main(int argc, char *argv[]) {
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
         WrapperHead *video_armor=nullptr;
         WrapperHead *video_energy=nullptr;
         if (from_camera) {
-            video_armor = new CameraWrapper(0/*, "armor"*/);
-//            video_energy = new CameraWrapper(1, "energy");
+            video_armor = new CameraWrapper(0, "armor");
+            video_energy = new CameraWrapper(1, "energy");
         } else {
 //            string armor_video, energy_video;
 //            lastVideo(armor_video, PROJECT_DIR"/armor_video/");
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 //            lastVideo(energy_video, PROJECT_DIR"/energy_video/");
 //            video_energy = new VideoWrapper(energy_video);
             video_armor = new VideoWrapper("/home/sjturm/Desktop/valid_video/armor/65.avi");
-//            video_energy = new VideoWrapper("/home/sjturm/Desktop/valid_video/energy/121.avi");
+            video_energy = new VideoWrapper("/home/sjturm/Desktop/valid_video/energy/121.avi");
         }
         if (video_armor->init()) {
             LOGM("video_armor source initialization successfully.");
@@ -75,13 +75,13 @@ int main(int argc, char *argv[]) {
             delete video_armor;
             video_armor = nullptr;
         }
-//        if (video_energy->init()) {
-//            LOGM("video_energy source initialization successfully.");
-//        } else {
-//            LOGW("video_energy source unavailable!");
-//            delete video_energy;
-//            video_energy = nullptr;
-//        }
+        if (video_energy->init()) {
+            LOGM("video_energy source initialization successfully.");
+        } else {
+            LOGW("video_energy source unavailable!");
+            delete video_energy;
+            video_energy = nullptr;
+        }
 
         Mat energy_src, armor_src;
         for (int i = 0; i < 10; i++) {

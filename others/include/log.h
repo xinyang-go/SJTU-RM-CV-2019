@@ -139,7 +139,7 @@
 			GetLocalTime(&te); \
 			LOGM(tag": %dms", (te.wSecond-ts.wSecond)*1000+(te.wMilliseconds-ts.wMilliseconds)); \
 		}while (0)
-	#else
+	#elif defined(Linux)
 		#include <sys/time.h>
 		#define CNT_TIME(tag, codes, ...) do{ \
 			static timeval ts, te; \
@@ -148,7 +148,10 @@
 			gettimeofday(&te, NULL); \
 			LOGM(tag": %.1lfms", (te.tv_sec-ts.tv_sec)*1000.0+(te.tv_usec-ts.tv_usec)/1000.0); \
 		}while (0)
-	#endif
+    #else
+        #warning "Unsupport plantform for CNT_TIME"
+        #define CNT_TIME(tag, codes, ...) codes
+    #endif
 #else
 	#define CNT_TIME(tag, codes, ...) codes
 #endif
