@@ -48,6 +48,7 @@ private:
 	bool isMark;
 	int fans_cnt;
 	int armors_cnt;
+	int centerRs_cnt;
 	int count;
 	int last_fans_cnt;
 	int last_armors_cnt;
@@ -82,6 +83,7 @@ private:
 
 	std::vector<EnergyPart> fans;
 	std::vector<EnergyPart> armors;
+    std::vector<EnergyPart> centerRs;
  //   std::vector<EnergyPart> gimble_zero_points;
 
 	cv::Point cycle_center;
@@ -102,15 +104,17 @@ private:
 
 	int findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans_cnt);
 	int findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_armors_cnt);
-    int findGimbleZeroPoint(const cv::Mat &src, vector<EnergyPart> &gimble_zero_point);
+    int findCenterR(const cv::Mat src);
 
 	void showFanContours(std::string windows_name, const cv::Mat &src, const std::vector<EnergyPart> &fans);
 	void showArmorContours(std::string windows_name, const cv::Mat &src, const std::vector<EnergyPart> &armors);
 	void showBothContours(std::string windows_name, const cv::Mat &src, const std::vector<EnergyPart> &fans,
 		const std::vector<EnergyPart> &armors);
+    void showCenterRContours(std::string windows_name, const cv::Mat src);
 
 	bool isValidFanContour(const vector<cv::Point> &fan_contour);
 	bool isValidArmorContour(const vector<cv::Point> &armor_contour);
+    bool isValidCenterRContour(const vector<cv::Point> center_R_contour);
 
     void getFanPosition(std::vector<float> &fanPosition, const std::vector<EnergyPart> &fans, cv::Point cycle_center, double radius);
 	void getArmorPosition(std::vector<float> &armorPosition, const std::vector<EnergyPart> &armors, cv::Point cycle_center, double radius);

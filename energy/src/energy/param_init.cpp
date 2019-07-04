@@ -15,6 +15,7 @@ void Energy::initEnergy() {
 
 	fans_cnt = 0;
 	armors_cnt = 0;
+	centerRs_cnt = 0;
 	cycle_center = Point(0, 0);
 	target_center = Point(0, 0);
 	last_target_center = Point(0, 0);
@@ -66,6 +67,7 @@ void Energy::initEnergy() {
 
 	fans.clear();
 	armors.clear();
+    centerRs.clear();
 	fanPosition.clear();
 	armorPosition.clear();
 	Armor_center.clear();
@@ -103,6 +105,15 @@ void Energy::initEnergyPartParam() {
 	energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 45;
 	energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX = 3;
 	energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN = 1;
+
+    energy_part_param_.CENTER_R_CONTOUR_AREA_MAX = 100000;
+    energy_part_param_.CENTER_R_CONTOUR_AREA_MIN = 0;
+    energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN = 10;
+    energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN = 10;
+    energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX = 30;
+    energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX = 30;
+    energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
+    energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
 
 	energy_part_param_.TWIN_ANGEL_MAX = 10;
 

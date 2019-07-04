@@ -121,38 +121,42 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
 	return static_cast<int>(armors.size());
 }
 
-int Energy::findGimbleZeroPoint(const cv::Mat &src, vector<EnergyPart> &gimble_zero_points) {
+int Energy::findCenterR(const cv::Mat src) {
     if (src.empty())return 0;
     static Mat src_bin;
     src_bin = src.clone();
-//    threshold(src, src_bin, energy_part_param_.FAN_GRAY_THRESH, 255, THRESH_BINARY);
+//    threshold(src, src_bin, energy_part_param_.ARMOR_GRAY_THRESH, 255, THRESH_BINARY);
     if(src.type() == CV_8UC3){
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);
     }
-    std::vector<vector<Point> > zero_point_contours;
+    std::vector<vector<Point> > center_R_contours;
 
-    findContours(src_bin, zero_point_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    StructingElementErodeDilate(src_bin);
+//    imshow("R struct",src_bin);
 
-    for (auto &zero_point_contour : zero_point_contours) {
+    findContours(src_bin, center_R_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
-        double cur_contour_area = contourArea(zero_point_contour);
-        RotatedRect cur_rect = minAreaRect(zero_point_contour);
+    for (auto &center_R_contour : center_R_contours) {
+        if (!isValidCenterRContour(center_R_contour))
+        {
+            continue;
+        }
+
+        RotatedRect cur_rect = minAreaRect(center_R_contour);
         Size2f cur_size = cur_rect.size;
-
-//        cout<<"cur_contour_area: "<<cur_contour_area<<'\t'<<"rect_area: "<<cur_size.area()<<'\t'<<"ratio: "<<cur_contour_area/cur_size.area()<<endl;
-
         float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
         float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
 
-		if(length<10&&width<10&&length>1&&width>1){
-			cout<<"zero point center: "<<cur_rect.center<<endl;
-			cout<<"zero point area: "<<length<<'\t'<<width<<endl;
-			gimble_zero_points.emplace_back(zero_point_contour);
-		}
+//        if(length>10 && width>5){
+//            centerRs.emplace_back(center_R_contour);
+//            cout<<"center R area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
+//        }
+        centerRs.emplace_back(center_R_contour);
 
+//        cout<<"armor area: "<<length<<'\t'<<width<<endl;
     }
 
-    return static_cast<int>(fans.size());
+    return static_cast<int>(centerRs.size());
 }
 
 bool Energy::isValidFanContour(const vector<cv::Point> &fan_contour) {
@@ -226,3 +230,39 @@ bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
 	return true;
 }
 
+bool Energy::isValidCenterRContour(const vector<cv::Point> center_R_contour) {
+    double cur_contour_area = contourArea(center_R_contour);
+//	if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
+//		cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN)
+//	{
+//		//cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
+//		//cout<<"area fail."<<endl;
+//		return false;
+//	}
+    RotatedRect cur_rect = minAreaRect(center_R_contour);
+    Size2f cur_size = cur_rect.size;
+    float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
+    float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+    if (length < energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN || width < energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN)
+    {
+        //cout<<"length width min fail."<<endl;
+        return false;
+    }
+
+    if (length > energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX||width>energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX)
+    {
+        //cout<<"length width max fail."<<endl;
+        return false;
+    }
+
+    float length_width_ratio = length / width;
+    if (length_width_ratio > energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX ||
+        length_width_ratio < energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN)
+    {
+        //cout<<"length width ratio fail."<<endl;
+        return false;
+    }
+    if (cur_contour_area / cur_size.area() < 0.7) return false;
+
+    return true;
+}

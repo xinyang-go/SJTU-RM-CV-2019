@@ -29,7 +29,7 @@ using namespace std;
 mcu_data mcuData = {
         0,
         0,
-        ARMOR_STATE,
+        ENERGY_STATE,
         0,
         1,
         ENEMY_RED,
@@ -65,8 +65,8 @@ int main(int argc, char *argv[]) {
 //            video_armor = new VideoWrapper(armor_video);
 //            lastVideo(energy_video, PROJECT_DIR"/energy_video/");
 //            video_energy = new VideoWrapper(energy_video);
-            video_armor = new VideoWrapper("/home/sjturm/Desktop/valid_video/armor/65.avi");
-            video_energy = new VideoWrapper("/home/sjturm/Desktop/valid_video/energy/121.avi");
+            video_armor = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_energy = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
         if (video_armor->init()) {
             LOGM("video_armor source initialization successfully.");
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
                     }
                 }
 //                cout<<last_state<<endl;
-                waitKey(1);
+                waitKey(3);
             });
         } while (ok);
 

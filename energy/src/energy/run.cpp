@@ -17,6 +17,7 @@ int Energy::run(cv::Mat &src){
 //    imshow("src",src);
     fans.clear();
     armors.clear();
+    centerRs.clear();
     fanPosition.clear();
     armorPosition.clear();
 //    gimble_zero_points.clear();
@@ -24,17 +25,12 @@ int Energy::run(cv::Mat &src){
 
 	changeMark();
 	if (isMark)return 0;
-//	cout<<"yaw"<<origin_yaw<<endl;
-
-//    if(all_armor_centers.size()>200)all_armor_centers.clear();
-//    if(first_armor_centers.size()>200)first_armor_centers.clear();
-//    cout<<"first_armor_centers.size(): "<<first_armor_centers.size()<<endl;
-
 //    imagePreprocess(src);
 //    imshow("img_preprocess",src);
 
     threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
 //    imshow("bin",src);
+
 
 
     fans_cnt = findFan(src, fans, last_fans_cnt);
@@ -50,8 +46,10 @@ int Energy::run(cv::Mat &src){
 
     if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src, fans, armors);
 
+    centerRs_cnt = findCenterR(src);
+    if(centerRs_cnt>0)showCenterRContours("R",src);
 
-    if(armors_cnt>=4 && fans_cnt>=3) {
+        if(armors_cnt>=4 && fans_cnt>=3) {
         FILE *fp = fopen(PROJECT_DIR"/Mark/mark.txt", "w");
         if (fp) {
             fprintf(fp, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
@@ -112,6 +110,8 @@ int Energy::run(cv::Mat &src){
 //    cout<<"position mode: "<<position_mode<<endl;
 
     gimbleRotation();
+
+
     if(changeTarget())target_cnt++;
 
 //	if (!isSendTarget)return 0;
