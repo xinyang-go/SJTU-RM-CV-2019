@@ -9,10 +9,11 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-//extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
-//extern int mark;
 
 
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数为能量机关模式主控制流函数
+// ---------------------------------------------------------------------------------------------------------------------
 int Energy::run(cv::Mat &src){
 //    imshow("src",src);
     fans.clear();
@@ -45,37 +46,18 @@ int Energy::run(cv::Mat &src){
     centerRs_cnt = findCenterR(src);
     if(centerRs_cnt>0)showCenterRContours("R",src);
 
-    if(armors_cnt>=4 && fans_cnt>=3) {
-        FILE *fp = fopen(PROJECT_DIR"/Mark/mark.txt", "w");
-        if (fp) {
-            fprintf(fp, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
-            fclose(fp);
-            save_new_mark = false;
-        }
-        FILE *fp_all = fopen(PROJECT_DIR"/Mark/mark_all.txt", "a");
-        if (fp_all) {
-            fprintf(fp_all, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
-            fclose(fp_all);
-        }
-    }
-    if(armors_cnt==5){
-        FILE *fp_best = fopen(PROJECT_DIR"/Mark/mark_best.txt", "a");
-        if(fp_best){
-            fprintf(fp_best, "yaw: %f, pitch: %f\n",origin_yaw, origin_pitch);
-            fclose(fp_best);
-        }
-    }
+
     if(armors_cnt != fans_cnt+1)
     {
         return 0;
     }
 
     getAllArmorCenters();
-    cycleLeastFit();
-    attack_distance = 718;
+    circleLeastFit();
+    attack_distance = ATTACK_DISTANCE;
 
-    getFanPosition();
-    getArmorPosition();
+    getFanPolarAngle();
+    getArmorPolarAngle();
     findTarget();
 
 	if (energy_rotation_init) {

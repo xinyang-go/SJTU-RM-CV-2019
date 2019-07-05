@@ -89,16 +89,18 @@ private:
 	void showBothContours(std::string windows_name, const cv::Mat src);//显示扇叶和装甲板
     void showCenterRContours(std::string windows_name, const cv::Mat src);//显示风车中心候选区R
 
-    void getFanPosition();//获取扇叶极坐标角度
-	void getArmorPosition();//获取装甲板极坐标角度
+    void getFanPolarAngle();//获取扇叶极坐标角度
+	void getArmorPolarAngle();//获取装甲板极坐标角度
 	void getAllArmorCenters();//记录所有装甲板中心坐标
 
-    void cycleLeastFit();//利用所有记录的装甲板中心最小二乘法计算圆心和半径
+    void circleLeastFit();//利用所有记录的装甲板中心最小二乘法计算圆心和半径
 
 	void findTarget();//获取目标装甲板的极坐标角度和装甲板中心坐标
 
     void rotate();//获取预测点位
 	void stretch(cv::Point point_1, cv::Point2f &point_2);//将像素差转换为实际距离差
+
+	void writeDownMark();//记录操作手标定的云台初始角度
 
     void getPredictPoint();//获取预测点位
 	bool changeTarget();//判断目标是否改变

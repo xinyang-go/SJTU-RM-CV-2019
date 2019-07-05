@@ -22,9 +22,6 @@ struct EnergyPart {
 };
 
 struct EnergyPartParam {
-	double RPM;
-	double HIT_TIME;
-
 	int GRAY_THRESH;
 	int SPLIT_GRAY_THRESH;
 	int FAN_GRAY_THRESH;
@@ -60,12 +57,6 @@ struct EnergyPartParam {
 	float TWIN_ANGEL_MAX;
 };
 
-typedef struct GMAngle_t{
-    float yaw;
-    float pitch;
-}GMAngle_t;
-
-extern GMAngle_t aim;
 
 #endif //PARAM_STRUCT_DEFINE_H
 

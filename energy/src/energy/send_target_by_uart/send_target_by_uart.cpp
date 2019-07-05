@@ -5,6 +5,11 @@
 #include <iostream>
 using namespace std;
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于向主控板发送数据
+// ---------------------------------------------------------------------------------------------------------------------
 bool sendTarget(Serial& serial, float x, float y, float z) {
 	static short x_tmp, y_tmp, z_tmp;
 	uint8_t buff[8];
@@ -22,6 +27,11 @@ bool sendTarget(Serial& serial, float x, float y, float z) {
 	return serial.WriteData(buff, sizeof(buff));
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于操作手数据发送
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::sendTargetByUart(float x, float y, float z) {
     if(changeTarget())target_cnt++;
     sendTarget(serial, x, y, z);

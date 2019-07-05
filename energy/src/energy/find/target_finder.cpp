@@ -8,6 +8,11 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于匹配扇叶和装甲板，找到目标装甲板,计算其极坐标角度和中心坐标
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::findTarget() {
 	if (fan_polar_angle.size() >= armor_polar_angle.size()) return;//扇叶多于装甲板，识别错误
 	if (armor_polar_angle.empty())return;//找不到扇叶，识别错误
@@ -26,7 +31,7 @@ void Energy::findTarget() {
 		if (armor_polar_angle.at(i) - fan_polar_angle.at(j) < energy_part_param_.TWIN_ANGEL_MAX
 		    && armor_polar_angle.at(i) - fan_polar_angle.at(j) > -1 * energy_part_param_.TWIN_ANGEL_MAX) {
 			j++;
-			continue;//若某个扇叶的极坐标角度与第j个装甲板的极坐标角度接近，则两者匹配成功
+			continue;//若第i个扇叶的极坐标角度与第j个装甲板的极坐标角度接近，则两者匹配成功，i与j都加1
 		}
 		else {
             target_polar_angle = armor_polar_angle.at(j);//无法被匹配到的装甲板为待击打装甲板

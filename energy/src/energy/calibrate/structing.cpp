@@ -8,6 +8,10 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数对图像进行闭运算操作
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::StructingElementClose(cv::Mat &src,int length, int width){
     if (src.empty())return;
     //threshold(src, src, energy_part_param_.CAMERA_GRAY_THRESH, 255, THRESH_BINARY);
@@ -15,6 +19,11 @@ void Energy::StructingElementClose(cv::Mat &src,int length, int width){
     morphologyEx(src, src, MORPH_CLOSE, element);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数对图像进行腐蚀与膨胀操作
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::StructingElementErodeDilate(cv::Mat &src) {
     cv::Mat src_out, src_out_out;
     Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(3, 3));
