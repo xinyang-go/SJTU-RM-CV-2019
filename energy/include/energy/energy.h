@@ -23,130 +23,93 @@ using std::vector;
 
 class Energy {
 public:
-	Energy(Serial &u, uint8_t &color);
-	~Energy();
+	Energy(Serial &u, uint8_t &color);//构造函数，参数为串口和敌方颜色
+	~Energy();//默认析构函数
 	int run(cv::Mat &src);
-
-    cv::Point2f uart_hit_point;
-	clock_t start;
-	Serial &serial;
-
-//    void setAllyColor(int color);
-    void setRotation(int rotation);
-	void setEnergyRotationInit();
-
-	void extract(cv::Mat &src);
-
-	void sendTargetByUart(float x, float y, float z);
+	Serial &serial;//串口
+	void setEnergyRotationInit();//判断顺逆时针函数
+	void extract(cv::Mat &src);//框取图像中的一块区域进行处理
+	void sendTargetByUart(float x, float y, float z);//向主控板发送数据
 
 
 private:
+	EnergyPartParam energy_part_param_;//能量机关的参数设置
+	bool isMark;//若操作手正在手动标定，则为true
+	int fans_cnt;//图像中的扇叶个数
+	int armors_cnt;//图像中的装甲板个数
+	int centerRs_cnt;//图像中可能的风车中心字母R选区个数
+	int last_fans_cnt;//上一帧的扇叶个数
+	int last_armors_cnt;//上一帧的装甲板个数
+	double radius;//大风车半径
+	float target_polar_angle;//待击打装甲板的极坐标角度
+    float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度
+	uint8_t &ally_color;//我方颜色
+	int energy_rotation_direction;//风车旋转方向
+	float attack_distance;//步兵与风车平面距离
+	int send_cnt;//向主控板发送的数据总次数
+	float yaw_rotation;//云台yaw轴应该转到的角度
+	float pitch_rotation;//云台pitch轴应该转到的角度
+	uint8_t last_mark;//用于记录上一帧操作手是否进行标定
+    double predict_rad;//预测提前角
+	bool energy_rotation_init;//若仍在判断风车旋转方向，则为true
+	int clockwise_rotation_init_cnt;//装甲板顺时针旋转次数
+	int anticlockwise_rotation_init_cnt;//装甲板逆时针旋转次数
+	float red_origin_yaw, red_origin_pitch;//红方的初始云台对心角度设定值
+	float blue_origin_yaw, blue_origin_pitch;//蓝方的初始云台对心角度设定值
+	float origin_yaw, origin_pitch;//初始的云台角度设定值
+	float target_cnt;//用于记录寻找到的装甲板总数，该值变化则立即中断主控板发射进程，防止重复击打已点亮的装甲板
+    bool save_new_mark;//若操作手进行过手动标定，则为true
 
-	EnergyPartParam energy_part_param_;
-	LiftHeight lift_height_;
-	bool isSendTarget;
-	bool isMark;
-	int fans_cnt;
-	int armors_cnt;
-	int centerRs_cnt;
-	int count;
-	int last_fans_cnt;
-	int last_armors_cnt;
-	double radius;
-	double target_position;
-	double last_target_position;
-	double last_hit_position;
-	float target_armor;
-    float last_target_armor;
-	uint8_t &ally_color;
-	int energy_part_rotation;
-	float attack_distance;
-	int send_cnt;
-	double rectified_focal_length;
-	double theta;//电机pitch轴应旋转的角度
-	double phi;//电机yaw轴应旋转的角度
-	float yaw_rotation;
-	float pitch_rotation;
-	uint8_t last_mark;
-	int position_mode;
-	int last_position_mode;
-    int isLeftVertexFound, isTopVertexFound, isRightVertexFound, isBottomVertexFound;
-	bool energy_rotation_init;
-	int clockwise_rotation_init_cnt;
-	int anticlockwise_rotation_init_cnt;
-	float red_origin_yaw, red_origin_pitch;
-	float blue_origin_yaw, blue_origin_pitch;
-	float origin_yaw, origin_pitch;
-	float target_cnt;
-    bool target_cnt_flag;
-    bool save_new_mark;
+	std::vector<EnergyPart> fans;//图像中所有扇叶
+	std::vector<EnergyPart> armors;//图像中所有装甲板
+    std::vector<EnergyPart> centerRs;//风车中心字母R的可能候选区
 
-	std::vector<EnergyPart> fans;
-	std::vector<EnergyPart> armors;
-    std::vector<EnergyPart> centerRs;
- //   std::vector<EnergyPart> gimble_zero_points;
+	cv::Point circle_center_point;//风车圆心坐标
+	cv::Point target_point;//目标装甲板中心坐标
+	cv::Point predict_point;//预测的击打点坐标
+	std::vector<float>fan_polar_angle;//当前帧所有扇叶的极坐标角度
+	std::vector<float>armor_polar_angle;//当前帧所有装甲板的极坐标角度
+    std::vector<cv::Point> all_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
+	cv::Mat src_blue, src_red, src_green;//通道分离中的三个图像通道
 
-	cv::Point cycle_center;
-	cv::Point target_center;
-	cv::Point last_target_center;
-	cv::Point hit_point;
-	std::vector<float>fanPosition;
-	std::vector<float>armorPosition;
-	std::vector<cv::Point> Armor_center;
-    std::vector<cv::Point> first_armor_centers;
-    std::vector<cv::Point> all_armor_centers;
-    cv::Point left, right, top, bottom;
-	cv::Mat src_blue, src_red, src_green;
-    
-	void initEnergy();
-	void initEnergyPartParam();
-	void initRotation();
+	void initEnergy();//能量机关初始化
+	void initEnergyPartParam();//能量机关参数初始化
+	void initRotation();//顺逆时针初始化
 
-	int findFan(const cv::Mat src, int &last_fans_cnt);
-	int findArmor(const cv::Mat src, int &last_armors_cnt);
-    int findCenterR(const cv::Mat src);
+	int findFan(const cv::Mat src, int &last_fans_cnt);//寻找图中所有扇叶
+	int findArmor(const cv::Mat src, int &last_armors_cnt);//寻找图中所有装甲板
+    int findCenterR(const cv::Mat src);//寻找图中可能的风车中心字母R
 
-	void showFanContours(std::string windows_name, const cv::Mat &src, const std::vector<EnergyPart> &fans);
-	void showArmorContours(std::string windows_name, const cv::Mat &src, const std::vector<EnergyPart> &armors);
-	void showBothContours(std::string windows_name, const cv::Mat src);
-    void showCenterRContours(std::string windows_name, const cv::Mat src);
+    bool isValidFanContour(const vector<cv::Point> fan_contour);//扇叶矩形尺寸要求
+    bool isValidArmorContour(const vector<cv::Point> armor_contour);//装甲板矩形尺寸要求
+    bool isValidCenterRContour(const vector<cv::Point> center_R_contour);//风车中心选区尺寸要求
 
-	bool isValidFanContour(const vector<cv::Point> fan_contour);
-	bool isValidArmorContour(const vector<cv::Point> armor_contour);
-    bool isValidCenterRContour(const vector<cv::Point> center_R_contour);
+	void showFanContours(std::string windows_name, const cv::Mat src);//显示扇叶
+	void showArmorContours(std::string windows_name, const cv::Mat src);//显示装甲板
+	void showBothContours(std::string windows_name, const cv::Mat src);//显示扇叶和装甲板
+    void showCenterRContours(std::string windows_name, const cv::Mat src);//显示风车中心候选区R
 
-    void getFanPosition(std::vector<float> &fanPosition, const std::vector<EnergyPart> &fans, cv::Point cycle_center, double radius);
-	void getArmorPosition(std::vector<float> &armorPosition, const std::vector<EnergyPart> &armors, cv::Point cycle_center, double radius);
-	void getFirstArmorCenters(vector<EnergyPart> &armors, std::vector<cv::Point> &first_armor_centers);
-	void getAllArmorCenters();
-	void getPosition(cv::Point point, double &angle);
+    void getFanPosition();//获取扇叶极坐标角度
+	void getArmorPosition();//获取装甲板极坐标角度
+	void getAllArmorCenters();//记录所有装甲板中心坐标
 
-	void cycleQuickCalculate(std::vector<cv::Point> &first_armor_centers, cv::Point &cycle_center, double &radius);
-    void cycleDefaultCalculateConst(cv::Point &cycle_center, double &radius);
-    void cycleCalculate();
-    void cycleLeastFit();
+    void cycleLeastFit();//利用所有记录的装甲板中心最小二乘法计算圆心和半径
 
-	void findTarget(const std::vector<float>fanPosition, const std::vector<float>armorPosition, float &target_armor);
+	void findTarget();//获取目标装甲板的极坐标角度和装甲板中心坐标
 
-    void findWholeCycle(const std::vector<cv::Point>&first_armor_centers);
+    void rotate();//获取预测点位
+	void stretch(cv::Point point_1, cv::Point2f &point_2);//将像素差转换为实际距离差
 
-	void saveFourPoints(std::vector<cv::Point> &FourPoints, cv::Point point_1, cv::Point point_2, cv::Point point_3, cv::Point point_4);
-    void savePoint2f(std::vector<cv::Point2f> &point_save, cv::Point point);
-    double pointDistance(cv::Point point_1, cv::Point point_2);
-    void rotate(double rad, double radius, cv::Point center, cv::Point point_old, cv::Point &point_new);
-	void stretch(cv::Point point_1, cv::Point2f &point_2);
-	void cycle(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point &center, double &radius);
+    void getPredictPoint();//获取预测点位
+	bool changeTarget();//判断目标是否改变
+	void changeMark();//操作手手动修改标定值
+    void gimbleRotation();//计算云台旋转角度
 
-    void getHitPoint();
-	bool changeTarget();
-	void changeMark();
-    void gimbleRotation();
+	void splitBayerBG(cv::Mat src, cv::Mat &blue, cv::Mat &red);//拜耳阵列分离
+	void imagePreprocess(cv::Mat &src);//图像通道分离
 
-	void splitBayerBG(cv::Mat &src, cv::Mat &blue, cv::Mat &red);
-	void imagePreprocess(cv::Mat &src);
-
-	void StructingElementClose(cv::Mat &src,int length, int width);
-	void StructingElementErodeDilate(cv::Mat &src);
+	void StructingElementClose(cv::Mat &src,int length, int width);//闭运算
+	void StructingElementErodeDilate(cv::Mat &src);//腐蚀和膨胀
 
 };
 

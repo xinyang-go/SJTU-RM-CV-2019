@@ -60,16 +60,6 @@ struct EnergyPartParam {
 	float TWIN_ANGEL_MAX;
 };
 
-struct LiftHeight{
-    float LIFT_0;
-    float LIFT_30;
-    float LIFT_60;
-    float LIFT_90;
-    float LIFT_minus_30;
-    float LIFT_minus_60;
-    float LIFT_minus_90;
-};
-
 typedef struct GMAngle_t{
     float yaw;
     float pitch;

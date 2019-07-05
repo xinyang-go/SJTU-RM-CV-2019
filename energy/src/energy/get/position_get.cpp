@@ -8,42 +8,50 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-void Energy::getFanPosition(std::vector<float> &fanPosition, const std::vector<EnergyPart> &fans, cv::Point cycle_center, double radius) {
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于获得图像中所有扇叶的当前极坐标角度
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::getFanPosition() {
 	if (radius == 0)return;
 	for (const auto &fan : fans)
 	{
-		float angle = static_cast<float>(180 / PI * atan2(-1 * (fan.rect.center.y - cycle_center.y), (fan.rect.center.x - cycle_center.x)));
-		fanPosition.push_back(angle);
+		float angle = static_cast<float>(180 / PI * atan2(-1 * (fan.rect.center.y - circle_center_point.y),
+		        (fan.rect.center.x - circle_center_point.x)));
+		fan_polar_angle.push_back(angle);
 	}
 //	cout << "fanPosition.size() = " << fanPosition.size() << '\t' << endl;
 }
 
-void Energy::getArmorPosition(std::vector<float> &armorPosition, const std::vector<EnergyPart> &armors, cv::Point cycle_center, double radius) {
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于获得图像中所有装甲板的当前极坐标角度
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::getArmorPosition() {
 	if (radius == 0)return;
 	for (const auto &armor : armors)
 	{
-		float angle = static_cast<float>(180 / PI * atan2(-1 * (armor.rect.center.y - cycle_center.y), (armor.rect.center.x - cycle_center.x)));
-		armorPosition.push_back(angle);
+		float angle = static_cast<float>(180 / PI * atan2(-1 * (armor.rect.center.y - circle_center_point.y),
+		        (armor.rect.center.x - circle_center_point.x)));
+		armor_polar_angle.push_back(angle);
 
 	}
 //	cout << "armorPosition.size() = " << armorPosition.size() << '\t' << endl;
 }
 
-void Energy::getFirstArmorCenters(vector<EnergyPart> &armors, std::vector<cv::Point> &first_armor_centers)
-{
-	for (const auto &armor : armors) {
-		if (armors.size() < 2)first_armor_centers.push_back(armor.rect.center);
-	}
-}
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于存储图像中所有装甲板的中心坐标，以便后续最小二乘法计算圆心和半径
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::getAllArmorCenters()
 {
 	for (const auto &armor : armors) {
 		all_armor_centers.push_back(armor.rect.center);
 	}
-}
-
-void Energy::getPosition(cv::Point point, double &angle){
-	if (radius == 0)return;
-	angle = (180 / PI * atan2(-1 * (point.y - cycle_center.y), (point.x - cycle_center.x)));
 }

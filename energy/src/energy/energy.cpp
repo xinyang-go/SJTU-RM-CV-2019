@@ -20,11 +20,11 @@ Energy::Energy(Serial &u, uint8_t &color):serial(u),ally_color(color),
 
     save_new_mark = true;
 
-    if(ally_color==ALLY_RED){
+    if(ally_color == ALLY_RED){
         origin_yaw = red_origin_yaw;
         origin_pitch = red_origin_pitch;
     }
-    else if(ally_color==ALLY_BLUE){
+    else if(ally_color == ALLY_BLUE){
         origin_yaw = blue_origin_yaw;
         origin_pitch = blue_origin_pitch;
     }
@@ -35,21 +35,10 @@ Energy::Energy(Serial &u, uint8_t &color):serial(u),ally_color(color),
 
 Energy::~Energy() = default;
 
-//
-//void Energy::setAllyColor(int color)
-//{
-//    ally_color_ = color;
-//}
-
-void Energy::setRotation(int rotation){
-	energy_part_rotation = rotation;
-}
-
 void Energy::setEnergyRotationInit() {
 	initEnergy();
 	initEnergyPartParam();
 	energy_rotation_init = true;
-
 
 	if(!save_new_mark){
         FILE *fp = fopen(PROJECT_DIR"/Mark/mark.txt", "r");

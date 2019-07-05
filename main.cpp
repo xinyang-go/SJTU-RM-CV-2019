@@ -96,8 +96,6 @@ int main(int argc, char *argv[]) {
         ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
 
         Energy energy(serial, mcuData.enemy_color);
-//        energy.setAllyColor(ally_color);
-        energy.setRotation(CLOCKWISE);
 
         bool ok = true;
         cout<<"start running"<<endl;
@@ -169,7 +167,7 @@ int main(int argc, char *argv[]) {
                     }
                 }
 //                cout<<last_state<<endl;
-                waitKey(3);
+                waitKey(1);
             });
         } while (ok);
 

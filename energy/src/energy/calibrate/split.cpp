@@ -8,7 +8,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-void Energy::splitBayerBG(cv::Mat &src, cv::Mat &blue, cv::Mat &red) {
+void Energy::splitBayerBG(cv::Mat src, cv::Mat &blue, cv::Mat &red) {
     uchar* data;
     uchar* bayer_data[2];
     for (int i = 0; i < src.rows; ++i) {
