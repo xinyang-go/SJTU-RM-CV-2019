@@ -66,4 +66,3 @@ void lastVideo(std::string &video_name, const std::string &filename_prefix){
     }
     if(cnt > 1) std::string video_name = filename_prefix + std::to_string(cnt) + ".avi";
 }
-

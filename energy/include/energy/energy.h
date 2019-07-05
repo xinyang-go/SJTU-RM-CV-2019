@@ -25,7 +25,7 @@ class Energy {
 public:
 	Energy(Serial &u, uint8_t &color);//构造函数，参数为串口和敌方颜色
 	~Energy();//默认析构函数
-	int run(cv::Mat &src);
+	int run(cv::Mat &gimble_src, cv::Mat &base_src);
 	Serial &serial;//串口
 	void setEnergyRotationInit();//判断顺逆时针函数
 	void extract(cv::Mat &src);//框取图像中的一块区域进行处理

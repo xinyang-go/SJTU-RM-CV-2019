@@ -13,6 +13,10 @@
 #define ENEMY_BLUE 0
 #define ENEMY_RED  1
 
+#define BIG_ENERGY_STATE 'b'
+#define SMALL_ENERGY_STATE 's'
+#define ARMOR_STATE  'a'
+
 struct mcu_data{
     float curr_yaw;
     float curr_pitch;

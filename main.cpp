@@ -20,16 +20,13 @@
 
 #include <log.h>
 
-#define ENERGY_STATE 'e'
-#define ARMOR_STATE  'a'
-
 using namespace cv;
 using namespace std;
 
 mcu_data mcuData = {
         0,
         0,
-        ENERGY_STATE,
+        BIG_ENERGY_STATE,
         0,
         1,
         ENEMY_RED,
@@ -101,26 +98,28 @@ int main(int argc, char *argv[]) {
         cout<<"start running"<<endl;
         do {
             CNT_TIME("Total", {
-                if (mcuData.state == ENERGY_STATE) {
-					if (last_state == ARMOR_STATE) {
+                if (mcuData.state == BIG_ENERGY_STATE) {
+					if (last_state != BIG_ENERGY_STATE) {
 						energy.setEnergyRotationInit();
 						cout << "set" << endl;
 					}
 					last_state = mcuData.state;
-                    if (video_energy) {
-                        ok = video_energy->read(energy_src);
+                    if (video_armor && video_energy) {
+                        ok = video_armor->read(armor_src) && video_energy->read(energy_src);
                         if (!ok) {
+                            delete video_armor;
                             delete video_energy;
+                            video_armor = nullptr;
                             video_energy = nullptr;
                         }
                         if(save_video){
                             Mat energy_save = energy_src.clone();
                             cvtColor(energy_save,energy_save,COLOR_GRAY2BGR);
+                            armor_video_writer.write(armor_src);
                             energy_video_writer.write(energy_save);
-//                            cout<<energy_src.type()<<endl;
-//                            LOGM(STR_CTR(WORD_GREEN,"Save ENERGY!"));
                         }
                         if (show_origin) {
+                            imshow("armor src", armor_src);
                             imshow("energy src", energy_src);
                         }
 //                        if (from_camera == 0) {
@@ -128,18 +127,57 @@ int main(int argc, char *argv[]) {
 //							imshow("resize", energy_src);
 //                            energy.extract(energy_src);
 //                        }
-                        energy.run(energy_src);
-//                        waitKey(1);
-                    } else {
+                        energy.run(armor_src, energy_src);
+                        waitKey(1);
+                    }
+                    else {
                         video_energy = new CameraWrapper(1, "energy");
                         if(!video_energy->init()){
                             delete video_energy;
                             video_energy = nullptr;
                         }
                     }
+                }
 
-                } else if (mcuData.state == ARMOR_STATE) {
-					last_state = mcuData.state;
+                else if (mcuData.state == SMALL_ENERGY_STATE) {
+                    last_state = mcuData.state;
+                    if (video_armor && video_energy) {
+                        ok = video_armor->read(armor_src) && video_energy->read(energy_src);
+                        if (!ok) {
+                            delete video_armor;
+                            delete video_energy;
+                            video_armor = nullptr;
+                            video_energy = nullptr;
+                        }
+                        if(save_video){
+                            Mat energy_save = energy_src.clone();
+                            cvtColor(energy_save,energy_save,COLOR_GRAY2BGR);
+                            armor_video_writer.write(armor_src);
+                            energy_video_writer.write(energy_save);
+                        }
+                        if (show_origin) {
+                            imshow("armor src", armor_src);
+                            imshow("energy src", energy_src);
+                        }
+//                        if (from_camera == 0) {
+//							cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
+//							imshow("resize", energy_src);
+//                            energy.extract(energy_src);
+//                        }
+                        energy.run(armor_src, energy_src);
+                        waitKey(1);
+                    }
+                    else {
+                        video_energy = new CameraWrapper(1, "energy");
+                        if(!video_energy->init()){
+                            delete video_energy;
+                            video_energy = nullptr;
+                        }
+                    }
+                }
+
+                else if (mcuData.state == ARMOR_STATE) {
+                    last_state = mcuData.state;
                     if (video_armor) {
                         ok = video_armor->read(armor_src);
                         if (!ok) {
@@ -148,17 +186,16 @@ int main(int argc, char *argv[]) {
                         }
                         if(save_video){
                             armor_video_writer.write(armor_src);
-//                            cout<<armor_src.type()<<endl;
-//                            LOGM(STR_CTR(WORD_GREEN,"Save ARMOR!"));
                         }
 //                        flip(armor_src, armor_src, 0);
                         if (show_origin) {
                             imshow("armor src", armor_src);
                         }
                         CNT_TIME("Armor Time", {
-                            armorFinder.run(armor_src);
+                                armorFinder.run(armor_src);
                         });
-                    } else {
+                    }
+                    else {
                         video_armor = new CameraWrapper(0, "armor");
                         if(!video_armor->init()){
                             delete video_armor;
@@ -166,8 +203,7 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
-//                cout<<last_state<<endl;
-                waitKey(1);
+
             });
         } while (ok);
 
