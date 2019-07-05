@@ -25,7 +25,10 @@ class Energy {
 public:
 	Energy(Serial &u, uint8_t &color);//构造函数，参数为串口和敌方颜色
 	~Energy();//默认析构函数
-	int run(cv::Mat &gimble_src, cv::Mat &base_src);
+	int runBig(cv::Mat &gimble_src, cv::Mat &chassis_src);
+    int runBig(cv::Mat &gimble_src);
+    int runSmall(cv::Mat &gimble_src, cv::Mat &chassis_src);
+    int runSmall(cv::Mat &gimble_src);
 	Serial &serial;//串口
 	void setEnergyRotationInit();//判断顺逆时针函数
 	void extract(cv::Mat &src);//框取图像中的一块区域进行处理
@@ -99,6 +102,7 @@ private:
 
     void rotate();//获取预测点位
 	void stretch(cv::Point point_1, cv::Point2f &point_2);//将像素差转换为实际距离差
+    double pointDistance(cv::Point point_1, cv::Point point_2);//计算两点距离
 
 	void writeDownMark();//记录操作手标定的云台初始角度
 

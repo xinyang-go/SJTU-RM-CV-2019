@@ -59,3 +59,15 @@ void Energy::stretch(cv::Point point_1, cv::Point2f &point_2){
 	point_2.x = static_cast<float >( ARMOR_CENTER_TO_CYCLE_CENTER * x_0 / r_0);
 	point_2.y = static_cast<float >( ARMOR_CENTER_TO_CYCLE_CENTER * y_0 / r_0);
 }
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于计算两点距离
+// ---------------------------------------------------------------------------------------------------------------------
+
+double Energy::pointDistance(cv::Point point_1, cv::Point point_2){
+    double distance = 0;
+    distance = sqrt(pow(static_cast<double>(point_1.x - point_2.x),2)
+                    + pow(static_cast<double>(point_1.y - point_2.y),2));
+    return distance;
+}

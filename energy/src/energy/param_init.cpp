@@ -26,7 +26,7 @@ void Energy::initEnergy() {
     target_polar_angle = -1000;
     last_target_polar_angle = -1000;
 	radius = 0;
-    energy_rotation_direction = CLOCKWISE;
+    energy_rotation_direction = ANTICLOCKWISE;
 	attack_distance = ATTACK_DISTANCE;
 	last_fans_cnt = 0;
 	last_armors_cnt = 0;

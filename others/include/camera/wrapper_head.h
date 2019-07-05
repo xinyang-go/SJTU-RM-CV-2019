@@ -15,7 +15,6 @@ public:
     virtual ~WrapperHead() = default;;
     virtual bool init() = 0;
     virtual bool read(cv::Mat &src) = 0;
-
 };
 
 

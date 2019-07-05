@@ -26,16 +26,23 @@ using namespace std;
 mcu_data mcuData = {
         0,
         0,
-        BIG_ENERGY_STATE,
+        ARMOR_STATE,
         0,
         1,
         ENEMY_RED,
 };
 
+WrapperHead *video_gimble = nullptr;
+WrapperHead *video_chassis = nullptr;
+
+Serial serial(115200);
+uint8_t last_state = mcuData.state;
+
+ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
+Energy energy(serial, mcuData.enemy_color);
+
 int main(int argc, char *argv[]) {
     process_options(argc, argv);
-    Serial serial(115200);
-	uint8_t last_state = mcuData.state;
     thread receive(uartReceive, &serial);
 
     int from_camera = 1;
@@ -45,170 +52,81 @@ int main(int argc, char *argv[]) {
     }
 
     while (true) {
-        VideoWriter armor_video_writer, energy_video_writer;
-        if (save_video) {
-            initVideoWriter(armor_video_writer, PROJECT_DIR"/armor_video/");
-            initVideoWriter(energy_video_writer, PROJECT_DIR"/energy_video/");
-        }
-
-        WrapperHead *video_armor=nullptr;
-        WrapperHead *video_energy=nullptr;
         if (from_camera) {
-            video_armor = new CameraWrapper(0, "armor");
-            video_energy = new CameraWrapper(1, "energy");
+            video_gimble = new CameraWrapper(0, "armor");
+            video_chassis = new CameraWrapper(1, "energy");
         } else {
-//            string armor_video, energy_video;
-//            lastVideo(armor_video, PROJECT_DIR"/armor_video/");
-//            video_armor = new VideoWrapper(armor_video);
-//            lastVideo(energy_video, PROJECT_DIR"/energy_video/");
-//            video_energy = new VideoWrapper(energy_video);
-            video_armor = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
-            video_energy = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
-        if (video_armor->init()) {
+        if (video_gimble->init()) {
             LOGM("video_armor source initialization successfully.");
         } else {
             LOGW("video_armor source unavailable!");
-            delete video_armor;
-            video_armor = nullptr;
+            delete video_gimble;
+            video_gimble = nullptr;
         }
-        if (video_energy->init()) {
+        if (video_chassis->init()) {
             LOGM("video_energy source initialization successfully.");
         } else {
             LOGW("video_energy source unavailable!");
-            delete video_energy;
-            video_energy = nullptr;
+            delete video_chassis;
+            video_chassis = nullptr;
         }
 
-        Mat energy_src, armor_src;
+        Mat gimble_src, chassis_src;
         for (int i = 0; i < 10; i++) {
-            if (video_armor) {
-                video_armor->read(armor_src);
+            if (video_gimble) {
+                video_gimble->read(gimble_src);
             }
-            if (video_energy) {
-                video_energy->read(energy_src);
+            if (video_chassis) {
+                video_chassis->read(chassis_src);
             }
         }
-
-        ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
-
-        Energy energy(serial, mcuData.enemy_color);
-
         bool ok = true;
         cout<<"start running"<<endl;
         do {
             CNT_TIME("Total", {
-                if (mcuData.state == BIG_ENERGY_STATE) {
-					if (last_state != BIG_ENERGY_STATE) {
-						energy.setEnergyRotationInit();
-						cout << "set" << endl;
-					}
-					last_state = mcuData.state;
-                    if (video_armor && video_energy) {
-                        ok = video_armor->read(armor_src) && video_energy->read(energy_src);
-                        if (!ok) {
-                            delete video_armor;
-                            delete video_energy;
-                            video_armor = nullptr;
-                            video_energy = nullptr;
-                        }
-                        if(save_video){
-                            Mat energy_save = energy_src.clone();
-                            cvtColor(energy_save,energy_save,COLOR_GRAY2BGR);
-                            armor_video_writer.write(armor_src);
-                            energy_video_writer.write(energy_save);
-                        }
-                        if (show_origin) {
-                            imshow("armor src", armor_src);
-                            imshow("energy src", energy_src);
-                        }
+                if (mcuData.state != ARMOR_STATE) {//能量机关模式
+                    ok = checkReconnect(video_gimble->read(gimble_src), video_chassis->read(chassis_src));//检查有几个摄像头
+                    if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
+                    if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
+
+                    if (mcuData.state == BIG_ENERGY_STATE) {//大符模式
 //                        if (from_camera == 0) {
-//							cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
-//							imshow("resize", energy_src);
+//                            cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
+//                            imshow("resize", energy_src);
 //                            energy.extract(energy_src);
 //                        }
-                        energy.run(armor_src, energy_src);
-                        waitKey(1);
-                    }
-                    else {
-                        video_energy = new CameraWrapper(1, "energy");
-                        if(!video_energy->init()){
-                            delete video_energy;
-                            video_energy = nullptr;
+                        if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大符模式，即刚往完成切换，则需要初始化
+                            energy.setEnergyRotationInit();
+                            cout << "set" << endl;
                         }
+                        energy.runBig(gimble_src, chassis_src);//击打大符
                     }
+                    else if (mcuData.state == SMALL_ENERGY_STATE) {
+                        energy.runSmall(gimble_src, chassis_src);//击打小符
+                    }
+                    last_state = mcuData.state;//更新上一帧状态
                 }
-
-                else if (mcuData.state == SMALL_ENERGY_STATE) {
+                else if (mcuData.state == ARMOR_STATE) {//自瞄模式
                     last_state = mcuData.state;
-                    if (video_armor && video_energy) {
-                        ok = video_armor->read(armor_src) && video_energy->read(energy_src);
-                        if (!ok) {
-                            delete video_armor;
-                            delete video_energy;
-                            video_armor = nullptr;
-                            video_energy = nullptr;
-                        }
-                        if(save_video){
-                            Mat energy_save = energy_src.clone();
-                            cvtColor(energy_save,energy_save,COLOR_GRAY2BGR);
-                            armor_video_writer.write(armor_src);
-                            energy_video_writer.write(energy_save);
-                        }
-                        if (show_origin) {
-                            imshow("armor src", armor_src);
-                            imshow("energy src", energy_src);
-                        }
-//                        if (from_camera == 0) {
-//							cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
-//							imshow("resize", energy_src);
-//                            energy.extract(energy_src);
-//                        }
-                        energy.run(armor_src, energy_src);
-                        waitKey(1);
-                    }
-                    else {
-                        video_energy = new CameraWrapper(1, "energy");
-                        if(!video_energy->init()){
-                            delete video_energy;
-                            video_energy = nullptr;
-                        }
-                    }
-                }
+                    ok = checkReconnect(video_gimble->read(gimble_src));
+                    if (save_video) saveVideos(gimble_src);
+                    if (show_origin) showOrigin(gimble_src);
+                    CNT_TIME("Armor Time", {
+                            armorFinder.run(gimble_src);
+                    });
 
-                else if (mcuData.state == ARMOR_STATE) {
-                    last_state = mcuData.state;
-                    if (video_armor) {
-                        ok = video_armor->read(armor_src);
-                        if (!ok) {
-                            delete video_armor;
-                            video_armor = nullptr;
-                        }
-                        if(save_video){
-                            armor_video_writer.write(armor_src);
-                        }
-//                        flip(armor_src, armor_src, 0);
-                        if (show_origin) {
-                            imshow("armor src", armor_src);
-                        }
-                        CNT_TIME("Armor Time", {
-                                armorFinder.run(armor_src);
-                        });
-                    }
-                    else {
-                        video_armor = new CameraWrapper(0, "armor");
-                        if(!video_armor->init()){
-                            delete video_armor;
-                            video_armor = nullptr;
-                        }
-                    }
                 }
-
+                cv::waitKey(1);
             });
         } while (ok);
 
-        delete video_armor;
-        delete video_energy;
+        delete video_gimble;
+        video_gimble = nullptr;
+        delete video_chassis;
+        video_chassis = nullptr;
         cout << "Program fails. Restarting" << endl;
     }
     return 0;

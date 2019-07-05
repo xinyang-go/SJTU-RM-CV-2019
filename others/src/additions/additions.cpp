@@ -4,14 +4,30 @@
 
 #include <cstring>
 #include <fstream>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <additions/additions.h>
+#include <camera/camera_wrapper.h>
 #include <log.h>
 #include <opencv2/videoio/videoio_c.h>
 #include <iostream>
+#include <energy/energy.h>
+#include <armor_finder/armor_finder.h>
 
 #define RECEIVE_LOG_LEVEL LOG_MSG
 
 using namespace std;
+using namespace cv;
+
+extern WrapperHead *video_gimble;
+extern WrapperHead *video_chassis;
+
+extern Serial serial;
+extern uint8_t last_state;
+
+extern ArmorFinder armorFinder;
+extern Energy energy;
 
 void uartReceive(Serial* pSerial) {
     char buffer[20];
@@ -38,7 +54,8 @@ void uartReceive(Serial* pSerial) {
     }
 }
 
-void initVideoWriter(cv::VideoWriter& video, const std::string &filename_prefix){
+cv::VideoWriter initVideoWriter(const std::string &filename_prefix){
+    cv::VideoWriter video;
     std::ifstream in(filename_prefix + "cnt.txt");
     int cnt = 0;
     if (in.is_open())
@@ -54,15 +71,85 @@ void initVideoWriter(cv::VideoWriter& video, const std::string &filename_prefix)
         out.close();
     }
     video.open(file_name, CV_FOURCC('P', 'I', 'M', '1'), 90, cv::Size(640, 480), true);
+    return video;
 }
 
-void lastVideo(std::string &video_name, const std::string &filename_prefix){
-    std::ifstream in(filename_prefix + "cnt.txt");
-    int cnt = 0;
-    if (in.is_open())
-    {
-        in >> cnt;
-        in.close();
+bool checkReconnect(bool is_gimble_connect, bool is_chassis_connect){
+    if(!is_gimble_connect){
+        video_gimble = new CameraWrapper(0, "armor");
+        if(!(is_gimble_connect = video_gimble->init())){
+            delete video_gimble;
+            video_gimble = nullptr;
+        }
     }
-    if(cnt > 1) std::string video_name = filename_prefix + std::to_string(cnt) + ".avi";
+    if(!is_chassis_connect){
+        video_chassis = new CameraWrapper(1, "energy");
+        if(!(is_chassis_connect = video_chassis->init())){
+            delete video_chassis;
+            video_chassis = nullptr;
+        }
+    }
+    return is_gimble_connect && is_chassis_connect;
+}
+
+bool checkReconnect(bool is_gimble_connect){
+    if(!is_gimble_connect){
+        video_gimble = new CameraWrapper(0, "armor");
+        if(!(is_gimble_connect = video_gimble->init())){
+            delete video_gimble;
+            video_gimble = nullptr;
+        }
+    }
+    return is_gimble_connect;
+}
+
+auto gimble_video_writer = initVideoWriter(PROJECT_DIR"/gimble_video/");
+auto chassis_video_writer = initVideoWriter(PROJECT_DIR"/chassis_video/");
+
+void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src){
+    if(!gimble_src.empty() && !chassis_src.empty()){
+        gimble_video_writer.write(gimble_src);
+        Mat chassis_save = chassis_src.clone();
+        cvtColor(chassis_save,chassis_save,COLOR_GRAY2BGR);
+        chassis_video_writer.write(chassis_save);
+    }
+    else if(!gimble_src.empty() && chassis_src.empty()){
+        gimble_video_writer.write(gimble_src);
+    }
+    else if(gimble_src.empty() && !chassis_src.empty()){
+        Mat chassis_save = chassis_src.clone();
+        cvtColor(chassis_save,chassis_save,COLOR_GRAY2BGR);
+        chassis_video_writer.write(chassis_save);
+    }
+    else return;
+}
+
+void saveVideos(const cv::Mat &gimble_src){
+    if(!gimble_src.empty()){
+        gimble_video_writer.write(gimble_src);
+    }
+    else return;
+}
+
+void showOrigin(const cv::Mat &gimble_src, const cv::Mat &chassis_src){
+    if(!gimble_src.empty() && !chassis_src.empty()){
+        imshow("gimble", gimble_src);
+        imshow("chassis", chassis_src);
+    }
+    else if(!gimble_src.empty() && chassis_src.empty()){
+        imshow("gimble", gimble_src);
+    }
+    else if(gimble_src.empty() && !chassis_src.empty()){
+        imshow("chassis", chassis_src);
+    }
+    else return;
+    cv::waitKey(1);
+}
+
+void showOrigin(const cv::Mat &gimble_src){
+    if(!gimble_src.empty()){
+        imshow("gimble", gimble_src);
+    }
+    else return;
+    cv::waitKey(1);
 }
