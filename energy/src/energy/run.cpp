@@ -33,18 +33,18 @@ int Energy::run(cv::Mat &src){
 
 
 
-    fans_cnt = findFan(src, fans, last_fans_cnt);
+    fans_cnt = findFan(src, last_fans_cnt);
 //    cout<<"fans_cnt: "<<fans_cnt<<endl;
     if(fans_cnt==-1) return 0;//滤去漏判的帧
 //    if(fans_cnt>0)showFanContours("fan",src,fans);
 //    fans_cnt=0;
 
-    armors_cnt = findArmor(src, armors, last_armors_cnt);
+    armors_cnt = findArmor(src, last_armors_cnt);
 //    cout<<"armors_cnt: "<<armors_cnt<<endl;
     if(armors_cnt==-1) return 0;//滤去漏判的帧
 //    if(armors_cnt>0) showArmorContours("armor",src,armors);
 
-    if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src, fans, armors);
+    if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src);
 
     centerRs_cnt = findCenterR(src);
     if(centerRs_cnt>0)showCenterRContours("R",src);

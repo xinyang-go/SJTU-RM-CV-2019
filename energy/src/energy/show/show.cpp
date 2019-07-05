@@ -83,8 +83,7 @@ void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
     imshow(windows_name, image2show);
 }
 
-void Energy::showBothContours(std::string windows_name, const cv::Mat &src, const std::vector<EnergyPart> &fans,
-	const std::vector<EnergyPart> &armors) {
+void Energy::showBothContours(std::string windows_name, const cv::Mat src) {
 	if (src.empty())return;
 	static Mat image2show;
     if(src.type() == CV_8UC1) // 黑白图像

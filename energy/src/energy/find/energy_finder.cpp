@@ -8,7 +8,10 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans_cnt) {
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于寻找图像内所有的大风车扇叶
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::findFan(const cv::Mat src, int &last_fans_cnt) {
     if (src.empty())return 0;
     static Mat src_bin;
     src_bin = src.clone();
@@ -16,6 +19,7 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
     if(src.type() == CV_8UC3){
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);
     }
+
 	std::vector<vector<Point> > fan_contours;
 
 	StructingElementClose(src_bin,6,6);
@@ -59,8 +63,10 @@ int Energy::findFan(const cv::Mat &src, vector<EnergyPart> &fans, int &last_fans
 }
 
 
-
-int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_armors_cnt) {
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于寻找图像内所有的大风车装甲板模块
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::findArmor(const cv::Mat src, int &last_armors_cnt) {
 	if (src.empty())return 0;
     static Mat src_bin;
     src_bin = src.clone();
@@ -72,7 +78,6 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
     StructingElementErodeDilate(src_bin);
-//    StructingElementClose(src_bin,10,10);
 //    imshow("armor struct",src_bin);
 
 	findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
@@ -121,6 +126,10 @@ int Energy::findArmor(const cv::Mat &src, vector<EnergyPart> &armors, int &last_
 	return static_cast<int>(armors.size());
 }
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于寻找图像内大风车中心字母“R”
+// ---------------------------------------------------------------------------------------------------------------------
 int Energy::findCenterR(const cv::Mat src) {
     if (src.empty())return 0;
     static Mat src_bin;
@@ -159,7 +168,10 @@ int Energy::findCenterR(const cv::Mat src) {
     return static_cast<int>(centerRs.size());
 }
 
-bool Energy::isValidFanContour(const vector<cv::Point> &fan_contour) {
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于判断找到的矩形候选区是否为扇叶
+// ---------------------------------------------------------------------------------------------------------------------
+bool Energy::isValidFanContour(const vector<cv::Point> fan_contour) {
 	double cur_contour_area = contourArea(fan_contour);
 	if (cur_contour_area > energy_part_param_.FAN_CONTOUR_AREA_MAX ||
 		cur_contour_area < energy_part_param_.FAN_CONTOUR_AREA_MIN)
@@ -179,29 +191,31 @@ bool Energy::isValidFanContour(const vector<cv::Point> &fan_contour) {
 		//cout<<"length width min fail."<<endl;
 		return false;
 	}
-//	float length_width_ratio = length / width;
-//	if (length_width_ratio > energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX ||
-//		length_width_ratio < energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN)
-//	{
-//		//cout<<"length width ratio fail."<<endl;
-//		return false;
-//	}
+	float length_width_ratio = length / width;
+	if (length_width_ratio > energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX ||
+		length_width_ratio < energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN)
+	{
+		//cout<<"length width ratio fail."<<endl;
+		return false;
+	}
 	if (cur_contour_area / cur_size.area() < 0.6) return false;
 
 	return true;
 }
 
 
-
-bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于判断找到的矩形候选区是否为装甲板
+// ---------------------------------------------------------------------------------------------------------------------
+bool Energy::isValidArmorContour(const vector<cv::Point> armor_contour) {
 	double cur_contour_area = contourArea(armor_contour);
-//	if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
-//		cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN)
-//	{
-//		//cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
-//		//cout<<"area fail."<<endl;
-//		return false;
-//	}
+	if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
+		cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN)
+	{
+		//cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
+		//cout<<"area fail."<<endl;
+		return false;
+	}
 	RotatedRect cur_rect = minAreaRect(armor_contour);
 	Size2f cur_size = cur_rect.size;
 	float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
@@ -230,15 +244,18 @@ bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
 	return true;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于判断找到的矩形候选区是否为可能的风车中心R候选区
+// ---------------------------------------------------------------------------------------------------------------------
 bool Energy::isValidCenterRContour(const vector<cv::Point> center_R_contour) {
     double cur_contour_area = contourArea(center_R_contour);
-//	if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
-//		cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN)
-//	{
-//		//cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
-//		//cout<<"area fail."<<endl;
-//		return false;
-//	}
+	if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
+		cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN)
+	{
+		//cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
+		//cout<<"area fail."<<endl;
+		return false;
+	}
     RotatedRect cur_rect = minAreaRect(center_R_contour);
     Size2f cur_size = cur_rect.size;
     float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
