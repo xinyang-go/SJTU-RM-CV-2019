@@ -13,6 +13,10 @@
 #define ENEMY_BLUE 0
 #define ENEMY_RED  1
 
+#define BIG_ENERGY_STATE 'b'
+#define SMALL_ENERGY_STATE 's'
+#define ARMOR_STATE  'a'
+
 struct mcu_data{
     float curr_yaw;
     float curr_pitch;
@@ -25,7 +29,11 @@ struct mcu_data{
 extern mcu_data mcuData;
 
 void uartReceive(Serial *pSerial);
-void initVideoWriter(cv::VideoWriter& video, const std::string &filename_prefix);
-void lastVideo(std::string &video_name, const std::string &filename_prefix);
+bool checkReconnect(bool is_gimble_connect, bool is_chassis_connect);
+bool checkReconnect(bool is_gimble_connect);
+void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src);
+void saveVideos(const cv::Mat &gimble_src);
+void showOrigin(const cv::Mat &gimble_src, const cv::Mat &chassis_src);
+void showOrigin(const cv::Mat &gimble_src);
 
 #endif /* _ADDITIONS_H_ */

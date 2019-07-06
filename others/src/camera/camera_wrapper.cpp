@@ -136,6 +136,7 @@ bool CameraWrapper::readRaw(cv::Mat &src) {
 
         return true;
     } else {
+        src = cv::Mat();
         return false;
     }
 }
@@ -155,6 +156,7 @@ bool CameraWrapper::readProcessed(cv::Mat &src) {
         CameraReleaseImageBuffer(h_camera, pby_buffer);
         return true;
     } else {
+        src = cv::Mat();
         return false;
     }
 }

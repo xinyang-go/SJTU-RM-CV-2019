@@ -10,6 +10,11 @@ using std::cout;
 using std::endl;
 using std::vector;
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于操作手手动标定
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::changeMark() {
 	if (mcuData.mark == 0 && last_mark == 1) {
 		last_mark = mcuData.mark;
@@ -32,41 +37,15 @@ void Energy::changeMark() {
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于计算云台应当转到的角度
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::gimbleRotation(){
-	cv::Point2f real_hit_point;
-    stretch(hit_point, real_hit_point);
-    yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-    pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-
-	/*origin_yaw = mark_yaw;
-	origin_pitch = mark_pitch;*/
-   
-//    if(position_mode == 1){
-//		yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-//        pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-//    else if(position_mode == 2){
-//		yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-//        pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-//    else if(position_mode == 3){
-//		yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-//        pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-//    else if(position_mode == 4){
-//		yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-//        pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-//    else if(position_mode == 5){
-//		yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-//        pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-//    else if(position_mode == 6){
-//		yaw_rotation = static_cast<float>(180 / PI * atan2((attack_distance * tan(origin_yaw * PI / 180) - real_hit_point.x), attack_distance));
-//        pitch_rotation = static_cast<float>(180 / PI * atan2((attack_distance*tan(origin_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-//    else{
-//        pitch_rotation = 5.5+static_cast<float>(180 / PI * atan2((attack_distance*tan(mark_pitch*PI/180)-real_hit_point.y), attack_distance));
-//    }
-
+	cv::Point2f real_predict_point;//计算在真实世界中的预测点位，进而计算云台的旋转角度
+    stretch(predict_point, real_predict_point);
+    yaw_rotation = static_cast<float>(180 / PI *
+            atan2((attack_distance * tan(origin_yaw * PI / 180) - real_predict_point.x), attack_distance));
+    pitch_rotation = static_cast<float>(180 / PI *
+            atan2((attack_distance*tan(origin_pitch*PI/180)-real_predict_point.y), attack_distance));
 }

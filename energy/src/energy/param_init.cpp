@@ -9,34 +9,31 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-void Energy::initEnergy() {
-	isSendTarget = false;
-	isMark = false;
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数对能量机关成员变量进行初始化
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::initEnergy() {
+	isMark = false;
+	centered=false;
 	fans_cnt = 0;
 	armors_cnt = 0;
-	cycle_center = Point(0, 0);
-	target_center = Point(0, 0);
-	last_target_center = Point(0, 0);
-	hit_point = Point(0, 0);
-	target_position = -1000;
-	last_target_position = -1000;
-	last_hit_position = 20000;
-	target_armor = -1000;
-    last_target_armor = -1000;
+	centerRs_cnt = 0;
+	gimble_cnt = 0;
+    circle_center_point = Point(0, 0);
+	target_point = Point(0, 0);
+    last_target_point = Point(0, 0);
+    predict_point = Point(0, 0);
+	former_point = Point(0,0);
+    target_polar_angle = -1000;
+    last_target_polar_angle = -1000;
 	radius = 0;
-
-	//    ally_color = ALLY_RED;
-	energy_part_rotation = CLOCKWISE;
+    energy_rotation_direction = ANTICLOCKWISE;
 	attack_distance = ATTACK_DISTANCE;
-	count = 1;
 	last_fans_cnt = 0;
 	last_armors_cnt = 0;
 	send_cnt = 0;
-
-	//rectified_focal_length = 1000;
-	//theta = 0;
-	//phi = 0;
 	yaw_rotation = 0;
 	pitch_rotation = 0;
 	last_mark = 0;
@@ -47,41 +44,29 @@ void Energy::initEnergy() {
     blue_origin_pitch = 15.688477;
 
 	target_cnt = 0;
-    target_cnt_flag = true;
-
-	isLeftVertexFound = -1;
-	isTopVertexFound = -1;
-	isRightVertexFound = -1;
-	isBottomVertexFound = -1;
-
-	left = Point(640, 480);
-	right = Point(0, 0);
-	top = Point(640, 480);
-	bottom = Point(0, 0);
-
-	position_mode = 0;
-	last_position_mode = 0;
-
 	energy_rotation_init = false;
+	predict_rad = 20;
 
 	fans.clear();
 	armors.clear();
-	fanPosition.clear();
-	armorPosition.clear();
-	Armor_center.clear();
-	first_armor_centers.clear();
+    centerRs.clear();
+
+	fan_polar_angle.clear();
+	armor_polar_angle.clear();
+
 	all_armor_centers.clear();
 
 	clockwise_rotation_init_cnt = 0;
 	anticlockwise_rotation_init_cnt = 0;
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数对能量机关参数进行初始化
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-
-    energy_part_param_.RPM = 10;
-    energy_part_param_.HIT_TIME = 1.14;
-
-	energy_part_param_.GRAY_THRESH = 240;
+	energy_part_param_.GRAY_THRESH = 235;
 	energy_part_param_.SPLIT_GRAY_THRESH = 60;
 	energy_part_param_.FAN_GRAY_THRESH = 75;
 	energy_part_param_.ARMOR_GRAY_THRESH = 80;
@@ -97,45 +82,52 @@ void Energy::initEnergyPartParam() {
 
 	energy_part_param_.ARMOR_CONTOUR_AREA_MAX = 100000;
 	energy_part_param_.ARMOR_CONTOUR_AREA_MIN = 0;
-	energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 30;
-	energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 15;
-	energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 50;
-	energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 45;
+	energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 15;
+	energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 5;
+	energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 30;
+	energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 20;
 	energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX = 3;
 	energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN = 1;
 
+    energy_part_param_.CENTER_R_CONTOUR_AREA_MAX = 100000;
+    energy_part_param_.CENTER_R_CONTOUR_AREA_MIN = 0;
+    energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN = 10;
+    energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN = 10;
+    energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX = 30;
+    energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX = 30;
+    energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
+    energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
+
 	energy_part_param_.TWIN_ANGEL_MAX = 10;
+	energy_part_param_.INTERSETION_CONTOUR_AREA_MIN = 60;
 
-	lift_height_.LIFT_0 = 0;
-    lift_height_.LIFT_30 = 0;
-    lift_height_.LIFT_60 = 0;
-    lift_height_.LIFT_90 = 10;
-    lift_height_.LIFT_minus_30 = 0;
-    lift_height_.LIFT_minus_60 = 0;
-    lift_height_.LIFT_minus_90 = 0;
-
+	energy_part_param_.TARGET_CHANGE_DISTANCE_MAX = 20;
 }
 
 
-void Energy::initRotation() {
-	target_position = target_armor;
-//	cout << "target position: " << target_position << '\t' << "last target position: " << last_target_position << endl;
-	if (target_position >= -180 && last_target_position >= -180 && fabs(target_position - last_target_position) < 30) {
-		if (target_position < last_target_position) clockwise_rotation_init_cnt++;
-		else if (target_position > last_target_position) anticlockwise_rotation_init_cnt++;
-	}
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数对能量机关旋转方向进行初始化
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::initRotation() {
+	if (target_polar_angle >= -180 && last_target_polar_angle >= -180
+	    && fabs(target_polar_angle - last_target_polar_angle) < 30) {
+	    //target_polar_angle和last_target_polar_angle的初值均为1000，大于-180表示刚开始几帧不要
+	    //若两者比较接近，则说明没有切换目标，因此可以用于顺逆时针的判断
+		if (target_polar_angle < last_target_polar_angle) clockwise_rotation_init_cnt++;
+		else if (target_polar_angle > last_target_polar_angle) anticlockwise_rotation_init_cnt++;
+	}
+    //由于刚开始圆心判断不准，角度变化可能计算有误，因此需要在角度正向或逆向变化足够大时才可确定是否为顺逆时针
 	if (clockwise_rotation_init_cnt == 30) {
-		energy_part_rotation = CLOCKWISE;
-		cout << "rotation: " << energy_part_rotation << endl;
+        energy_rotation_direction = CLOCKWISE;//顺时针变化30次，确定为顺时针
+		cout << "rotation: " << energy_rotation_direction << endl;
 		energy_rotation_init = false;
 	}
 	else if (anticlockwise_rotation_init_cnt == 30) {
-		energy_part_rotation = ANTICLOCKWISE;
-		cout << "rotation: " << energy_part_rotation << endl;
+        energy_rotation_direction = ANTICLOCKWISE;//逆时针变化30次，确定为顺时针
+		cout << "rotation: " << energy_rotation_direction << endl;
 		energy_rotation_init = false;
 	}
-//	else cout << clockwise_rotation_init_cnt <<'\t'<<anticlockwise_rotation_init_cnt<< endl;
-
-	last_target_position = target_position;
+    last_target_polar_angle = target_polar_angle;
 }

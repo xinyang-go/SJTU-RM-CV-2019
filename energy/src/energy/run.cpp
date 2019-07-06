@@ -9,134 +9,148 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-//extern float curr_yaw, curr_pitch, mark_yaw, mark_pitch;
-//extern int mark;
 
 
-int Energy::run(cv::Mat &src){
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数为大能量机关模式主控制流函数，且步兵需要同时拥有云台摄像头和底盘摄像头
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src){
+    if(chassis_src.empty())
+        runBig(gimble_src);//仅拥有云台摄像头则调用单摄像头的run函数
+    else if(!centered) {
+        armors.clear();
+        armor_polar_angle.clear();
+        changeMark();
+        if (isMark)return 0;
+
+        threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+        imshow("yun",gimble_src);
+
+        armors_cnt = findArmor(gimble_src,  last_armors_cnt);
+        if(armors_cnt!=1) return 0;//滤去漏判的帧
+
+        getAllArmorCenters();
+        circleLeastFit();
+
+//    attack_distance = 752;//单项赛
+        attack_distance = 718;
+
+        if (energy_rotation_init) {
+            initRotation();
+            return 0;
+        }
+
+        if(++gimble_cnt%8==0){
+            former_point=circle_center_point;
+            //gimble_cnt=0;
+        }
+
+        if(former_point==predict_point&&gimble_cnt%8==7&&predict_point!=Point(0,0)) {
+            centered=true;
+            cout<<"gimble focused!"<<endl;
+            cout<<"number of framse: "<<gimble_cnt<<endl;
+        }
+        predict_point=circle_center_point;
+//        cout<<gimble_cnt<<endl;
+//        cout<<"center:("<<predict_point.x<<','<<predict_point.y<<")\n";
+        gimbleRotation();
+
+//    cout<<"send"<<endl;
+//    cout<<"position mode: "<<position_mode<<endl;
+        sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
+        return 0;
+    }
+//    if(centered)
+//        destroyAllWindows();
+    return 0;
+}
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数为大能量机关模式主控制流函数，且步兵仅拥有云台摄像头
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::runBig(cv::Mat &gimble_src){
 //    imshow("src",src);
     fans.clear();
     armors.clear();
-    fanPosition.clear();
-    armorPosition.clear();
-//    gimble_zero_points.clear();
-    isSendTarget = false;
+    centerRs.clear();
+    fan_polar_angle.clear();
+    armor_polar_angle.clear();
 
-	changeMark();
-	if (isMark)return 0;
-//	cout<<"yaw"<<origin_yaw<<endl;
-
-//    if(all_armor_centers.size()>200)all_armor_centers.clear();
-//    if(first_armor_centers.size()>200)first_armor_centers.clear();
-//    cout<<"first_armor_centers.size(): "<<first_armor_centers.size()<<endl;
-
+    changeMark();
+    if (isMark)return 0;
 //    imagePreprocess(src);
 //    imshow("img_preprocess",src);
 
-    threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+    threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
 //    imshow("bin",src);
 
-
-    fans_cnt = findFan(src, fans, last_fans_cnt);
+    fans_cnt = findFan(gimble_src, last_fans_cnt);
 //    cout<<"fans_cnt: "<<fans_cnt<<endl;
     if(fans_cnt==-1) return 0;//滤去漏判的帧
-//    if(fans_cnt>0)showFanContours("fan",src,fans);
+//    if(fans_cnt>0)showFanContours("fan",src);
 //    fans_cnt=0;
 
-    armors_cnt = findArmor(src, armors, last_armors_cnt);
+    armors_cnt = findArmor(gimble_src, last_armors_cnt);
 //    cout<<"armors_cnt: "<<armors_cnt<<endl;
     if(armors_cnt==-1) return 0;//滤去漏判的帧
-//    if(armors_cnt>0) showArmorContours("armor",src,armors);
+//    if(armors_cnt>0) showArmorContours("armor",src);
 
-    if(armors_cnt>0||fans_cnt>0) showBothContours("Both",src, fans, armors);
+    if(armors_cnt != fans_cnt+1) return 0;
 
+    centerRs_cnt = findCenterR(gimble_src);
+//    if(centerRs_cnt>0)showCenterRContours("R", gimble_src);
 
-    if(armors_cnt>=4 && fans_cnt>=3) {
-        FILE *fp = fopen(PROJECT_DIR"/Mark/mark.txt", "w");
-        if (fp) {
-            fprintf(fp, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
-            fclose(fp);
-            save_new_mark = false;
-        }
-        FILE *fp_all = fopen(PROJECT_DIR"/Mark/mark_all.txt", "a");
-        if (fp_all) {
-            fprintf(fp_all, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
-            fclose(fp_all);
-        }
-    }
-    if(armors_cnt==5){
-        FILE *fp_best = fopen(PROJECT_DIR"/Mark/mark_best.txt", "a");
-        if(fp_best){
-            fprintf(fp_best, "yaw: %f, pitch: %f\n",origin_yaw, origin_pitch);
-            fclose(fp_best);
-        }
-    }
-//    cout<<"armors_cnt: "<<armors_cnt<<"fans_cnt: "<<fans_cnt<<endl;
-//    cout<<"armors_cnt: "<<armors_cnt<<"fans_cnt: "<<fans_cnt<<endl;
-//    if(armors_cnt != fans_cnt+1)
-//    {
-//        return 0;
-//    }
-    //cout<<"clock: "<<energy_part_rotation<<endl;
+    writeDownMark();
+
     getAllArmorCenters();
-//    cout<<"all_armor_centers.size(): "<<all_armor_centers.size()<<endl;
-    cycleLeastFit();
+    circleLeastFit();
+//    attack_distance = ATTACK_DISTANCE;
 
-//    cycle_center = cv::Point(335, 246);
-//    radius = 116.936;
-//    attack_distance = ATTACK_DISTANCE * 120/ radius;
+    getFanPolarAngle();
+    getArmorPolarAngle();
+    findTargetByPolar();
+//    findTargetByIntersection();
 
-//	attack_distance = 674 + 1286 * 75 * (1/radius - 1/133.85);
-//	cout<<"radius"<<radius<<endl;
-//	cout << "attack distance: " << attack_distance << endl;
-//    attack_distance = 752;//单项赛
-    attack_distance = 718;
+    if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
 
-    getFanPosition(fanPosition, fans, cycle_center, radius);
-    getArmorPosition(armorPosition, armors, cycle_center, radius);
-    findTarget(fanPosition, armorPosition, target_armor);
-//    cout << "The target armor's position is " << target_armor << endl;
-//    cout<<"The target armor center is: "<<target_center<<endl;
-
-//    cout<<target_armor<<endl;
-	if (energy_rotation_init) {
-		initRotation();
-		return 0;
-	}
-
-    getHitPoint();
-//    hit_point = target_center;
-//    cout << "The hit point position is " << hit_point << endl;
-    
-//    cout<<"send"<<endl;
-//    cout<<"position mode: "<<position_mode<<endl;
-
+    if (energy_rotation_init) {
+        initRotation();
+        return 0;
+    }
+    getPredictPoint();
     gimbleRotation();
-    if(changeTarget())target_cnt++;
-
-//	if (!isSendTarget)return 0;
     sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
-
-//    cout<<target_cnt<<endl;
 
 //    cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
 //    cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
-
 //    cout<<"send_cnt: "<<send_cnt<<endl;
-
-
+    return 0;
 }
 
-//-----------------------------------------------------------------------------------
 
-/*
-//此处用于标定云台在摄像头视频中的零点
-    findGimbleZeroPoint(src,gimble_zero_points);
-    cout<<"gimble zero points: :"<<gimble_zero_points.size()<<endl;
-    showFanContours("zero",src,gimble_zero_points);
-    cycle_center = cv::Point(291,305);
-    if(gimble_zero_points.size()>0)hit_point = gimble_zero_points.at(0).rect.center;
-*/
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数为小能量机关模式主控制流函数，击打小符只需要拥有云台摄像头
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::runSmall(cv::Mat &gimble_src){
+    imshow("gimble src", gimble_src);
+    if(gimble_src.type()== CV_8UC3)cvtColor(gimble_src, gimble_src, COLOR_BGR2GRAY);
+    fans.clear();
+    armors.clear();
+    threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+    imshow("bin",gimble_src);
+    fans_cnt = findFan(gimble_src, last_fans_cnt);
+    armors_cnt = findArmor(gimble_src, last_armors_cnt);
+    if(fans_cnt==-1 || armors_cnt==-1 || armors_cnt != fans_cnt+1) return 0;
+    findTargetByIntersection();
+    if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
+    getAimPoint();
+    sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
+}
 
 
 

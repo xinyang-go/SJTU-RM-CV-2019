@@ -16,7 +16,7 @@
 #include "camera/wrapper_head.h"
 #ifdef Windows
     #include "camera/CameraApi.h"
-#elif defined(Linux)
+#elif defined(Linux) || defined(Darwin)
     #include "camera/camera_api.h"
 #endif
 

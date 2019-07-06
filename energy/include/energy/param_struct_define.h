@@ -10,6 +10,11 @@
 
 using std::vector;
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此结构体为能量机关模块的结构体，用于寻找矩形轮廓
+// ---------------------------------------------------------------------------------------------------------------------
 struct EnergyPart {
 	cv::RotatedRect rect;
 	float angle;
@@ -21,52 +26,50 @@ struct EnergyPart {
 	};
 };
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此结构体包括能量机关参数
+// ---------------------------------------------------------------------------------------------------------------------
 struct EnergyPartParam {
-	double RPM;
-	double HIT_TIME;
+	int GRAY_THRESH;//二值化阈值
+	int SPLIT_GRAY_THRESH;//通道分离二值化阈值
+	int FAN_GRAY_THRESH;//扇叶识别二值化阈值
+	int ARMOR_GRAY_THRESH;//装甲板识别二值化阈值
 
-	int GRAY_THRESH;
-	int SPLIT_GRAY_THRESH;
-	int FAN_GRAY_THRESH;
-	int ARMOR_GRAY_THRESH;
+	long FAN_CONTOUR_AREA_MAX;//扇叶面积最大值
+	long FAN_CONTOUR_AREA_MIN;//扇叶面积最小值
+	long FAN_CONTOUR_LENGTH_MIN;//扇叶长边长度最小值
+    long FAN_CONTOUR_LENGTH_MAX;//扇叶长边长度最大值
+	long FAN_CONTOUR_WIDTH_MIN;//扇叶宽边长度最小值
+    long FAN_CONTOUR_WIDTH_MAX;//扇叶宽边长度最大值
+	float FAN_CONTOUR_HW_RATIO_MAX;//扇叶长宽比最大值
+	float FAN_CONTOUR_HW_RATIO_MIN;//扇叶长宽比最小值
 
-	long FAN_CONTOUR_AREA_MAX;
-	long FAN_CONTOUR_AREA_MIN;
-	long FAN_CONTOUR_LENGTH_MIN;
-    long FAN_CONTOUR_LENGTH_MAX;
-	long FAN_CONTOUR_WIDTH_MIN;
-    long FAN_CONTOUR_WIDTH_MAX;
-	float FAN_CONTOUR_HW_RATIO_MAX;
-	float FAN_CONTOUR_HW_RATIO_MIN;
+	long ARMOR_CONTOUR_AREA_MAX;//装甲板面积最大值
+	long ARMOR_CONTOUR_AREA_MIN;//装甲板面积最小值
+	long ARMOR_CONTOUR_LENGTH_MIN;//装甲板长边长度最小值
+	long ARMOR_CONTOUR_WIDTH_MIN;//装甲板长边长度最大值
+	long ARMOR_CONTOUR_LENGTH_MAX;//装甲板宽边长度最小值
+	long ARMOR_CONTOUR_WIDTH_MAX;//装甲板宽边长度最大值
+	float ARMOR_CONTOUR_HW_RATIO_MAX;//装甲板长宽比最大值
+	float ARMOR_CONTOUR_HW_RATIO_MIN;//装甲板长宽比最小值
 
-	long ARMOR_CONTOUR_AREA_MAX;
-	long ARMOR_CONTOUR_AREA_MIN;
-	long ARMOR_CONTOUR_LENGTH_MIN;
-	long ARMOR_CONTOUR_WIDTH_MIN;
-	long ARMOR_CONTOUR_LENGTH_MAX;
-	long ARMOR_CONTOUR_WIDTH_MAX;
-	float ARMOR_CONTOUR_HW_RATIO_MAX;
-	float ARMOR_CONTOUR_HW_RATIO_MIN;
+    long CENTER_R_CONTOUR_AREA_MAX;//风车中心R面积最大值
+    long CENTER_R_CONTOUR_AREA_MIN;//风车中心R面积最小值
+    long CENTER_R_CONTOUR_LENGTH_MIN;//风车中心R长边长度最小值
+    long CENTER_R_CONTOUR_WIDTH_MIN;//风车中心R长边长度最大值
+    long CENTER_R_CONTOUR_LENGTH_MAX;//风车中心R宽边长度最小值
+    long CENTER_R_CONTOUR_WIDTH_MAX;//风车中心R宽边长度最大值
+    float CENTER_R_CONTOUR_HW_RATIO_MAX;//风车中心R长宽比最大值
+    float CENTER_R_CONTOUR_HW_RATIO_MIN;//风车中心R长宽比最小值
 
-	float TWIN_ANGEL_MAX;
+	float TWIN_ANGEL_MAX;//扇叶和装甲板匹配时极坐标角度差的最大值
+	long INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积
+
+	long TARGET_CHANGE_DISTANCE_MAX;//目标未更改时，目标装甲板中心与原目标装甲板中心的距离变化最大值
 };
 
-struct LiftHeight{
-    float LIFT_0;
-    float LIFT_30;
-    float LIFT_60;
-    float LIFT_90;
-    float LIFT_minus_30;
-    float LIFT_minus_60;
-    float LIFT_minus_90;
-};
-
-typedef struct GMAngle_t{
-    float yaw;
-    float pitch;
-}GMAngle_t;
-
-extern GMAngle_t aim;
 
 #endif //PARAM_STRUCT_DEFINE_H
 
