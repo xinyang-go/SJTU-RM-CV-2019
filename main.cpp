@@ -32,7 +32,7 @@ mcu_data mcuData = {
         ARMOR_STATE,
         0,
         1,
-        ENEMY_RED,
+        ENEMY_BLUE,
 };
 
 int main(int argc, char *argv[]) {
@@ -57,14 +57,9 @@ int main(int argc, char *argv[]) {
         WrapperHead *video_armor=nullptr;
         WrapperHead *video_energy=nullptr;
         if (from_camera) {
-            video_armor = new CameraWrapper(0, "armor");
+            video_armor = new CameraWrapper(0/*, "armor"*/);
             video_energy = new CameraWrapper(1, "energy");
         } else {
-//            string armor_video, energy_video;
-//            lastVideo(armor_video, PROJECT_DIR"/armor_video/");
-//            video_armor = new VideoWrapper(armor_video);
-//            lastVideo(energy_video, PROJECT_DIR"/energy_video/");
-//            video_energy = new VideoWrapper(energy_video);
             video_armor = new VideoWrapper("/home/sjturm/Desktop/valid_video/armor/65.avi");
             video_energy = new VideoWrapper("/home/sjturm/Desktop/valid_video/energy/121.avi");
         }

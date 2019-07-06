@@ -300,6 +300,7 @@ int Classifier::operator()(const cv::Mat &image) {
     vector<MatrixXd> sub = {b, g, r};
     vector<vector<MatrixXd>> in = {sub};
     MatrixXd result = calculate(in);
+//    cout << result << "==============" <<endl;
     MatrixXd::Index minRow, minCol;
     result.maxCoeff(&minRow, &minCol);
     return minRow;

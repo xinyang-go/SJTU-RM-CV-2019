@@ -14,7 +14,8 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, string paras_folder, const u
             state(STANDBY_STATE),
             classifier(std::move(paras_folder)),
             contour_area(0),
-            use_classifier(use)
+            use_classifier(use),
+            boxid(-1)
             {
 }
 
@@ -25,11 +26,11 @@ void ArmorFinder::run(cv::Mat &src) {
     cv::cvtColor(src_use, src_gray, CV_RGB2GRAY);
 
     if(show_armor_box){
-        showArmorBox("box", src, armor_box);
+        showArmorBox("box", src, armor_box, boxid);
         cv::waitKey(1);
     }
-//    stateSearchingTarget(src_use);
-//    return;
+    stateSearchingTarget(src_use);
+    return;
     switch (state){
         case SEARCHING_STATE:
             if(stateSearchingTarget(src_use)){

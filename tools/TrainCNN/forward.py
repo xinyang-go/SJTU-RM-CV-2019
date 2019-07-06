@@ -29,24 +29,25 @@ def max_pool_2x2(x):
 CONV1_KERNAL_SIZE = 5
 
 # 第一层卷积输出通道数
-CONV1_OUTPUT_CHANNELS = 8
+CONV1_OUTPUT_CHANNELS = 6
 
 # 第二层卷积核大小
 CONV2_KERNAL_SIZE = 3
 
 # 第二层卷积输出通道数
-CONV2_OUTPUT_CHANNELS = 16
+CONV2_OUTPUT_CHANNELS = 10
 
 # 第一层全连接宽度
 FC1_OUTPUT_NODES = 16
 
 # 第二层全连接宽度（输出标签类型数）
 FC2_OUTPUT_NODES = 15
+
 # 输出标签类型数
 OUTPUT_NODES = FC2_OUTPUT_NODES
 
 
-def forward(x, regularizer=None):
+def forward(x, regularizer=None, keep_rate=tf.constant(1.0)):
     vars = []
     nodes = []
 
@@ -71,16 +72,19 @@ def forward(x, regularizer=None):
     pool_shape = pool2.get_shape().as_list()
     node = pool_shape[1] * pool_shape[2] * pool_shape[3]
     reshaped = tf.reshape(pool2, [-1, node])
+    reshaped = tf.nn.dropout(reshaped, keep_rate)
 
-    fc1_w = tf.nn.dropout(get_weight([node, FC1_OUTPUT_NODES], regularizer), 0.1)
+    fc1_w = get_weight([node, FC1_OUTPUT_NODES], regularizer)
     fc1_b = get_bias([FC1_OUTPUT_NODES])
     fc1   = tf.nn.relu(tf.matmul(reshaped, fc1_w) + fc1_b)
+    fc1   = tf.nn.dropout(fc1, keep_rate)
     vars.extend([fc1_w, fc1_b])
     nodes.extend([fc1])
 
-    fc2_w = tf.nn.dropout(get_weight([FC1_OUTPUT_NODES, FC2_OUTPUT_NODES], regularizer), 0.1)
+    fc2_w = get_weight([FC1_OUTPUT_NODES, FC2_OUTPUT_NODES], regularizer)
     fc2_b = get_bias([FC2_OUTPUT_NODES])
-    fc2   = tf.nn.softmax(tf.matmul(fc1, fc2_w) + fc2_b)
+#    fc2   = tf.nn.softmax(tf.matmul(fc1, fc2_w) + fc2_b)
+    fc2   = tf.matmul(fc1, fc2_w) + fc2_b
     vars.extend([fc2_w, fc2_b])
     nodes.extend([fc2])
 

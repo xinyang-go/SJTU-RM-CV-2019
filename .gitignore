@@ -2,5 +2,6 @@ cmake-build-debug
 build
 .idea
 Mark
+armor_box_photo
 tools/TrainCNN/.idea
 tools/TrainCNN/__pycache__

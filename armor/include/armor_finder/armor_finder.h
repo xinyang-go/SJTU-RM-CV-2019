@@ -26,6 +26,7 @@ private:
     const uint8_t &enemy_color;
     State state;
     cv::Rect2d armor_box;
+    int boxid;
     cv::Ptr<cv::Tracker> tracker;
     cv::Mat src_gray;
 
