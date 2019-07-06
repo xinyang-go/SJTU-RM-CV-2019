@@ -40,18 +40,19 @@ int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src){
             return 0;
         }
 
-        if(++gimble_cnt==10){
+        if(++gimble_cnt%8==0){
             former_point=circle_center_point;
-            gimble_cnt=0;
+            //gimble_cnt=0;
         }
 
-        if(former_point==predict_point&&gimble_cnt==9&&predict_point!=Point(0,0)) {
+        if(former_point==predict_point&&gimble_cnt%8==7&&predict_point!=Point(0,0)) {
             centered=true;
             cout<<"gimble focused!"<<endl;
+            cout<<"number of framse: "<<gimble_cnt<<endl;
         }
         predict_point=circle_center_point;
-        cout<<gimble_cnt<<endl;
-        cout<<"center:("<<predict_point.x<<','<<predict_point.y<<")\n";
+//        cout<<gimble_cnt<<endl;
+//        cout<<"center:("<<predict_point.x<<','<<predict_point.y<<")\n";
         gimbleRotation();
 
 //    cout<<"send"<<endl;

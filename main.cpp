@@ -26,7 +26,7 @@ using namespace std;
 mcu_data mcuData = {
         0,
         0,
-        SMALL_ENERGY_STATE,
+        BIG_ENERGY_STATE,
         0,
         1,
         ENEMY_RED,
@@ -56,8 +56,8 @@ int main(int argc, char *argv[]) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_gimble = new VideoWrapper("/Users/leo/Desktop/videos/179.avi");
+            video_chassis = new VideoWrapper("/Users/leo/Desktop/videos/179.avi");
         }
         if (video_gimble->init()) {
             LOGM("video_gimble source initialization successfully.");
