@@ -137,9 +137,11 @@ int Energy::runBig(cv::Mat &gimble_src){
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::runSmall(cv::Mat &gimble_src){
     imshow("gimble src", gimble_src);
+    if(gimble_src.type()== CV_8UC3)cvtColor(gimble_src, gimble_src, COLOR_BGR2GRAY);
     fans.clear();
     armors.clear();
     threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+    imshow("bin",gimble_src);
     fans_cnt = findFan(gimble_src, last_fans_cnt);
     armors_cnt = findArmor(gimble_src, last_armors_cnt);
     if(fans_cnt==-1 || armors_cnt==-1 || armors_cnt != fans_cnt+1) return 0;

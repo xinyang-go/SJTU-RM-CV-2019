@@ -103,15 +103,15 @@ int Energy::findArmor(const cv::Mat src, int &last_armors_cnt) {
 		}
         armors.emplace_back(armor_contour);
 
-       /* RotatedRect cur_rect = minAreaRect(armor_contour);
-        Size2f cur_size = cur_rect.size;
-        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
-        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-        if(length>10&&width>5){
-            armors.emplace_back(armor_contour);
-            cout<<"armor area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
-        }
-        cout<<"armor area: "<<length<<'\t'<<width<<endl;*/
+//        RotatedRect cur_rect = minAreaRect(armor_contour);
+//        Size2f cur_size = cur_rect.size;
+//        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
+//        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+//        if(length>10&&width>5){
+//            armors.emplace_back(armor_contour);
+//            cout<<"armor area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
+//        }
+
 	}
 	if(armors.size() < last_armors_cnt){
 		last_armors_cnt = static_cast<int>(armors.size());

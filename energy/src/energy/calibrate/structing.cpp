@@ -27,9 +27,9 @@ void Energy::StructingElementClose(cv::Mat &src,int length, int width){
 void Energy::StructingElementErodeDilate(cv::Mat &src) {
     cv::Mat src_out, src_out_out;
     Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(3, 3));
-    Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(2, 1));
+    Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(3, 4));
     Mat element_dilate_2 = getStructuringElement(MORPH_RECT, Size(8, 6));
-    Mat element_erode_2 = getStructuringElement(MORPH_RECT, Size(4,4));
+    Mat element_erode_2 = getStructuringElement(MORPH_RECT, Size(4 , 4));
     Mat element_dilate_3 = getStructuringElement(MORPH_RECT, Size(3, 3));
 
 
@@ -42,9 +42,9 @@ void Energy::StructingElementErodeDilate(cv::Mat &src) {
     dilate(src, src, element_dilate_2);
 //    imshow("dilate_2", src);
 
-    erode(src,src, element_erode_2);
-//    imshow("erode_2", src);
-
     dilate(src, src, element_dilate_3);
 //    imshow("dilate_3", src);
+
+    erode(src,src, element_erode_2);
+    imshow("erode_2", src);
 }
