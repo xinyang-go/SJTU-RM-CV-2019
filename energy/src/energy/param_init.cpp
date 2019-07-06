@@ -23,6 +23,7 @@ void Energy::initEnergy() {
 	gimble_cnt = 0;
     circle_center_point = Point(0, 0);
 	target_point = Point(0, 0);
+    last_target_point = Point(0, 0);
     predict_point = Point(0, 0);
 	former_point = Point(0,0);
     target_polar_angle = -1000;
@@ -98,6 +99,9 @@ void Energy::initEnergyPartParam() {
     energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
 
 	energy_part_param_.TWIN_ANGEL_MAX = 10;
+	energy_part_param_.INTERSETION_CONTOUR_AREA_MIN = 60;
+
+	energy_part_param_.TARGET_CHANGE_DISTANCE_MAX = 20;
 }
 
 

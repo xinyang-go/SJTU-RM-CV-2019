@@ -26,7 +26,7 @@ using namespace std;
 mcu_data mcuData = {
         0,
         0,
-        BIG_ENERGY_STATE,
+        SMALL_ENERGY_STATE,
         0,
         1,
         ENEMY_RED,
@@ -53,23 +53,23 @@ int main(int argc, char *argv[]) {
 
     while (true) {
         if (from_camera) {
-            video_gimble = new CameraWrapper(0, "armor");
-            video_chassis = new CameraWrapper(1, "energy");
+            video_gimble = new CameraWrapper(0/*, "armor"*/);
+            video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/Users/leo/Desktop/videos/170.avi");
-            video_chassis = new VideoWrapper("/Users/leo/Desktop/videos/170.avi");
+            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
         if (video_gimble->init()) {
-            LOGM("video_armor source initialization successfully.");
+            LOGM("video_gimble source initialization successfully.");
         } else {
-            LOGW("video_armor source unavailable!");
+            LOGW("video_gimble source unavailable!");
             delete video_gimble;
             video_gimble = nullptr;
         }
         if (video_chassis->init()) {
-            LOGM("video_energy source initialization successfully.");
+            LOGM("video_chassis source initialization successfully.");
         } else {
-            LOGW("video_energy source unavailable!");
+            LOGW("video_chassis source unavailable!");
             delete video_chassis;
             video_chassis = nullptr;
         }
@@ -87,37 +87,35 @@ int main(int argc, char *argv[]) {
         cout<<"start running"<<endl;
         do {
             CNT_TIME("Total", {
-                if (mcuData.state != ARMOR_STATE) {//能量机关模式
+                if (mcuData.state == BIG_ENERGY_STATE) {//大符模式
                     ok = checkReconnect(video_gimble->read(gimble_src), video_chassis->read(chassis_src));//检查有几个摄像头
                     if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
-
-                    if (mcuData.state == BIG_ENERGY_STATE) {//大符模式
-//                        if (from_camera == 0) {
-//                            cv::resize(energy_src, energy_src, cv::Size(640, 480), 2);
-//                            imshow("resize", energy_src);
-//                            energy.extract(energy_src);
-//                        }
-                        if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大符模式，即刚往完成切换，则需要初始化
-                            energy.setEnergyRotationInit();
-                            cout << "set" << endl;
-                        }
-                        energy.runBig(gimble_src, chassis_src);//击打大符
+//                    if (from_camera == 0) {
+//                        cv::resize(chassis_src, chassis_src, cv::Size(640, 480), 2);
+//                        imshow("resize", chassis_src);
+//                        energy.extract(chassis_src);
+//                    }
+                    if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大符模式，即刚往完成切换，则需要初始化
+                        energy.setEnergyRotationInit();
+                        cout << "set" << endl;
                     }
-                    else if (mcuData.state == SMALL_ENERGY_STATE) {
-                        energy.runSmall(gimble_src, chassis_src);//击打小符
-                    }
+                    energy.runBig(gimble_src, chassis_src);//击打大符
                     last_state = mcuData.state;//更新上一帧状态
                 }
-                else if (mcuData.state == ARMOR_STATE) {//自瞄模式
+                else if (mcuData.state != BIG_ENERGY_STATE) {//自瞄或小符模式
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimble->read(gimble_src));
                     if (save_video) saveVideos(gimble_src);
                     if (show_origin) showOrigin(gimble_src);
-                    CNT_TIME("Armor Time", {
-                            armorFinder.run(gimble_src);
-                    });
-
+                    if (mcuData.state == ARMOR_STATE){
+                        CNT_TIME("Armor Time", {
+                                armorFinder.run(gimble_src);
+                        });
+                    }
+                    else if(mcuData.state == SMALL_ENERGY_STATE){
+                        energy.runSmall(gimble_src);
+                    }
                 }
                 cv::waitKey(1);
             });

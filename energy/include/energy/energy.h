@@ -26,7 +26,6 @@ public:
 	~Energy();//默认析构函数
 	int runBig(cv::Mat &gimble_src, cv::Mat &chassis_src);
     int runBig(cv::Mat &gimble_src);
-    int runSmall(cv::Mat &gimble_src, cv::Mat &chassis_src);
     int runSmall(cv::Mat &gimble_src);
 	Serial &serial;//串口
 	void setEnergyRotationInit();//判断顺逆时针函数
@@ -69,6 +68,7 @@ private:
 
 	cv::Point circle_center_point;//风车圆心坐标
 	cv::Point target_point;//目标装甲板中心坐标
+	cv::Point last_target_point;//上一帧目标装甲板中心坐标
 	cv::Point predict_point;//预测的击打点坐标
 	cv::Point former_point;//之前预测的圆心坐标
 	std::vector<float>fan_polar_angle;//当前帧所有扇叶的极坐标角度
@@ -99,7 +99,8 @@ private:
 
     void circleLeastFit();//利用所有记录的装甲板中心最小二乘法计算圆心和半径
 
-	void findTarget();//获取目标装甲板的极坐标角度和装甲板中心坐标
+	void findTargetByPolar();//通过极坐标角度匹配获取目标装甲板的极坐标角度和装甲板中心坐标
+    void findTargetByIntersection();//通过面积重合度匹配获取目标装甲板的极坐标角度和装甲板中心坐标
 
     void rotate();//获取预测点位
 	void stretch(cv::Point point_1, cv::Point2f &point_2);//将像素差转换为实际距离差
@@ -108,6 +109,7 @@ private:
 	void writeDownMark();//记录操作手标定的云台初始角度
 
     void getPredictPoint();//获取预测点位
+    void getAimPoint();//通过自瞄逻辑计算点位
 	bool changeTarget();//判断目标是否改变
 	void changeMark();//操作手手动修改标定值
     void gimbleRotation();//计算云台旋转角度

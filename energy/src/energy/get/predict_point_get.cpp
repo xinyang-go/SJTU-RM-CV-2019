@@ -26,12 +26,12 @@ void Energy::getPredictPoint(){
 // 此函数用于操作手手动标定
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::changeTarget(){
-    if(fabs(target_polar_angle - last_target_polar_angle) < 30||fabs(target_polar_angle - last_target_polar_angle) > 330){
-        last_target_polar_angle = target_polar_angle;
+    if(pointDistance(target_point,last_target_point) < energy_part_param_.TARGET_CHANGE_DISTANCE_MAX){
+        last_target_point = target_point;
         return false;
     }
     else{
-        last_target_polar_angle = target_polar_angle;
+        last_target_point= target_point;
         return true;
     }
 }

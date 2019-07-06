@@ -65,6 +65,9 @@ struct EnergyPartParam {
     float CENTER_R_CONTOUR_HW_RATIO_MIN;//风车中心R长宽比最小值
 
 	float TWIN_ANGEL_MAX;//扇叶和装甲板匹配时极坐标角度差的最大值
+	long INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积
+
+	long TARGET_CHANGE_DISTANCE_MAX;//目标未更改时，目标装甲板中心与原目标装甲板中心的距离变化最大值
 };
 
 

@@ -102,13 +102,16 @@ int Energy::runBig(cv::Mat &gimble_src){
     centerRs_cnt = findCenterR(gimble_src);
 //    if(centerRs_cnt>0)showCenterRContours("R", gimble_src);
 
+    writeDownMark();
+
     getAllArmorCenters();
     circleLeastFit();
-    attack_distance = ATTACK_DISTANCE;
+//    attack_distance = ATTACK_DISTANCE;
 
     getFanPolarAngle();
     getArmorPolarAngle();
-    findTarget();
+    findTargetByPolar();
+//    findTargetByIntersection();
 
     if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
 
@@ -129,24 +132,21 @@ int Energy::runBig(cv::Mat &gimble_src){
 
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
-// 此函数为小能量机关模式主控制流函数，且步兵需要同时拥有云台摄像头和底盘摄像头
-// ---------------------------------------------------------------------------------------------------------------------
-int Energy::runSmall(cv::Mat &gimble_src, cv::Mat &chassis_src){
-    if(chassis_src.empty())runSmall(gimble_src);//仅拥有云台摄像头则调用单摄像头的run函数
-    else return 0;
-}
-
-
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数为小能量机关模式主控制流函数，且步兵仅拥有云台摄像头
+// 此函数为小能量机关模式主控制流函数，击打小符只需要拥有云台摄像头
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::runSmall(cv::Mat &gimble_src){
-
+    imshow("gimble src", gimble_src);
+    fans.clear();
+    armors.clear();
+    threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+    fans_cnt = findFan(gimble_src, last_fans_cnt);
+    armors_cnt = findArmor(gimble_src, last_armors_cnt);
+    if(fans_cnt==-1 || armors_cnt==-1 || armors_cnt != fans_cnt+1) return 0;
+    findTargetByIntersection();
+    if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
+    getAimPoint();
+    sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
 }
 
 

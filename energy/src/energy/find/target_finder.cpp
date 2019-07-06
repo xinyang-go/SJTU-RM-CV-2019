@@ -11,9 +11,9 @@ using std::vector;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// 此函数用于匹配扇叶和装甲板，找到目标装甲板,计算其极坐标角度和中心坐标
+// 此函数通过极坐标角度匹配扇叶和装甲板，找到目标装甲板,计算其极坐标角度和中心坐标
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::findTarget() {
+void Energy::findTargetByPolar() {
 	if (fan_polar_angle.size() >= armor_polar_angle.size()) return;//扇叶多于装甲板，识别错误
 	if (armor_polar_angle.empty())return;//找不到扇叶，识别错误
 	if (fan_polar_angle.empty()) {
@@ -26,7 +26,7 @@ void Energy::findTarget() {
 	}
 	sort(fan_polar_angle.begin(), fan_polar_angle.end());//对扇叶的极坐标角度进行排序
 	sort(armor_polar_angle.begin(), armor_polar_angle.end());//对装甲板的极坐标角度进行排序
-	int i, j = 0;
+	int i = 0, j = 0;
 	for (i = 0; i < fan_polar_angle.size(); ++i) {
 		if (armor_polar_angle.at(i) - fan_polar_angle.at(j) < energy_part_param_.TWIN_ANGEL_MAX
 		    && armor_polar_angle.at(i) - fan_polar_angle.at(j) > -1 * energy_part_param_.TWIN_ANGEL_MAX) {
@@ -55,6 +55,40 @@ void Energy::findTarget() {
 			target_point = armor.rect.center;//根据已经确定的目标装甲板极坐标角度，获得该装甲板的中心坐标
 		}
 	}
-
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数根据矩形重合面积匹配扇叶与装甲板
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::findTargetByIntersection() {
+    if (fans.size() >= armors.size()) return;//扇叶多于装甲板，识别错误
+    if (armors.empty())return;//找不到扇叶，识别错误
+    if (fans.empty()) {
+        target_point = armors.at(0).rect.center;
+        return;
+    }
+    int i = 0, j = 0;
+    while (i < armors.size()) {
+        for (j = 0; j < fans.size(); ++j) {
+            std::vector<cv::Point2f> intersection;
+            if(rotatedRectangleIntersection(armors.at(i).rect, fans.at(j).rect, intersection) == 0)//返回0表示没有重合面积
+                continue;
+            else
+                rotatedRectangleIntersection(armors.at(i).rect, fans.at(j).rect, intersection);
+                double cur_contour_area = contourArea(intersection);
+                if (cur_contour_area > energy_part_param_.INTERSETION_CONTOUR_AREA_MIN) {
+//                    cout << endl;
+//                    cout << "NO. " << i << " armor and No. " << j << "fans are matched, the intersection area is"
+//                         << cur_contour_area << endl;
+                    break;
+                }
+        }
+        if(j == fans.size()){
+            target_point = armors.at(i).rect.center;
+            break;
+        }
+        i++;
+    }
+}

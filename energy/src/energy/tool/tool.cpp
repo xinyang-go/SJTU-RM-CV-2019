@@ -71,3 +71,5 @@ double Energy::pointDistance(cv::Point point_1, cv::Point point_2){
                     + pow(static_cast<double>(point_1.y - point_2.y),2));
     return distance;
 }
+
+
