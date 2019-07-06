@@ -30,7 +30,8 @@ public:
 	Serial &serial;//串口
 	void setEnergyRotationInit();//判断顺逆时针函数
 	void extract(cv::Mat &src);//框取图像中的一块区域进行处理
-	void sendTargetByUart(float x, float y, float z);//向主控板发送数据
+    void sendBigTarget(Serial& serial, float x, float y, float z);
+    void sendSmallTarget(Serial& serial, float x, float y, char change, char shoot);
 
 
 private:
@@ -62,6 +63,7 @@ private:
 	float origin_yaw, origin_pitch;//初始的云台角度设定值
 	float target_cnt;//用于记录寻找到的装甲板总数，该值变化则立即中断主控板发射进程，防止重复击打已点亮的装甲板
     bool save_new_mark;//若操作手进行过手动标定，则为true
+    bool small_energy_shoot;//若为true，则要求主控板发弹
 	std::vector<EnergyPart> fans;//图像中所有扇叶
 	std::vector<EnergyPart> armors;//图像中所有装甲板
     std::vector<EnergyPart> centerRs;//风车中心字母R的可能候选区

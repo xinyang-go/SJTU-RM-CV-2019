@@ -26,7 +26,7 @@ using namespace std;
 mcu_data mcuData = {
         0,
         0,
-        ARMOR_STATE,
+        SMALL_ENERGY_STATE,
         0,
         1,
         ENEMY_BLUE,

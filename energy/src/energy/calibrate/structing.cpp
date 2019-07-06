@@ -46,5 +46,5 @@ void Energy::StructingElementErodeDilate(cv::Mat &src) {
 //    imshow("dilate_3", src);
 
     erode(src,src, element_erode_2);
-    imshow("erode_2", src);
+//    imshow("erode_2", src);
 }

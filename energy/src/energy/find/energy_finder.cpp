@@ -32,24 +32,15 @@ int Energy::findFan(const cv::Mat src, int &last_fans_cnt) {
 		}
         fans.emplace_back(fan_contour);
 
-       /* double cur_contour_area = contourArea(fan_contour);
-        RotatedRect cur_rect = minAreaRect(fan_contour);
-        Size2f cur_size = cur_rect.size;
-
-        cout<<"cur_contour_area: "<<cur_contour_area<<'\t'<<"rect_area: "<<cur_size.area()<<
-            '\t'<<"ratio: "<<cur_contour_area/cur_size.area()<<endl;
-
-        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
-        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-        cout<<"fan area: "<<length<<'\t'<<width<<endl;
-
-		if(length>20&&width>20){
-			cout<<cur_rect.center;
-			fans.emplace_back(fan_contour);
-			cout<<"fan area: "<<length<<'\t'<<width<<endl;
-		}
-        cout<<"fan area: "<<length<<'\t'<<width<<endl;*/
-
+//        RotatedRect cur_rect = minAreaRect(fan_contour);
+//        Size2f cur_size = cur_rect.size;
+//        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
+//        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+//        if(length>20&&width>20){
+//			cout<<cur_rect.center;
+//			fans.emplace_back(fan_contour);
+//			cout<<"fan area: "<<length<<'\t'<<width<<endl;
+//		}
 	}
 	if(fans.size() < last_fans_cnt){
 		last_fans_cnt = static_cast<int>(fans.size());

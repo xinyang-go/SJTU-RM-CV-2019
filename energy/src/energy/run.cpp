@@ -57,7 +57,8 @@ int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src){
 
 //    cout<<"send"<<endl;
 //    cout<<"position mode: "<<position_mode<<endl;
-        sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
+        if(changeTarget())target_cnt++;
+        sendBigTarget(serial, yaw_rotation, pitch_rotation, target_cnt);
         return 0;
     }
 //    if(centered)
@@ -122,7 +123,8 @@ int Energy::runBig(cv::Mat &gimble_src){
     }
     getPredictPoint();
     gimbleRotation();
-    sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
+    if(changeTarget())target_cnt++;
+    sendBigTarget(serial, yaw_rotation, pitch_rotation, target_cnt);
 
 //    cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
 //    cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
@@ -149,7 +151,8 @@ int Energy::runSmall(cv::Mat &gimble_src){
     findTargetByIntersection();
     if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
     getAimPoint();
-    sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
+    if(changeTarget())target_cnt++;//若云台移动过程中发现有新装甲板亮起，需改变target_cnt值，以及时告知主控板中断进程，防止重复打击
+    sendSmallTarget(serial, yaw_rotation, pitch_rotation, target_cnt, small_energy_shoot);
 }
 
 

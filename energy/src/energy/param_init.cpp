@@ -44,6 +44,7 @@ void Energy::initEnergy() {
     blue_origin_pitch = 15.688477;
 
 	target_cnt = 0;
+    small_energy_shoot = false;
 	energy_rotation_init = false;
 	predict_rad = 20;
 
@@ -66,23 +67,23 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-	energy_part_param_.GRAY_THRESH = 235;
+	energy_part_param_.GRAY_THRESH = 225;
 	energy_part_param_.SPLIT_GRAY_THRESH = 60;
 	energy_part_param_.FAN_GRAY_THRESH = 75;
 	energy_part_param_.ARMOR_GRAY_THRESH = 80;
 
 	energy_part_param_.FAN_CONTOUR_AREA_MAX = 17000;
 	energy_part_param_.FAN_CONTOUR_AREA_MIN = 0;
-	energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 90;
-    energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 140;
-	energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 35;
+	energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 70;
+    energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 100;
+	energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 30;
     energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 60;
 	energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 4;
 	energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN = 1;
 
 	energy_part_param_.ARMOR_CONTOUR_AREA_MAX = 100000;
 	energy_part_param_.ARMOR_CONTOUR_AREA_MIN = 0;
-	energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 15;
+	energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 13;
 	energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 5;
 	energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 30;
 	energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 20;
