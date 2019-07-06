@@ -174,7 +174,7 @@ bool Serial::ReadData(unsigned char *buffer,  unsigned int length) {
 	return bResult;
 }
 
-#elif defined(Linux)
+#elif defined(Linux) || defined(Darwin)
 
 #include <string.h>
 

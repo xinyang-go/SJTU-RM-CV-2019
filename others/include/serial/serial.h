@@ -29,7 +29,7 @@ private:
 	DWORD dwCommEvents;
 };
 
-#elif defined(Linux)
+#elif defined(Linux) || defined(Darwin)
 
 #include <errno.h>
 #include <fcntl.h>
