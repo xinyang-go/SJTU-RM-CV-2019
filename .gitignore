@@ -4,3 +4,4 @@ build
 Mark
 tools/TrainCNN/.idea
 tools/TrainCNN/__pycache__
+.DS_Store

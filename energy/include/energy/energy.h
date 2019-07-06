@@ -18,7 +18,6 @@
 #include "additions/additions.h"
 #include "options/options.h"
 
-
 using std::vector;
 
 class Energy {
@@ -38,11 +37,13 @@ public:
 private:
 	EnergyPartParam energy_part_param_;//能量机关的参数设置
 	bool isMark;//若操作手正在手动标定，则为true
+	bool centered=false;//云台是否对准中心
 	int fans_cnt;//图像中的扇叶个数
 	int armors_cnt;//图像中的装甲板个数
 	int centerRs_cnt;//图像中可能的风车中心字母R选区个数
 	int last_fans_cnt;//上一帧的扇叶个数
 	int last_armors_cnt;//上一帧的装甲板个数
+	int gimble_cnt; //经过的帧数
 	double radius;//大风车半径
 	float target_polar_angle;//待击打装甲板的极坐标角度
     float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度
@@ -62,7 +63,6 @@ private:
 	float origin_yaw, origin_pitch;//初始的云台角度设定值
 	float target_cnt;//用于记录寻找到的装甲板总数，该值变化则立即中断主控板发射进程，防止重复击打已点亮的装甲板
     bool save_new_mark;//若操作手进行过手动标定，则为true
-
 	std::vector<EnergyPart> fans;//图像中所有扇叶
 	std::vector<EnergyPart> armors;//图像中所有装甲板
     std::vector<EnergyPart> centerRs;//风车中心字母R的可能候选区
@@ -70,6 +70,7 @@ private:
 	cv::Point circle_center_point;//风车圆心坐标
 	cv::Point target_point;//目标装甲板中心坐标
 	cv::Point predict_point;//预测的击打点坐标
+	cv::Point former_point;//之前预测的圆心坐标
 	std::vector<float>fan_polar_angle;//当前帧所有扇叶的极坐标角度
 	std::vector<float>armor_polar_angle;//当前帧所有装甲板的极坐标角度
     std::vector<cv::Point> all_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算

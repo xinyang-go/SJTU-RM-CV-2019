@@ -16,13 +16,15 @@ using std::vector;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergy() {
 	isMark = false;
-
+	centered=false;
 	fans_cnt = 0;
 	armors_cnt = 0;
 	centerRs_cnt = 0;
+	gimble_cnt = 0;
     circle_center_point = Point(0, 0);
 	target_point = Point(0, 0);
     predict_point = Point(0, 0);
+	former_point = Point(0,0);
     target_polar_angle = -1000;
     last_target_polar_angle = -1000;
 	radius = 0;

@@ -15,11 +15,53 @@ using std::vector;
 // 此函数为大能量机关模式主控制流函数，且步兵需要同时拥有云台摄像头和底盘摄像头
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src){
-    if(chassis_src.empty())runBig(gimble_src);//仅拥有云台摄像头则调用单摄像头的run函数
-    else {
-        runBig(chassis_src);
+    if(chassis_src.empty())
+        runBig(gimble_src);//仅拥有云台摄像头则调用单摄像头的run函数
+    else if(!centered) {
+        armors.clear();
+        armor_polar_angle.clear();
+        changeMark();
+        if (isMark)return 0;
+
+        threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+        imshow("yun",gimble_src);
+
+        armors_cnt = findArmor(gimble_src,  last_armors_cnt);
+        if(armors_cnt!=1) return 0;//滤去漏判的帧
+
+        getAllArmorCenters();
+        circleLeastFit();
+
+//    attack_distance = 752;//单项赛
+        attack_distance = 718;
+
+        if (energy_rotation_init) {
+            initRotation();
+            return 0;
+        }
+
+        if(++gimble_cnt==10){
+            former_point=circle_center_point;
+            gimble_cnt=0;
+        }
+
+        if(former_point==predict_point&&gimble_cnt==9&&predict_point!=Point(0,0)) {
+            centered=true;
+            cout<<"gimble focused!"<<endl;
+        }
+        predict_point=circle_center_point;
+        cout<<gimble_cnt<<endl;
+        cout<<"center:("<<predict_point.x<<','<<predict_point.y<<")\n";
+        gimbleRotation();
+
+//    cout<<"send"<<endl;
+//    cout<<"position mode: "<<position_mode<<endl;
+        sendTargetByUart(yaw_rotation, pitch_rotation, target_cnt);
         return 0;
     }
+//    if(centered)
+//        destroyAllWindows();
+    return 0;
 }
 
 
@@ -81,6 +123,7 @@ int Energy::runBig(cv::Mat &gimble_src){
 //    cout<<"yaw: "<<yaw_rotation<<'\t'<<"pitch: "<<pitch_rotation<<endl;
 //    cout<<"curr_yaw: "<<mcuData.curr_yaw<<'\t'<<"curr_pitch: "<<mcuData.curr_pitch<<endl;
 //    cout<<"send_cnt: "<<send_cnt<<endl;
+    return 0;
 }
 
 
