@@ -129,7 +129,6 @@ static bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
     }else if(src.type() == CV_8UC1){
         src_gray = src.clone();
     }
-    LightBlobs all;
     std::vector<std::vector<cv::Point> > light_contours;
     cv::findContours(src_gray, light_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
@@ -138,9 +137,7 @@ static bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
         if(isValidLightBlob(src_gray, rect)){
             light_blobs.emplace_back(rect);
         }
-        all.emplace_back(rect);
     }
-    showContours("all", src, all);
     return light_blobs.size() >= 2;
 }
 

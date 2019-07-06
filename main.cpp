@@ -29,7 +29,7 @@ mcu_data mcuData = {
         ARMOR_STATE,
         0,
         1,
-        ENEMY_RED,
+        ENEMY_BLUE,
 };
 
 WrapperHead *video_gimble = nullptr;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
                     if (show_origin) showOrigin(gimble_src);
                     if (mcuData.state == ARMOR_STATE){
                         CNT_TIME("Armor Time", {
-                                armorFinder.run(gimble_src);
+                            armorFinder.run(gimble_src);
                         });
                     }
                     else if(mcuData.state == SMALL_ENERGY_STATE){

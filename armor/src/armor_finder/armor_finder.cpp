@@ -29,8 +29,8 @@ void ArmorFinder::run(cv::Mat &src) {
         showArmorBox("box", src, armor_box, boxid);
         cv::waitKey(1);
     }
-    stateSearchingTarget(src_use);
-    return;
+//    stateSearchingTarget(src_use);
+//    return;
     switch (state){
         case SEARCHING_STATE:
             if(stateSearchingTarget(src_use)){
