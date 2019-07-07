@@ -76,7 +76,7 @@ bool CameraWrapper::init() {
 #elif defined(Linux)
     CameraSetAeState(h_camera, false);
     CameraSetExposureTime(h_camera, 10*1000);
-    CameraSetAnalogGain(h_camera, 40);
+    CameraSetAnalogGain(h_camera, 30);
     if(mode == 0){
         CameraSetGain(h_camera, 100, 100, 100);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);

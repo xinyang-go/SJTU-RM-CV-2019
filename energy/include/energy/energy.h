@@ -118,6 +118,7 @@ private:
 
 	void splitBayerBG(cv::Mat src, cv::Mat &blue, cv::Mat &red);//拜耳阵列分离
 	void imagePreprocess(cv::Mat &src);//图像通道分离
+    void hsvFilter(cv::Mat &src);//此函数通过HSV颜色空间对图像纯度进行限制，进行滤光
 
 	void StructingElementClose(cv::Mat &src,int length, int width);//闭运算
 	void StructingElementErodeDilate(cv::Mat &src);//腐蚀和膨胀

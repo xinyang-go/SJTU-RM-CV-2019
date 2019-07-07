@@ -73,7 +73,7 @@ int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src){
 // 此函数为大能量机关模式主控制流函数，且步兵仅拥有云台摄像头
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::runBig(cv::Mat &gimble_src){
-//    imshow("src",src);
+    imshow("src",gimble_src);
     fans.clear();
     armors.clear();
     centerRs.clear();
@@ -82,22 +82,21 @@ int Energy::runBig(cv::Mat &gimble_src){
 
     changeMark();
     if (isMark)return 0;
-//    imagePreprocess(src);
-//    imshow("img_preprocess",src);
+//    imagePreprocess(gimble_src);
+//    imshow("img_preprocess", gimble_src);
 
     threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
-//    imshow("bin",src);
+    imshow("bin",gimble_src);
 
     fans_cnt = findFan(gimble_src, last_fans_cnt);
 //    cout<<"fans_cnt: "<<fans_cnt<<endl;
     if(fans_cnt==-1) return 0;//滤去漏判的帧
 //    if(fans_cnt>0)showFanContours("fan",src);
-//    fans_cnt=0;
 
     armors_cnt = findArmor(gimble_src, last_armors_cnt);
 //    cout<<"armors_cnt: "<<armors_cnt<<endl;
     if(armors_cnt==-1) return 0;//滤去漏判的帧
-//    if(armors_cnt>0) showArmorContours("armor",src);
+//    if(armors_cnt>0) showArmorContours("armor",gimble_src);
 
     if(armors_cnt != fans_cnt+1) return 0;
 
@@ -142,7 +141,7 @@ int Energy::runSmall(cv::Mat &gimble_src){
     imshow("gimble src", gimble_src);
     if(gimble_src.type()== CV_8UC3)cvtColor(gimble_src, gimble_src, COLOR_BGR2GRAY);
     fans.clear();
-    armors.clear();
+    armors.clear();-
     threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
     imshow("bin",gimble_src);
     fans_cnt = findFan(gimble_src, last_fans_cnt);

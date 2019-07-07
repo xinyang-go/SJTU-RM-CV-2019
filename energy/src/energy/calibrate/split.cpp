@@ -52,9 +52,9 @@ void Energy::imagePreprocess(cv::Mat &src) {
     {
         std::vector<Mat> channels;
         split(src, channels);
-        resize(channels.at(0), src_blue, Size(SRC_WIDTH, SRC_HEIGHT));
-        resize(channels.at(1), src_green, Size(SRC_WIDTH, SRC_HEIGHT));
-        resize(channels.at(2), src_red, Size(SRC_WIDTH, SRC_HEIGHT));
+        resize(channels.at(0), src_blue, Size(src.size().width/2, src.size().height/2));
+        resize(channels.at(1), src_green, Size(src.size().width/2, src.size().height/2));
+        resize(channels.at(2), src_red, Size(src.size().width/2, src.size().height/2));
         if(ally_color == ALLY_RED)
         {
             src = src_red-src_blue;
@@ -64,7 +64,7 @@ void Energy::imagePreprocess(cv::Mat &src) {
             //src=src_blue;
         }
     }
-    cv::resize(src, src, cv::Size(640, 480), 2);
+    cv::resize(src, src, cv::Size(src.size().width * 2, src.size().height * 2), 2);
     threshold(src, src, energy_part_param_.SPLIT_GRAY_THRESH, 255, THRESH_BINARY);
 
 }

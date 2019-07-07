@@ -56,8 +56,8 @@ int main(int argc, char *argv[]) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/Users/leo/Desktop/videos/179.avi");
-            video_chassis = new VideoWrapper("/Users/leo/Desktop/videos/179.avi");
+            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/official_r_l.mp4");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
         if (video_gimble->init()) {
             LOGM("video_gimble source initialization successfully.");
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
                         energy.runSmall(gimble_src);
                     }
                 }
-                cv::waitKey(1);
+//                cv::waitKey(1);
             });
         } while (ok);
 
