@@ -268,7 +268,7 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
         color = channels[0];                /* 根据目标颜色进行通道提取 */
     else if (enemy_color == ENEMY_RED)      /*                      */
         color = channels[2];                /************************/
-    cv::threshold(color, src_bin, 170, 255, CV_THRESH_BINARY); // 二值化对应通道
+    cv::threshold(color, src_bin, 190, 255, CV_THRESH_BINARY); // 二值化对应通道
     imagePreProcess(src_bin);                                  // 开闭运算
     if (!findLightBlobs(src_bin, light_blobs)) {
         return false;

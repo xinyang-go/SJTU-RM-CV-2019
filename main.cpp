@@ -21,10 +21,10 @@ using namespace std;
 mcu_data mcuData = {
         0,
         0,
-        SMALL_ENERGY_STATE,
+        ARMOR_STATE,
         0,
         1,
-        ENEMY_BLUE,
+        ENEMY_RED,
 };
 
 WrapperHead *video_gimble = nullptr;
@@ -111,7 +111,6 @@ int main(int argc, char *argv[]) {
                         energy.runBig(gimble_src);
                     }
                 }
-                cv::waitKey(100);
             });
         } while (ok);
 
