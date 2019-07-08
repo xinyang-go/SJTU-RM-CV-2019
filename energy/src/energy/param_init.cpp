@@ -99,6 +99,8 @@ void Energy::initEnergyPartParam() {
     energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
     energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
 
+    energy_part_param_.FLOW_LIGHT_CONTOUR_HW_RATIO_MIN = 6;
+
 	energy_part_param_.TWIN_ANGEL_MAX = 10;
 	energy_part_param_.INTERSETION_CONTOUR_AREA_MIN = 60;
 

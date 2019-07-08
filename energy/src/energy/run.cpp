@@ -82,8 +82,8 @@ int Energy::runBig(cv::Mat &gimble_src){
 
     changeMark();
     if (isMark)return 0;
-//    imagePreprocess(gimble_src);
-//    imshow("img_preprocess", gimble_src);
+    imagePreprocess(gimble_src);
+    imshow("img_preprocess", gimble_src);
 
     threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
     imshow("bin",gimble_src);

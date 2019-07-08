@@ -114,10 +114,11 @@ int main(int argc, char *argv[]) {
                         });
                     }
                     else if(mcuData.state == SMALL_ENERGY_STATE){
-                        energy.runSmall(gimble_src);
+//                        energy.runSmall(gimble_src);
+                        energy.runBig(gimble_src);
                     }
                 }
-//                cv::waitKey(1);
+                cv::waitKey(100);
             });
         } while (ok);
 
