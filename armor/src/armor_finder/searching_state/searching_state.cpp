@@ -337,11 +337,5 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
         armor_box = armor_boxes[0];
         boxid = -1;
     }
-    if (split.size() == cv::Size(320, 240)) {
-        armor_box.x *= 2;
-        armor_box.y *= 2;
-        armor_box.width *= 2;
-        armor_box.height *= 2;
-    }
     return sendBoxPosition();
 }
