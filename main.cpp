@@ -2,22 +2,17 @@
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include <iostream>
+#include <thread>
 #include <opencv2/core/core.hpp>
-#include <fstream>
-#include <energy/energy.h>
 #include <serial/serial.h>
-#include <energy/param_struct_define.h>
-#include <energy/constant.h>
 #include <camera/camera_wrapper.h>
 #include <camera/video_wrapper.h>
 #include <camera/wrapper_head.h>
+#include <energy/energy.h>
 #include <armor_finder/armor_finder.h>
 #include <options/options.h>
 #include <additions/additions.h>
-#include <thread>
-
 #define DO_NOT_CNT_TIME
-
 #include <log.h>
 
 using namespace cv;

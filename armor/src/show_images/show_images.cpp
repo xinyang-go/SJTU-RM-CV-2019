@@ -1,8 +1,12 @@
 #include <show_images/show_images.h>
+#include <opencv2/highgui.hpp>
 #include <log.h>
 
 using namespace cv;
 
+/**************************
+ *     显示多个装甲板区域    *
+ **************************/
 void showArmorBoxVector(std::string windows_name, const cv::Mat &src, const std::vector<cv::Rect2d> &armor_box) {
     static Mat image2show;
     if (src.type() == CV_8UC1) {// 黑白图像
@@ -17,6 +21,9 @@ void showArmorBoxVector(std::string windows_name, const cv::Mat &src, const std:
     imshow(windows_name, image2show);
 }
 
+/**************************
+ * 显示多个装甲板区域及其类别 *
+ **************************/
 void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::Rect2d> boxes[10]) {
     static Mat image2show;
     if (src.type() == CV_8UC1) { // 黑白图像
@@ -45,6 +52,9 @@ void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::
     imshow(window_names, image2show);
 }
 
+/**************************
+ * 显示多个装甲板区域及其类别 *
+ **************************/
 void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor_box, int boxid) {
     static Mat image2show;
     if (src.type() == CV_8UC1) { // 黑白图像
@@ -67,6 +77,9 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor
     imshow(windows_name, image2show);
 }
 
+/**************************
+ *      显示多个灯条区域     *
+ **************************/
 void showContours(std::string windows_name, const cv::Mat &src, const std::vector<LightBlob> &light_blobs) {
     static Mat image2show;
 

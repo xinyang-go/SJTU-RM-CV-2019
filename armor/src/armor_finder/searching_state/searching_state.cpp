@@ -4,10 +4,10 @@
 
 #include <armor_finder/armor_finder.h>
 #include <opencv2/highgui.hpp>
-#include <image_process/image_process.h>
-#include <log.h>
 #include <show_images/show_images.h>
 #include <options/options.h>
+#include <log.h>
+#include "image_process.h"
 
 typedef std::vector<LightBlob> LightBlobs;
 
@@ -255,20 +255,21 @@ static string prior_red[] = {
 };
 
 bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
-    cv::Mat split, src_bin, color;
-    LightBlobs light_blobs;
-    std::vector<cv::Rect2d> armor_boxes, boxes_number[14];
-    std::vector<cv::Mat> channels;
+    std::vector<cv::Mat> channels;      // 通道拆分
+    cv::Mat src_bin, color; // 二值图和颜色通道图
+    LightBlobs light_blobs; // 存储所有可能的灯条
+    std::vector<cv::Rect2d> armor_boxes; // 装甲板候选区
+    std::vector<cv::Rect2d> boxes_number[15]; // 装甲板候选区放置在对应id位置
 
-    armor_box = cv::Rect2d(0, 0, 0, 0);
+    armor_box = cv::Rect2d(0, 0, 0, 0);     // 重置目标装甲板位置
 
-    cv::split(src, channels);
-    if (enemy_color == ENEMY_BLUE)
-        color = channels[0];
-    else if (enemy_color == ENEMY_RED)
-        color = channels[2];
-    cv::threshold(color, src_bin, 170, 255, CV_THRESH_BINARY);
-    imagePreProcess(src_bin);
+    cv::split(src, channels);               /************************/
+    if (enemy_color == ENEMY_BLUE)          /*                      */
+        color = channels[0];                /* 根据目标颜色进行通道提取 */
+    else if (enemy_color == ENEMY_RED)      /*                      */
+        color = channels[2];                /************************/
+    cv::threshold(color, src_bin, 170, 255, CV_THRESH_BINARY); // 二值化对应通道
+    imagePreProcess(src_bin);                                  // 开闭运算
     if (!findLightBlobs(src_bin, light_blobs)) {
         return false;
     }

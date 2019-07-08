@@ -3,17 +3,17 @@
 //
 
 #include <cstring>
+#include <iostream>
 #include <fstream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/videoio/videoio_c.h>
 #include <additions/additions.h>
 #include <camera/camera_wrapper.h>
-#include <log.h>
-#include <opencv2/videoio/videoio_c.h>
-#include <iostream>
 #include <energy/energy.h>
 #include <armor_finder/armor_finder.h>
+#include <log.h>
 
 #define RECEIVE_LOG_LEVEL LOG_MSG
 
