@@ -8,6 +8,18 @@
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
 
+std::map<int, string> id2name = {
+        {-1, "OO"},{ 0, "NO"},
+        { 1, "B1"},{ 2, "B2"},{ 3, "B3"},{ 4, "B4"},{ 5, "B5"},{ 6, "B7"},{ 7, "B8"},
+        { 8, "R1"},{ 9, "R2"},{10, "R3"},{11, "R4"},{12, "R5"},{13, "R7"},{14, "R8"},
+};
+
+std::map<string, int> name2id = {
+        {"OO", -1},{"NO",  0},
+        {"B1",  1},{"B2",  2},{"B3",  3},{"B4",  4},{"B5",  5},{"B7",  6},{"B8",  7},
+        {"R1",  8},{"R2",  9},{"R3", 10},{"R4", 11},{"R5", 12},{"R7", 13},{"R8", 14},
+};
+
 ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, string paras_folder, const uint8_t &use) :
             serial(u),
             enemy_color(color),
@@ -23,14 +35,13 @@ void ArmorFinder::run(cv::Mat &src) {
     static int tracking_cnt = 0;
     cv::Mat src_use;
     src_use = src.clone();
-    cv::cvtColor(src_use, src_gray, CV_RGB2GRAY);
 
     if(show_armor_box){
         showArmorBox("box", src, armor_box, boxid);
         cv::waitKey(1);
     }
-    stateSearchingTarget(src_use);
-    return;
+//    stateSearchingTarget(src_use);
+//    return;
     switch (state){
         case SEARCHING_STATE:
             if(stateSearchingTarget(src_use)){

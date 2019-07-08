@@ -5,11 +5,15 @@
 #ifndef _ARMOR_FINDER_H_
 #define _ARMOR_FINDER_H_
 
+#include <map>
 #include <opencv2/core.hpp>
 #include <opencv2/tracking.hpp>
 #include <serial/serial.h>
 #include <armor_finder/classifier/classifier.h>
 #include "additions/additions.h"
+
+extern std::map<int, string> id2name;
+extern std::map<string, int> name2id;
 
 class ArmorFinder{
 public:
@@ -28,7 +32,6 @@ private:
     cv::Rect2d armor_box;
     int boxid;
     cv::Ptr<cv::Tracker> tracker;
-    cv::Mat src_gray;
 
     Classifier classifier;
 

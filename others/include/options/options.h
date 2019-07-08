@@ -11,11 +11,10 @@ extern bool show_armor_box;
 extern bool show_armor_boxes;
 extern bool show_light_blobs;
 extern bool show_origin;
-extern bool save_labelled;
 extern bool run_with_camera;
 extern bool save_video;
-extern bool collect_data;
 extern bool wait_uart;
+extern bool save_labelled_boxes;
 
 void process_options(int argc, char *argv[]);
 

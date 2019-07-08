@@ -10,11 +10,10 @@ bool show_armor_box = false;
 bool show_armor_boxes = false;
 bool show_light_blobs = false;
 bool show_origin = false;
-bool save_labelled = false;
 bool run_with_camera = false;
 bool save_video = false;
-bool collect_data = false;
 bool wait_uart = false;
+bool save_labelled_boxes = false;
 
 void process_options(int argc, char *argv[]){
     if(argc >= 2){
@@ -24,10 +23,9 @@ void process_options(int argc, char *argv[]){
                 LOGM("--show-armor-boxes: show the candidate aim boxes.");
                 LOGM("--show-light-blobs: show the candidate light blobs.");
                 LOGM("--show-origin: show the origin image.");
-                LOGM("--save-label: save the image when box found.");
                 LOGM("--run-with-camera: start the program with camera directly without asking.");
                 LOGM("--save-video: save the video.");
-                LOGM("--collect-data: collect data sent from mcu.");
+                LOGM("--save-labelled-boxes: save labelled armor boxes.");
             }else if(strcmp(argv[i], "--show-armor-box") == 0){
                 show_armor_box = true;
                 LOGM("Enable show armor box");
@@ -49,21 +47,18 @@ void process_options(int argc, char *argv[]){
                 LOGM("Enable show light blobs");
                 show_origin = true;
                 LOGM("Enable show origin");
-            }else if(strcmp(argv[i], "--save-labeled") == 0){
-                save_labelled = true;
-                LOGM("Enable save labeled");
             }else if(strcmp(argv[i], "--run-with-camera") == 0){
                 run_with_camera = true;
                 LOGM("Run with camera!");
             }else if(strcmp(argv[i], "--save-video") == 0){
                 save_video = true;
                 LOGM("Save video!");
-            }else if(strcmp(argv[i], "--collect-data") == 0){
-                collect_data = true;
-                LOGM("Enable data collection!");
             }else if(strcmp(argv[i], "--wait-uart") == 0){
                 wait_uart = true;
                 LOGM("Wait uart until available!");
+            }else if(strcmp(argv[i], "--save-labelled-boxes") == 0){
+                save_labelled_boxes = true;
+                LOGM("labelled armor boxes will be saved!");
             }else{
                 LOGW("Unknown option: %s. Use --help to see options.", argv[i]);
             }

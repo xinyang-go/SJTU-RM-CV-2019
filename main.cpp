@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
             }
         }
         bool ok = true;
-        cout<<"start running"<<endl;
+        cout << "start running" << endl;
         do {
             CNT_TIME("Total", {
                 if (mcuData.state == BIG_ENERGY_STATE) {//大符模式
@@ -102,18 +102,16 @@ int main(int argc, char *argv[]) {
                     }
                     energy.runBig(gimble_src, chassis_src);//击打大符
                     last_state = mcuData.state;//更新上一帧状态
-                }
-                else if (mcuData.state != BIG_ENERGY_STATE) {//自瞄或小符模式
+                } else if (mcuData.state != BIG_ENERGY_STATE) {//自瞄或小符模式
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimble->read(gimble_src));
                     if (save_video) saveVideos(gimble_src);
                     if (show_origin) showOrigin(gimble_src);
-                    if (mcuData.state == ARMOR_STATE){
+                    if (mcuData.state == ARMOR_STATE) {
                         CNT_TIME("Armor Time", {
                             armorFinder.run(gimble_src);
                         });
-                    }
-                    else if(mcuData.state == SMALL_ENERGY_STATE){
+                    } else if (mcuData.state == SMALL_ENERGY_STATE) {
 //                        energy.runSmall(gimble_src);
                         energy.runBig(gimble_src);
                     }
