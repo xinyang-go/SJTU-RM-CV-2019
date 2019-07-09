@@ -111,11 +111,8 @@ bool CameraWrapper::init() {
 
 
 bool CameraWrapper::read(cv::Mat& src) {
-//    return readRaw(src);             //suit for using bayer hacking in armor_finder to replace process, fast and it can filter red and blue.
-    if(mode==0)return readProcessed(src);   // processed color image, but this runs slowly, about half fps of previous one.
+    if(mode==0)return readProcessed(src);
     if(mode==1)return readRaw(src);
-
-
 }
 
 bool CameraWrapper::readRaw(cv::Mat &src) {

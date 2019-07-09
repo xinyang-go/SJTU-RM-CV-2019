@@ -18,35 +18,37 @@
 using namespace cv;
 using namespace std;
 
-mcu_data mcuData = {
-        0,
-        0,
-        ARMOR_STATE,
-        0,
-        1,
-        ENEMY_RED,
+mcu_data mcuData = {    // 单片机端回传结构体
+        0,              // 当前云台yaw角
+        0,              // 当前云台pitch角
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        0,              // 云台角度标记位
+        1,              // 是否启用数字识别
+        ENEMY_RED,      // 敌方颜色
 };
 
-WrapperHead *video_gimble = nullptr;
-WrapperHead *video_chassis = nullptr;
+WrapperHead *video_gimble = nullptr;    // 云台摄像头视频源
+WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 
-Serial serial(115200);
-uint8_t last_state = mcuData.state;
-
+Serial serial(115200);                  // 串口对象
+uint8_t last_state = mcuData.state;     // 上次状态，用于初始化
+// 自瞄主程序对象
 ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
+// 能量机关主程序对象
 Energy energy(serial, mcuData.enemy_color);
 
 int main(int argc, char *argv[]) {
-    process_options(argc, argv);
-    thread receive(uartReceive, &serial);
+    process_options(argc, argv);            // 处理命令行参数
+    thread receive(uartReceive, &serial);   // 开启串口接收线程
 
-    int from_camera = 1;
+    int from_camera = 1;                    // 根据条件选择视频源
     if (!run_with_camera) {
         cout << "Input 1 for camera, 0 for video files" << endl;
         cin >> from_camera;
     }
 
     while (true) {
+        // 打开视频源
         if (from_camera) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
@@ -69,6 +71,7 @@ int main(int argc, char *argv[]) {
             video_chassis = nullptr;
         }
 
+        // 跳过前10帧噪声图像。
         Mat gimble_src, chassis_src;
         for (int i = 0; i < 10; i++) {
             if (video_gimble) {
