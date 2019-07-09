@@ -28,9 +28,7 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
             contour_area(0),
             use_classifier(use),
             boxid(-1),
-            tracking_cnt(0),
-            miss_cnt(0),
-            weak_cnt(0)
+            tracking_cnt(0)
             {
 }
 
@@ -44,16 +42,8 @@ void ArmorFinder::run(cv::Mat &src) {
 //    stateSearchingTarget(src_use);                    // for debug
 //    return;
     switch (state){
-        case WEAKSEARCHING_STATE:
-            if(stateSearchingTarget(src_use) && ++weak_cnt>5){
-                miss_cnt = 0;
-                state = SEARCHING_STATE;
-            }else{
-                weak_cnt = 0;
-            }
         case SEARCHING_STATE:
             if(stateSearchingTarget(src_use)){
-                miss_cnt = 0;
                 if((armor_box & cv::Rect2d(0, 0, 640, 480)) == armor_box) { // 判断装甲板区域是否脱离图像区域
                     if(!classifier || !use_classifier){                     /* 如果分类器不可用或者不使用分类器 */
                         cv::Mat roi = src_use.clone()(armor_box), roi_gray; /* 就使用装甲区域亮点数判断是否跟丢 */
@@ -67,14 +57,10 @@ void ArmorFinder::run(cv::Mat &src) {
                     tracking_cnt = 0;
                     LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
                 }
-            }else if(++miss_cnt>100){
-                weak_cnt = 0;
-                state = WEAKSEARCHING_STATE;
             }
             break;
         case TRACKING_STATE:
             if(!stateTrackingTarget(src_use) || ++tracking_cnt>100){    // 最多追踪100帧图像
-                miss_cnt = 0;
                 state = SEARCHING_STATE;
                 LOGM(STR_CTR(WORD_LIGHT_YELLOW ,"into search!"));
             }
