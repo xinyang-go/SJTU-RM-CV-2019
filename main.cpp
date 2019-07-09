@@ -2,61 +2,58 @@
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include <iostream>
+#include <thread>
 #include <opencv2/core/core.hpp>
-#include <fstream>
-#include <energy/energy.h>
 #include <serial/serial.h>
-#include <energy/param_struct_define.h>
-#include <energy/constant.h>
 #include <camera/camera_wrapper.h>
 #include <camera/video_wrapper.h>
 #include <camera/wrapper_head.h>
+#include <energy/energy.h>
 #include <armor_finder/armor_finder.h>
 #include <options/options.h>
 #include <additions/additions.h>
-#include <thread>
-
 #define DO_NOT_CNT_TIME
-
 #include <log.h>
 
 using namespace cv;
 using namespace std;
 
-mcu_data mcuData = {
-        0,
-        0,
-        SMALL_ENERGY_STATE,
-        0,
-        1,
-        ENEMY_BLUE,
+mcu_data mcuData = {    // 单片机端回传结构体
+        0,              // 当前云台yaw角
+        0,              // 当前云台pitch角
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        0,              // 云台角度标记位
+        1,              // 是否启用数字识别
+        ENEMY_RED,      // 敌方颜色
 };
 
-WrapperHead *video_gimble = nullptr;
-WrapperHead *video_chassis = nullptr;
+WrapperHead *video_gimble = nullptr;    // 云台摄像头视频源
+WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 
-Serial serial(115200);
-uint8_t last_state = mcuData.state;
-
+Serial serial(115200);                  // 串口对象
+uint8_t last_state = mcuData.state;     // 上次状态，用于初始化
+// 自瞄主程序对象
 ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
+// 能量机关主程序对象
 Energy energy(serial, mcuData.enemy_color);
 
 int main(int argc, char *argv[]) {
-    process_options(argc, argv);
-    thread receive(uartReceive, &serial);
+    process_options(argc, argv);            // 处理命令行参数
+    thread receive(uartReceive, &serial);   // 开启串口接收线程
 
-    int from_camera = 1;
+    int from_camera = 1;                    // 根据条件选择视频源
     if (!run_with_camera) {
         cout << "Input 1 for camera, 0 for video files" << endl;
         cin >> from_camera;
     }
 
     while (true) {
+        // 打开视频源
         if (from_camera) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/official_r_l.mp4");
             video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
         if (video_gimble->init()) {
@@ -74,6 +71,7 @@ int main(int argc, char *argv[]) {
             video_chassis = nullptr;
         }
 
+        // 跳过前10帧噪声图像。
         Mat gimble_src, chassis_src;
         for (int i = 0; i < 10; i++) {
             if (video_gimble) {
@@ -84,7 +82,7 @@ int main(int argc, char *argv[]) {
             }
         }
         bool ok = true;
-        cout<<"start running"<<endl;
+        cout << "start running" << endl;
         do {
             CNT_TIME("Total", {
                 if (mcuData.state == BIG_ENERGY_STATE) {//大符模式
@@ -102,23 +100,20 @@ int main(int argc, char *argv[]) {
                     }
                     energy.runBig(gimble_src, chassis_src);//击打大符
                     last_state = mcuData.state;//更新上一帧状态
-                }
-                else if (mcuData.state != BIG_ENERGY_STATE) {//自瞄或小符模式
+                } else if (mcuData.state != BIG_ENERGY_STATE) {//自瞄或小符模式
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimble->read(gimble_src));
                     if (save_video) saveVideos(gimble_src);
                     if (show_origin) showOrigin(gimble_src);
-                    if (mcuData.state == ARMOR_STATE){
+                    if (mcuData.state == ARMOR_STATE) {
                         CNT_TIME("Armor Time", {
                             armorFinder.run(gimble_src);
                         });
-                    }
-                    else if(mcuData.state == SMALL_ENERGY_STATE){
+                    } else if (mcuData.state == SMALL_ENERGY_STATE) {
 //                        energy.runSmall(gimble_src);
                         energy.runBig(gimble_src);
                     }
                 }
-                cv::waitKey(3);
             });
         } while (ok);
 

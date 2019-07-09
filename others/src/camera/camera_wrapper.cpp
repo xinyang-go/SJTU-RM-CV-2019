@@ -76,7 +76,7 @@ bool CameraWrapper::init() {
 #elif defined(Linux)
     CameraSetAeState(h_camera, false);
     CameraSetExposureTime(h_camera, 10*1000);
-    CameraSetAnalogGain(h_camera, 30);
+    CameraSetAnalogGain(h_camera, 50);
     if(mode == 0){
         CameraSetGain(h_camera, 100, 100, 100);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
@@ -111,11 +111,8 @@ bool CameraWrapper::init() {
 
 
 bool CameraWrapper::read(cv::Mat& src) {
-//    return readRaw(src);             //suit for using bayer hacking in armor_finder to replace process, fast and it can filter red and blue.
-    if(mode==0)return readProcessed(src);   // processed color image, but this runs slowly, about half fps of previous one.
+    if(mode==0)return readProcessed(src);
     if(mode==1)return readRaw(src);
-
-
 }
 
 bool CameraWrapper::readRaw(cv::Mat &src) {

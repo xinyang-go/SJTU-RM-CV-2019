@@ -14,7 +14,6 @@ const int SRC_WIDTH_CAMERA = 640;
 const int SRC_HEIGHT_CAMERA = 480;
 const int SRC_WIDTH = 320;
 const int SRC_HEIGHT = 240;
-const double PI = 3.1415926;
 const int CLOCKWISE = 1;
 const int ANTICLOCKWISE = -1;
 const float ATTACK_DISTANCE = 718;//cm

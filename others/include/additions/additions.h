@@ -7,15 +7,6 @@
 
 #include <stdint.h>
 #include <serial/serial.h>
-#include <opencv2/videoio.hpp>
-#include <camera/wrapper_head.h>
-
-#define ENEMY_BLUE 0
-#define ENEMY_RED  1
-
-#define BIG_ENERGY_STATE 'b'
-#define SMALL_ENERGY_STATE 's'
-#define ARMOR_STATE  'a'
 
 struct mcu_data{
     float curr_yaw;
