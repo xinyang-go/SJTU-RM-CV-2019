@@ -45,6 +45,7 @@ struct EnergyPartParam {
     long FAN_CONTOUR_WIDTH_MAX;//扇叶宽边长度最大值
 	float FAN_CONTOUR_HW_RATIO_MAX;//扇叶长宽比最大值
 	float FAN_CONTOUR_HW_RATIO_MIN;//扇叶长宽比最小值
+    float FAN_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
 
 	long ARMOR_CONTOUR_AREA_MAX;//装甲板面积最大值
 	long ARMOR_CONTOUR_AREA_MIN;//装甲板面积最小值
@@ -54,6 +55,7 @@ struct EnergyPartParam {
 	long ARMOR_CONTOUR_WIDTH_MAX;//装甲板宽边长度最大值
 	float ARMOR_CONTOUR_HW_RATIO_MAX;//装甲板长宽比最大值
 	float ARMOR_CONTOUR_HW_RATIO_MIN;//装甲板长宽比最小值
+	float ARMOR_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
 
     long CENTER_R_CONTOUR_AREA_MAX;//风车中心R面积最大值
     long CENTER_R_CONTOUR_AREA_MIN;//风车中心R面积最小值
@@ -63,13 +65,24 @@ struct EnergyPartParam {
     long CENTER_R_CONTOUR_WIDTH_MAX;//风车中心R宽边长度最大值
     float CENTER_R_CONTOUR_HW_RATIO_MAX;//风车中心R长宽比最大值
     float CENTER_R_CONTOUR_HW_RATIO_MIN;//风车中心R长宽比最小值
+    float CENTER_R_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
 
-    long FLOW_LIGHT_CONTOUR_HW_RATIO_MIN;//流动条长宽比最小值_
+    long FLOW_STRIP_CONTOUR_AREA_MAX;//流动条（待击打）面积最大值
+    long FLOW_STRIP_CONTOUR_AREA_MIN;//流动条（待击打）面积最小值
+    long FLOW_STRIP_CONTOUR_LENGTH_MIN;//流动条（待击打）长边长度最小值
+    long FLOW_STRIP_CONTOUR_WIDTH_MIN;//流动条（待击打）长边长度最大值
+    long FLOW_STRIP_CONTOUR_LENGTH_MAX;//流动条（待击打）宽边长度最小值
+    long FLOW_STRIP_CONTOUR_WIDTH_MAX;//流动条（待击打）宽边长度最大值
+    float FLOW_STRIP_CONTOUR_HW_RATIO_MAX;//流动条（待击打）长宽比最大值
+    float FLOW_STRIP_CONTOUR_HW_RATIO_MIN;//流动条（待击打）长宽比最小值
+    float FLOW_STRIP_CONTOUR_AREA_RATIO_MAX;//装甲板轮廓占旋转矩形面积比最小值
+    float FLOW_STRIP_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
 
 	float TWIN_ANGEL_MAX;//扇叶和装甲板匹配时极坐标角度差的最大值
 	long INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积
 
 	long TARGET_CHANGE_DISTANCE_MAX;//目标未更改时，目标装甲板中心与原目标装甲板中心的距离变化最大值
+	long TWIN_POINT_MAX;//两个点相同时距离最大值
 };
 
 

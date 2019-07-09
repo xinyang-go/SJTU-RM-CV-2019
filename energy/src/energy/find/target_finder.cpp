@@ -92,3 +92,25 @@ void Energy::findTargetByIntersection() {
         i++;
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数在流动条区域内寻找装甲板
+// ---------------------------------------------------------------------------------------------------------------------
+bool Energy::findTargetInFlowStrip(){
+    int i = 0;
+    for(i=0; i<armors.size(); ++i){
+        std::vector<cv::Point2f> intersection;
+        if(rotatedRectangleIntersection(armors.at(i).rect, flow_strips.at(0).rect, intersection)==0)
+            continue;//返回0表示没有重合面积
+        double cur_contour_area = contourArea(intersection);
+        if(cur_contour_area < energy_part_param_.INTERSETION_CONTOUR_AREA_MIN)
+            continue;
+        else{
+            target_point = armors.at(i).rect.center;
+            return true;
+        }
+    }
+    return false;
+}

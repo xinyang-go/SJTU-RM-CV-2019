@@ -133,9 +133,41 @@ void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
     imshow(windows_name, image2show);
 }
 
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于显示图像中所有扇叶和装甲板
-// ---------------------------------------------------------------------------------------------------------------------
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于显示图像中所有流动条
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::showFlowStripContours(std::string windows_name, const cv::Mat src) {
+    if (src.empty())return;
+    static Mat image2show;
+
+    if(src.type() == CV_8UC1) // 黑白图像
+    {
+        cvtColor(src, image2show, COLOR_GRAY2RGB);
+
+    } else if (src.type() == CV_8UC3) //RGB 彩色
+    {
+        image2show = src.clone();
+    }
+    for (const auto &flow_strip : flow_strips)
+    {
+        Point2f vertices[4];      //定义矩形的4个顶点
+        flow_strip.rect.points(vertices);   //计算矩形的4个顶点
+        for (int i = 0; i < 4; i++)
+            line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(127, 127, 255), 2);
+    }
+    for (const auto &armor : armors)
+    {
+        if(pointDistance(armor.rect.center, target_point) < energy_part_param_.TWIN_POINT_MAX){
+            Point2f vertices[4];      //定义矩形的4个顶点
+            armor.rect.points(vertices);   //计算矩形的4个顶点
+            for (int i = 0; i < 4; i++)
+                line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 255, 0), 2);
+            }
+        }
+    imshow(windows_name, image2show);
+}
 
 

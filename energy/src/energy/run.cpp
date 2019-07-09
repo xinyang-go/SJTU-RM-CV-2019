@@ -77,49 +77,47 @@ int Energy::runBig(cv::Mat &gimble_src){
     fans.clear();
     armors.clear();
     centerRs.clear();
+    flow_strips.clear();
     fan_polar_angle.clear();
     armor_polar_angle.clear();
 
     changeMark();
     if (isMark)return 0;
-    imagePreprocess(gimble_src);
-    imshow("img_preprocess", gimble_src);
+//    imagePreprocess(gimble_src);
+//    imshow("img_preprocess", gimble_src);
 
     threshold(gimble_src, gimble_src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
     imshow("bin",gimble_src);
 
-    fans_cnt = findFan(gimble_src, last_fans_cnt);
-//    cout<<"fans_cnt: "<<fans_cnt<<endl;
-    if(fans_cnt==-1) return 0;//滤去漏判的帧
-//    if(fans_cnt>0)showFanContours("fan",src);
-
     armors_cnt = findArmor(gimble_src, last_armors_cnt);
-//    cout<<"armors_cnt: "<<armors_cnt<<endl;
-    if(armors_cnt==-1) return 0;//滤去漏判的帧
-//    if(armors_cnt>0) showArmorContours("armor",gimble_src);
+    if (energy_rotation_init) {
+        initRotation();
+        return 0;
+    }
 
-    if(armors_cnt != fans_cnt+1) return 0;
+    getAllArmorCenters();
+    circleLeastFit();
+
+    flow_strips_cnt = findFlowStrip(gimble_src, last_flow_strips_cnt);
+    if(flow_strips_cnt == 1 && findTargetInFlowStrip()){
+        showFlowStripContours("strip", gimble_src);
+    }else{
+        fans_cnt = findFan(gimble_src, last_fans_cnt);
+        if(fans_cnt==-1) return 0;//滤去漏判的帧
+        if(armors_cnt==-1) return 0;//滤去漏判的帧
+        if(armors_cnt != fans_cnt+1) return 0;
+        findTargetByIntersection();
+//        getFanPolarAngle();
+//        getArmorPolarAngle();
+//        findTargetByPolar();
+//        if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
+    }
 
     centerRs_cnt = findCenterR(gimble_src);
 //    if(centerRs_cnt>0)showCenterRContours("R", gimble_src);
 
     writeDownMark();
 
-    getAllArmorCenters();
-    circleLeastFit();
-//    attack_distance = ATTACK_DISTANCE;
-
-    getFanPolarAngle();
-    getArmorPolarAngle();
-    findTargetByPolar();
-//    findTargetByIntersection();
-
-    if(armors_cnt>0||fans_cnt>0) showBothContours("Both", gimble_src);
-
-    if (energy_rotation_init) {
-        initRotation();
-        return 0;
-    }
     getPredictPoint();
     gimbleRotation();
     if(changeTarget())target_cnt++;
