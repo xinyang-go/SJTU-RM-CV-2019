@@ -65,7 +65,7 @@ int Energy::findArmor(const cv::Mat src, int &last_armors_cnt) {
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
     StructingElementErodeDilate(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("armor struct", src_bin);
+//    imshow("armor struct", src_bin);
 
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
     findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -199,7 +199,7 @@ int Energy::findFlowStrip(const cv::Mat src, int &last_flow_strips_cnt) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
     StructingElementClose(src_bin, 6, 6);//图像膨胀，防止图像断开并更方便寻找
-    imshow("flow strip struct", src_bin);
+//    imshow("flow strip struct", src_bin);
 
     std::vector<vector<Point> > flow_strip_contours;
     findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -241,7 +241,7 @@ void Energy::findCenterROI(const cv::Mat src) {
     target_armor.at(0).rect.points(vertices);   //计算矩形的4个顶点
     for (int i = 0; i < 4; i++)
         line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 15);
-    imshow("fill", src_mask);
+//    imshow("fill", src_mask);
     flow_strips_cnt = findFlowStrip(src_mask, last_flow_strips_cnt);
     float length = target_armor.at(0).rect.size.height > target_armor.at(0).rect.size.width ?
                    target_armor.at(0).rect.size.height : target_armor.at(0).rect.size.width;
