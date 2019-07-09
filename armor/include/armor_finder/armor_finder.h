@@ -30,7 +30,7 @@ private:
     typedef cv::TrackerKCF TrackerToUse;                // Tracker类型定义
 
     typedef enum{
-        SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
+        WEAKSEARCHING_STATE, SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;                                            // 自瞄状态枚举定义
 
     const uint8_t &enemy_color;                         // 敌方颜色，引用外部变量，自动变化
@@ -40,8 +40,12 @@ private:
     cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
     Classifier classifier;                              // CNN分类器对象实例，用于数字识别
     int  contour_area;                                  // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
+    int tracking_cnt;                                   // 记录追踪帧数，用于定时退出追踪
+    int miss_cnt;                                       //
+    int weak_cnt;                                       //
 	Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
     const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
+
 
     bool stateSearchingTarget(cv::Mat &src);            // searching state主函数
     bool stateTrackingTarget(cv::Mat &src);             // tracking state主函数
