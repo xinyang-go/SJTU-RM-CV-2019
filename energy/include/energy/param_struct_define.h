@@ -24,6 +24,8 @@ struct EnergyPart {
 		rect = cv::minAreaRect(c);
 		angle = cv::minAreaRect(c).angle;
 	};
+
+	EnergyPart(cv::RotatedRect rect=cv::RotatedRect(), float angle=0, vector<cv::Point> contour=vector<cv::Point>()):rect(rect),angle(angle),contour(contour){};
 };
 
 
@@ -66,17 +68,29 @@ struct EnergyPartParam {
     float CENTER_R_CONTOUR_HW_RATIO_MAX;//风车中心R长宽比最大值
     float CENTER_R_CONTOUR_HW_RATIO_MIN;//风车中心R长宽比最小值
     float CENTER_R_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
+    float CENTER_R_CONTOUR_INTERSETION_AREA_MIN;//中心R占ROI区的面积最小值
+
+    long FLOW_STRIP_FAN_CONTOUR_AREA_MAX;//流动条扇叶（待击打）面积最大值
+    long FLOW_STRIP_FAN_CONTOUR_AREA_MIN;//流动条扇叶（待击打）面积最小值
+    long FLOW_STRIP_FAN_CONTOUR_LENGTH_MIN;//流动条扇叶（待击打）长边长度最小值
+    long FLOW_STRIP_FAN_CONTOUR_WIDTH_MIN;//流动条扇叶（待击打）宽边长度最小值
+    long FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX;//流动条扇叶（待击打）长边长度最大值
+    long FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX;//流动条扇叶（待击打）宽边长度最大值
+    float FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX;//流动条扇叶（待击打）长宽比最大值
+    float FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN;//流动条扇叶（待击打）长宽比最小值
+    float FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX;//装甲板轮廓占旋转矩形面积比最小值
+    float FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
 
     long FLOW_STRIP_CONTOUR_AREA_MAX;//流动条（待击打）面积最大值
     long FLOW_STRIP_CONTOUR_AREA_MIN;//流动条（待击打）面积最小值
     long FLOW_STRIP_CONTOUR_LENGTH_MIN;//流动条（待击打）长边长度最小值
-    long FLOW_STRIP_CONTOUR_WIDTH_MIN;//流动条（待击打）长边长度最大值
-    long FLOW_STRIP_CONTOUR_LENGTH_MAX;//流动条（待击打）宽边长度最小值
+    long FLOW_STRIP_CONTOUR_WIDTH_MIN;//流动条（待击打）宽边长度最小值
+    long FLOW_STRIP_CONTOUR_LENGTH_MAX;//流动条（待击打）长边长度最大值
     long FLOW_STRIP_CONTOUR_WIDTH_MAX;//流动条（待击打）宽边长度最大值
     float FLOW_STRIP_CONTOUR_HW_RATIO_MAX;//流动条（待击打）长宽比最大值
     float FLOW_STRIP_CONTOUR_HW_RATIO_MIN;//流动条（待击打）长宽比最小值
-    float FLOW_STRIP_CONTOUR_AREA_RATIO_MAX;//装甲板轮廓占旋转矩形面积比最小值
     float FLOW_STRIP_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
+    float FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN;//流动条占旋转矩形面积比最小值
 
 	float TWIN_ANGEL_MAX;//扇叶和装甲板匹配时极坐标角度差的最大值
 	long INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积

@@ -77,7 +77,10 @@ int Energy::runBig(cv::Mat &gimble_src){
     fans.clear();
     armors.clear();
     centerRs.clear();
+    flow_strip_fans.clear();
     flow_strips.clear();
+    center_ROI.clear();
+    target_armor.clear();
     fan_polar_angle.clear();
     armor_polar_angle.clear();
 
@@ -98,9 +101,10 @@ int Energy::runBig(cv::Mat &gimble_src){
     getAllArmorCenters();
     circleLeastFit();
 
-    flow_strips_cnt = findFlowStrip(gimble_src, last_flow_strips_cnt);
-    if(flow_strips_cnt == 1 && findTargetInFlowStrip()){
-        showFlowStripContours("strip", gimble_src);
+    flow_strip_fans_cnt = findFlowStripFan(gimble_src, last_flow_strip_fans_cnt);
+    if(flow_strip_fans_cnt == 1 && findTargetInFlowStripFan()){
+        findCenterROI(gimble_src);
+        showFlowStripFanContours("strip", gimble_src);
     }else{
         fans_cnt = findFan(gimble_src, last_fans_cnt);
         if(fans_cnt==-1) return 0;//滤去漏判的帧
@@ -114,7 +118,7 @@ int Energy::runBig(cv::Mat &gimble_src){
     }
 
     centerRs_cnt = findCenterR(gimble_src);
-//    if(centerRs_cnt>0)showCenterRContours("R", gimble_src);
+    if(centerRs_cnt>0)showCenterRContours("R", gimble_src);
 
     writeDownMark();
 

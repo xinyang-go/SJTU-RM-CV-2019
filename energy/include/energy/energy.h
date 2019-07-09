@@ -42,10 +42,12 @@ private:
 	int fans_cnt;//图像中的扇叶个数
 	int armors_cnt;//图像中的装甲板个数
 	int centerRs_cnt;//图像中可能的风车中心字母R选区个数
+    int flow_strip_fans_cnt;//图像中的含流动条扇叶个数
 	int flow_strips_cnt;//图像中的流动条个数
 	int last_fans_cnt;//上一帧的扇叶个数
 	int last_armors_cnt;//上一帧的装甲板个数
-	int last_flow_strips_cnt;//
+	int last_flow_strip_fans_cnt;//上一帧的含流动条扇叶个数
+	int last_flow_strips_cnt;//上一帧的流动条个数
 	int gimble_cnt; //经过的帧数
 	double radius;//大风车半径
 	float target_polar_angle;//待击打装甲板的极坐标角度
@@ -71,6 +73,9 @@ private:
 	std::vector<EnergyPart> armors;//图像中所有装甲板
     std::vector<EnergyPart> centerRs;//风车中心字母R的可能候选区
     std::vector<EnergyPart> flow_strips;//图像中所有流动条（理论上只有一个）
+    std::vector<EnergyPart> flow_strip_fans;//图像中所有流动条所在扇叶（理论上只有一个）
+    std::vector<EnergyPart> center_ROI;//风车中心候选区
+    std::vector<EnergyPart> target_armor;//目标装甲板（理论上仅一个）
 
 	cv::Point circle_center_point;//风车圆心坐标
 	cv::Point target_point;//目标装甲板中心坐标
@@ -89,18 +94,21 @@ private:
 	int findFan(const cv::Mat src, int &last_fans_cnt);//寻找图中所有扇叶
 	int findArmor(const cv::Mat src, int &last_armors_cnt);//寻找图中所有装甲板
     int findCenterR(const cv::Mat src);//寻找图中可能的风车中心字母R
-    int findFlowStrip(const cv::Mat src, int &last_flow_strips_cnt);//寻找图中所有流动条
+    int findFlowStrip(const cv::Mat src, int &last_flow_strips_cnt);//寻找图中的流动条
+    void findCenterROI(const cv::Mat src);//框取中心R候选区
+    int findFlowStripFan(const cv::Mat src, int &last_flow_strip_fans_cnt);//寻找图中的流动条所在扇叶
 
-    bool isValidFanContour(const vector<cv::Point> fan_contour);//扇叶矩形尺寸要求
-    bool isValidArmorContour(const vector<cv::Point> armor_contour);//装甲板矩形尺寸要求
-    bool isValidCenterRContour(const vector<cv::Point> center_R_contour);//风车中心选区尺寸要求
-    bool isValidFlowStripContour(const vector<cv::Point> flow_strip_contour);//流动条矩形尺寸要求
+    bool isValidFanContour(const vector<cv::Point> &fan_contour);//扇叶矩形尺寸要求
+    bool isValidArmorContour(const vector<cv::Point> &armor_contour);//装甲板矩形尺寸要求
+    bool isValidCenterRContour(const vector<cv::Point> &center_R_contour);//风车中心选区尺寸要求
+    bool isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour);//流动条扇叶矩形尺寸要求
+    bool isValidFlowStripFanContour(const vector<cv::Point> &flow_strip_fan_contour);//流动条扇叶矩形尺寸要求
 
 	void showFanContours(std::string windows_name, const cv::Mat src);//显示扇叶
 	void showArmorContours(std::string windows_name, const cv::Mat src);//显示装甲板
 	void showBothContours(std::string windows_name, const cv::Mat src);//显示扇叶和装甲板
     void showCenterRContours(std::string windows_name, const cv::Mat src);//显示风车中心候选区R
-    void showFlowStripContours(std::string windows_name, const cv::Mat src);//显示流动条
+    void showFlowStripFanContours(std::string windows_name, const cv::Mat src);//显示流动条所在扇叶
 
     void getFanPolarAngle();//获取扇叶极坐标角度
 	void getArmorPolarAngle();//获取装甲板极坐标角度
@@ -110,7 +118,7 @@ private:
 
 	void findTargetByPolar();//通过极坐标角度匹配获取目标装甲板的极坐标角度和装甲板中心坐标
     void findTargetByIntersection();//通过面积重合度匹配获取目标装甲板的极坐标角度和装甲板中心坐标
-    bool findTargetInFlowStrip();//在已发现的流动条区域中寻找待击打装甲板
+    bool findTargetInFlowStripFan();//在已发现的流动条区域中寻找待击打装甲板
 
     void rotate();//获取预测点位
 	void stretch(cv::Point point_1, cv::Point2f &point_2);//将像素差转换为实际距离差

@@ -21,7 +21,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        SMALL_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/official_r_l.mp4");
+            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
             video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
         if (video_gimble->init()) {
@@ -114,9 +114,9 @@ int main(int argc, char *argv[]) {
                         energy.runBig(gimble_src);
                     }
                 }
+//                cv::waitKey(3);
             });
         } while (ok);
-
         delete video_gimble;
         video_gimble = nullptr;
         delete video_chassis;

@@ -21,6 +21,7 @@ void Energy::initEnergy() {
 	armors_cnt = 0;
 	centerRs_cnt = 0;
     flow_strips_cnt = 0;
+    flow_strip_fans_cnt = 0;
 	gimble_cnt = 0;
     circle_center_point = Point(0, 0);
 	target_point = Point(0, 0);
@@ -35,6 +36,7 @@ void Energy::initEnergy() {
 	last_fans_cnt = 0;
 	last_armors_cnt = 0;
     last_flow_strips_cnt = 0;
+    last_flow_strip_fans_cnt = 0;
 	send_cnt = 0;
 	yaw_rotation = 0;
 	pitch_rotation = 0;
@@ -54,6 +56,9 @@ void Energy::initEnergy() {
 	armors.clear();
     centerRs.clear();
     flow_strips.clear();
+    flow_strip_fans.clear();
+    center_ROI.clear();
+    target_armor.clear();
 
 	fan_polar_angle.clear();
 	armor_polar_angle.clear();
@@ -122,17 +127,29 @@ void Energy::initEnergyPartParam() {
     energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
     energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
     energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN = 0.7;
+    energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN = 10;
 
-    energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MAX = 17000;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MAX = 17000;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MIN = 0;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MIN = 90;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MIN = 35;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX = 140;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX = 60;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX = 3;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN = 1;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX = 0.55;
+    energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN = 0.25;
+
+    energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MAX = 100000;
     energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MIN = 0;
-    energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 90;
-    energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 35;
-    energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 140;
-    energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 60;
-    energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 3;
-    energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 1;
-    energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MAX = 0.55;
-    energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.25;
+    energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 50;
+    energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 3;
+    energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 90;
+    energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 20;
+    energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 12;
+    energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 4;
+    energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.5;
+    energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 300;
 
 	energy_part_param_.TWIN_ANGEL_MAX = 10;
 	energy_part_param_.INTERSETION_CONTOUR_AREA_MIN = 60;
