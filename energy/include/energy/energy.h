@@ -36,8 +36,9 @@ public:
 
 
 private:
-	EnergyPartParam energy_part_param_;//能量机关的参数设置
-
+    EnergyPartParam energy_part_param_;//能量机关的参数设置
+	EnergyPartParam gimble_energy_part_param_;//云台摄像头能量机关的参数设置
+    EnergyPartParam chassis_energy_part_param_;//底盘摄像头能量机关的参数设置
 	bool isMark;//若操作手正在手动标定，则为true
 	bool isGimble;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
 	bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程

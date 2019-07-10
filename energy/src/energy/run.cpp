@@ -18,6 +18,8 @@ int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src) {
         runBig(gimble_src);//仅拥有云台摄像头则调用单摄像头的run函数
     else if (isGimble) {
         imshow("src", gimble_src);
+        if (gimble_src.type() == CV_8UC3)cvtColor(gimble_src, gimble_src, COLOR_BGR2GRAY);
+        energy_part_param_ = gimble_energy_part_param_;
         fans.clear();
         armors.clear();
         centerRs.clear();
@@ -47,6 +49,8 @@ int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src) {
         }
     } else if (isChassis) {
         imshow("src", chassis_src);
+        if (chassis_src.type() == CV_8UC3)cvtColor(chassis_src, chassis_src, COLOR_BGR2GRAY);
+        energy_part_param_ = chassis_energy_part_param_;
         fans.clear();
         armors.clear();
         centerRs.clear();
@@ -102,6 +106,8 @@ int Energy::runBig(cv::Mat &gimble_src, cv::Mat &chassis_src) {
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::runBig(cv::Mat &gimble_src) {
     imshow("src", gimble_src);
+    if (gimble_src.type() == CV_8UC3)cvtColor(gimble_src, gimble_src, COLOR_BGR2GRAY);
+    energy_part_param_ = gimble_energy_part_param_;
     fans.clear();
     armors.clear();
     centerRs.clear();
@@ -150,6 +156,7 @@ int Energy::runBig(cv::Mat &gimble_src) {
 int Energy::runSmall(cv::Mat &gimble_src) {
     imshow("gimble src", gimble_src);
     if (gimble_src.type() == CV_8UC3)cvtColor(gimble_src, gimble_src, COLOR_BGR2GRAY);
+    energy_part_param_ = gimble_energy_part_param_;
     fans.clear();
     armors.clear();
     centerRs.clear();
