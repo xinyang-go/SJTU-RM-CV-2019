@@ -109,6 +109,9 @@ bool CameraWrapper::init() {
     return true;
 }
 
+bool CameraWrapper::changeBrightness(int brightness) {
+    CameraSetAnalogGain(h_camera, brightness);
+}
 
 bool CameraWrapper::read(cv::Mat& src) {
     if(mode==0)return readProcessed(src);

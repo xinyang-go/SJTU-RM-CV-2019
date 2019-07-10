@@ -15,13 +15,13 @@
 /*                                                                           */
 /*===========================================================================*/
 
-//#define LOG_LEVEL LOG_NONE
-
+#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
+#include <sys/time.h>
 
 std::map<int, string> id2name = {                               //装甲板id到名称的map
         {-1, "OO"},{ 0, "NO"},
@@ -46,9 +46,8 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
         tracking_cnt(0) {
 }
 
-extern int box_distance;
-
 void ArmorFinder::run(cv::Mat &src) {
+    src_raw = src;
     cv::Mat src_use = src.clone();      // 实际参与计算的图像对象
 
     if (show_armor_box) {                 // 根据条件显示当前目标装甲板
@@ -71,14 +70,14 @@ void ArmorFinder::run(cv::Mat &src) {
                     tracker->init(src_use, armor_box);
                     state = TRACKING_STATE;
                     tracking_cnt = 0;
-//                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
+                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
                 }
             }
             break;
         case TRACKING_STATE:
             if (!stateTrackingTarget(src_use) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
                 state = SEARCHING_STATE;
-//                LOGM(STR_CTR(WORD_LIGHT_YELLOW, "into search!"));
+                LOGM(STR_CTR(WORD_LIGHT_YELLOW, "into search!"));
             }
             break;
         case STANDBY_STATE:
@@ -116,9 +115,6 @@ bool sendTarget(Serial &serial, double x, double y, double z) {
 
     return serial.WriteData(buff, sizeof(buff));
 }
-
-#define DISTANCE_HEIGHT_5MM (113.0)     // 单位: m*pixel
-#define DISTANCE_HEIGHT     DISTANCE_HEIGHT_5MM
 
 bool ArmorFinder::sendBoxPosition() {
     auto rect = armor_box;
