@@ -27,7 +27,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -94,28 +94,37 @@ int main(int argc, char *argv[]) {
         do {
             CNT_TIME("Total", {
                 if (mcuData.state == BIG_ENERGY_STATE) {//大符模式
+                    if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大符模式，即刚往完成切换，则需要初始化
+                        energy.setEnergyRotationInit();
+                        ((CameraWrapper*)video_gimble)->changeBrightness(20);
+                        cout << "set" << endl;
+                    }
                     ok = checkReconnect(video_gimble->read(gimble_src), video_chassis->read(chassis_src));//检查有几个摄像头
                     if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
-                    if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大符模式，即刚往完成切换，则需要初始化
-                        energy.setEnergyRotationInit();
-                        cout << "set" << endl;
-                    }
                     energy.runBig(gimble_src, chassis_src);//击打大符
 //                    energy.runBig(gimble_src);
                     last_state = mcuData.state;//更新上一帧状态
-                } else if (mcuData.state != BIG_ENERGY_STATE) {//自瞄或小符模式
+                } else if (mcuData.state == SMALL_ENERGY_STATE) {// 小符模式
+                    if(last_state == ARMOR_STATE){
+                        ((CameraWrapper*)video_gimble)->changeBrightness(20);
+                    }
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimble->read(gimble_src));
                     if (save_video) saveVideos(gimble_src);
                     if (show_origin) showOrigin(gimble_src);
-                    if (mcuData.state == ARMOR_STATE) {
-                        CNT_TIME("Armor Time", {
-                            armorFinder.run(gimble_src);
-                        });
-                    } else if (mcuData.state == SMALL_ENERGY_STATE) {
-                        energy.runSmall(gimble_src);
+                    energy.runSmall(gimble_src);
+                } else {                                         // 自瞄模式
+                    if(last_state != ARMOR_STATE){
+                        ((CameraWrapper*)video_gimble)->changeBrightness(40);
                     }
+                    last_state = mcuData.state;
+                    ok = checkReconnect(video_gimble->read(gimble_src));
+                    if (save_video) saveVideos(gimble_src);
+                    if (show_origin) showOrigin(gimble_src);
+                    CNT_TIME("Armor Time", {
+                            armorFinder.run(gimble_src);
+                    });
                 }
 //                cv::waitKey(0);
             });

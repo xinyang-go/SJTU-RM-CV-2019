@@ -15,13 +15,13 @@
 /*                                                                           */
 /*===========================================================================*/
 
-//#define LOG_LEVEL LOG_NONE
-
+#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
+#include <sys/time.h>
 
 std::map<int, string> id2name = {                               //装甲板id到名称的map
         {-1, "OO"},{ 0, "NO"},
@@ -71,14 +71,14 @@ void ArmorFinder::run(cv::Mat &src) {
                     tracker->init(src_use, armor_box);
                     state = TRACKING_STATE;
                     tracking_cnt = 0;
-//                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
+                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
                 }
             }
             break;
         case TRACKING_STATE:
             if (!stateTrackingTarget(src_use) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
                 state = SEARCHING_STATE;
-//                LOGM(STR_CTR(WORD_LIGHT_YELLOW, "into search!"));
+                LOGM(STR_CTR(WORD_LIGHT_YELLOW, "into search!"));
             }
             break;
         case STANDBY_STATE:
