@@ -54,9 +54,9 @@ def save_para(folder, paras):
         save_bias(fp, paras[7])
 
 
-STEPS = 5000
+STEPS = 10000
 BATCH = 30
-LEARNING_RATE_BASE  = 0.01
+LEARNING_RATE_BASE  = 0.005
 LEARNING_RATE_DECAY = 0.99
 MOVING_AVERAGE_DECAY = 0.99
 
@@ -103,7 +103,7 @@ def train(dataset, show_bar=False):
 
             _, loss_value, step = sess.run(
                 [train_op, loss, global_step],
-                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.7}
+                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.5}
             )
 
             if i % 100 == 0:
@@ -204,5 +204,9 @@ def train(dataset, show_bar=False):
 
 
 if __name__ == "__main__":
-    dataset = generate.DataSet("/home/xinyang/Workspace/dataset/box_cut")
+    import os
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+    dataset = generate.DataSet("/home/xinyang/Workspace/box_cut")
     train(dataset, show_bar=True)
+    input("press enter to continue...")

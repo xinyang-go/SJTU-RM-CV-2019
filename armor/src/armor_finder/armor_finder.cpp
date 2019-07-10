@@ -15,7 +15,8 @@
 /*                                                                           */
 /*===========================================================================*/
 
-#define LOG_LEVEL LOG_NONE
+//#define LOG_LEVEL LOG_NONE
+
 #include <log.h>
 #include <options/options.h>
 #include <show_images/show_images.h>
@@ -35,32 +36,33 @@ std::map<string, int> name2id = {                               //装甲板名�
 };
 
 ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, const uint8_t &use) :
-            serial(u),
-            enemy_color(color),
-            state(STANDBY_STATE),
-            classifier(paras_folder),
-            contour_area(0),
-            use_classifier(use),
-            boxid(-1),
-            tracking_cnt(0)
-            {
+        serial(u),
+        enemy_color(color),
+        state(STANDBY_STATE),
+        classifier(paras_folder),
+        contour_area(0),
+        use_classifier(use),
+        boxid(-1),
+        tracking_cnt(0) {
 }
+
+extern int box_distance;
 
 void ArmorFinder::run(cv::Mat &src) {
     cv::Mat src_use = src.clone();      // 实际参与计算的图像对象
 
-    if(show_armor_box){                 // 根据条件显示当前目标装甲板
+    if (show_armor_box) {                 // 根据条件显示当前目标装甲板
         showArmorBox("box", src, armor_box, boxid);
         cv::waitKey(1);
     }
 //    stateSearchingTarget(src_use);                    // for debug
 //    return;
-    switch (state){
+    switch (state) {
         case SEARCHING_STATE:
-            if(stateSearchingTarget(src_use)){
-                if((armor_box & cv::Rect2d(0, 0, 640, 480)) == armor_box) { // 判断装甲板区域是否脱离图像区域
-                    if(!classifier || !use_classifier){                     /* 如果分类器不可用或者不使用分类器 */
-                        cv::Mat roi = src_use.clone()(armor_box), roi_gray; /* 就使用装甲区域亮点数判断是否跟丢 */
+            if (stateSearchingTarget(src_use)) {
+                if ((armor_box & cv::Rect2d(0, 0, 640, 480)) == armor_box) { // 判断装甲板区域是否脱离图像区域
+                    if (!classifier || !use_classifier) {                    /* 如果分类器不可用或者不使用分类器 */
+                        cv::Mat roi = src_use.clone()(armor_box), roi_gray;  /* 就使用装甲区域亮点数判断是否跟丢 */
                         cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
                         cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
                         contour_area = cv::countNonZero(roi_gray);
@@ -69,14 +71,14 @@ void ArmorFinder::run(cv::Mat &src) {
                     tracker->init(src_use, armor_box);
                     state = TRACKING_STATE;
                     tracking_cnt = 0;
-                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
+//                    LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
                 }
             }
             break;
         case TRACKING_STATE:
-            if(!stateTrackingTarget(src_use) || ++tracking_cnt>100){    // 最多追踪100帧图像
+            if (!stateTrackingTarget(src_use) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
                 state = SEARCHING_STATE;
-                LOGM(STR_CTR(WORD_LIGHT_YELLOW ,"into search!"));
+//                LOGM(STR_CTR(WORD_LIGHT_YELLOW, "into search!"));
             }
             break;
         case STANDBY_STATE:
@@ -85,42 +87,46 @@ void ArmorFinder::run(cv::Mat &src) {
     }
 }
 
-bool sendTarget(Serial& serial, double x, double y, double z) {
-	static short x_tmp, y_tmp, z_tmp;
-	static time_t last_time = time(nullptr);
-	static int fps;
-	uint8_t buff[8];
+bool sendTarget(Serial &serial, double x, double y, double z) {
+    static short x_tmp, y_tmp, z_tmp;
+    static time_t last_time = time(nullptr);
+    static int fps;
+    uint8_t buff[8];
 
-	time_t t = time(nullptr);
-	if (last_time != t) {
-		last_time = t;
-		cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
-		fps = 0;
-	}
-	fps += 1;
+    time_t t = time(nullptr);
+    if (last_time != t) {
+        last_time = t;
+        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+        fps = 0;
+    }
+    fps += 1;
 
-	x_tmp = static_cast<short>(x * (32768 - 1) / 100);
-	y_tmp = static_cast<short>(y * (32768 - 1) / 100);
-	z_tmp = static_cast<short>(z * (32768 - 1) / 1000);
+    x_tmp = static_cast<short>(x * (32768 - 1) / 100);
+    y_tmp = static_cast<short>(y * (32768 - 1) / 100);
+    z_tmp = static_cast<short>(z * (32768 - 1) / 1000);
 
-	buff[0] = 's';
-	buff[1] = static_cast<char>((x_tmp >> 8) & 0xFF);
-	buff[2] = static_cast<char>((x_tmp >> 0) & 0xFF);
-	buff[3] = static_cast<char>((y_tmp >> 8) & 0xFF);
-	buff[4] = static_cast<char>((y_tmp >> 0) & 0xFF);
-	buff[5] = static_cast<char>((z_tmp >> 8) & 0xFF);
-	buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
-	buff[7] = 'e';
-	
-	return serial.WriteData(buff, sizeof(buff));
+    buff[0] = 's';
+    buff[1] = static_cast<char>((x_tmp >> 8) & 0xFF);
+    buff[2] = static_cast<char>((x_tmp >> 0) & 0xFF);
+    buff[3] = static_cast<char>((y_tmp >> 8) & 0xFF);
+    buff[4] = static_cast<char>((y_tmp >> 0) & 0xFF);
+    buff[5] = static_cast<char>((z_tmp >> 8) & 0xFF);
+    buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
+    buff[7] = 'e';
+
+    return serial.WriteData(buff, sizeof(buff));
 }
+
+#define DISTANCE_HEIGHT_5MM (113.0)     // 单位: m*pixel
+#define DISTANCE_HEIGHT     DISTANCE_HEIGHT_5MM
 
 bool ArmorFinder::sendBoxPosition() {
     auto rect = armor_box;
-    double dx = rect.x + rect.width/2 - 320 - 10;
-    double dy = rect.y + rect.height/2 - 240 - 20;
-    double yaw   = atan(dx / FOCUS_PIXAL) * 180 / 3.14159265459;
-    double pitch = atan(dy / FOCUS_PIXAL) * 180 / 3.14159265459;
+    double dx = rect.x + rect.width / 2 - 320;
+    double dy = rect.y + rect.height / 2 - 240 - 20;
+    double yaw = atan(dx / FOCUS_PIXAL) * 180 / PI;
+    double pitch = atan(dy / FOCUS_PIXAL) * 180 / PI;
+    double dist = DISTANCE_HEIGHT / armor_box.height;
 //    cout << yaw << endl;
-    return sendTarget(serial, yaw, -pitch, 0);
+    return sendTarget(serial, yaw, -pitch, dist);
 }

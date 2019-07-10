@@ -94,7 +94,7 @@ static double nonZeroRateOfRotateRect_opt(const cv::Mat &bin, const cv::RotatedR
 }
 
 static bool isValidLightBlob(const cv::Mat &bin, const cv::RotatedRect &rect) {
-    return (lw_rate(rect) > 1.8) &&
+    return (lw_rate(rect) > 1.5) &&
            //           (rect.size.width*rect.size.height < 3000) &&
            (rect.size.width * rect.size.height > 1) &&
            //           (nonZeroRateOfRotateRect_opt(bin, rect) > 0.8);
@@ -262,13 +262,14 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
     std::vector<cv::Rect2d> boxes_number[15]; // 装甲板候选区放置在对应id位置
 
     armor_box = cv::Rect2d(0, 0, 0, 0);     // 重置目标装甲板位置
+    boxid = -1;                              // 重置目标装甲板id
 
     cv::split(src, channels);               /************************/
     if (enemy_color == ENEMY_BLUE)          /*                      */
         color = channels[0];                /* 根据目标颜色进行通道提取 */
     else if (enemy_color == ENEMY_RED)      /*                      */
         color = channels[2];                /************************/
-    cv::threshold(color, src_bin, 190, 255, CV_THRESH_BINARY); // 二值化对应通道
+    cv::threshold(color, src_bin, 170, 255, CV_THRESH_BINARY); // 二值化对应通道
     imagePreProcess(src_bin);                                  // 开闭运算
     if (!findLightBlobs(src_bin, light_blobs)) {
         return false;
