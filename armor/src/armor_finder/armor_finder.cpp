@@ -46,9 +46,8 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
         tracking_cnt(0) {
 }
 
-extern int box_distance;
-
 void ArmorFinder::run(cv::Mat &src) {
+    src_raw = src;
     cv::Mat src_use = src.clone();      // 实际参与计算的图像对象
 
     if (show_armor_box) {                 // 根据条件显示当前目标装甲板
@@ -116,9 +115,6 @@ bool sendTarget(Serial &serial, double x, double y, double z) {
 
     return serial.WriteData(buff, sizeof(buff));
 }
-
-#define DISTANCE_HEIGHT_5MM (113.0)     // 单位: m*pixel
-#define DISTANCE_HEIGHT     DISTANCE_HEIGHT_5MM
 
 bool ArmorFinder::sendBoxPosition() {
     auto rect = armor_box;

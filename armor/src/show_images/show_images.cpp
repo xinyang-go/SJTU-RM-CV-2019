@@ -53,7 +53,7 @@ void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::
 }
 
 /**************************
- * 显示多个装甲板区域及其类别 *
+ * 显示单个装甲板区域及其类别 *
  **************************/
 void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor_box, int boxid) {
     static Mat image2show;
@@ -63,14 +63,16 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor
         image2show = src.clone();
     }
     rectangle(image2show, armor_box, Scalar(0, 255, 0), 1);
+    char dist[5];
+//    sprintf(dist, "%.1f", distance);
     if (boxid == -1)
-        putText(image2show, id2name[boxid], Point(armor_box.x + 2, armor_box.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
+        putText(image2show, id2name[boxid]+" "+dist, Point(armor_box.x + 2, armor_box.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
                 Scalar(0, 255, 0));
     else if (1 <= boxid && boxid < 8)
-        putText(image2show, id2name[boxid], Point(armor_box.x + 2, armor_box.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
+        putText(image2show, id2name[boxid]+" "+dist, Point(armor_box.x + 2, armor_box.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
                 Scalar(255, 0, 0));
     else if (8 <= boxid && boxid < 15)
-        putText(image2show, id2name[boxid], Point(armor_box.x + 2, armor_box.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
+        putText(image2show, id2name[boxid]+" "+dist, Point(armor_box.x + 2, armor_box.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
                 Scalar(0, 0, 255));
     else if (boxid != 0)
         LOGE_INFO("Invalid box id:%d!", boxid);
