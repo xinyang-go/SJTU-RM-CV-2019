@@ -31,8 +31,7 @@ public:
 	Serial &serial;//串口
 	void setEnergyRotationInit();//判断顺逆时针函数
 	void extract(cv::Mat &src);//框取图像中的一块区域进行处理
-    void sendBigTarget(Serial& serial, float x, float y, float z);
-    void sendSmallTarget(Serial& serial, float x, float y, char change, char shoot);
+    void sendTarget(Serial& serial, float x, float y, char change, char shoot);
 
 
 private:
@@ -42,6 +41,8 @@ private:
 	bool isMark;//若操作手正在手动标定，则为true
 	bool isGimble;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
 	bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
+	bool isGuessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
+	bool isPredicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
 	int fans_cnt;//图像中的扇叶个数
 	int armors_cnt;//图像中的装甲板个数
 	int centerRs_cnt;//图像中可能的风车中心字母R选区个数
@@ -70,7 +71,8 @@ private:
 	float origin_yaw, origin_pitch;//初始的云台角度设定值
 	float target_cnt;//用于记录寻找到的装甲板总数，该值变化则立即中断主控板发射进程，防止重复击打已点亮的装甲板
     bool save_new_mark;//若操作手进行过手动标定，则为true
-    bool small_energy_shoot;//若为true，则要求主控板发弹
+    bool big_energy_shoot;//大符模式中，若为true，则要求主控板发弹
+    bool small_energy_shoot;//小符模式中，若为true，则要求主控板发弹
 	std::vector<EnergyPart> fans;//图像中所有扇叶
 	std::vector<EnergyPart> armors;//图像中所有装甲板
     std::vector<EnergyPart> centerRs;//风车中心字母R的可能候选区
@@ -92,6 +94,7 @@ private:
 	void initEnergyPartParam();//能量机关参数初始化
 	void initRotation();//顺逆时针初始化
 
+	void changeMode();//猜测模式与击打模式切换
 	bool isGimbleCentered();//判断云台摄像头对心是否完成
 
 	int findFan(const cv::Mat src, int &last_fans_cnt);//寻找图中所有扇叶

@@ -16,6 +16,8 @@ using std::vector;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergy() {
 	isMark = false;
+	isPredicting = true;
+	isGuessing = false;
 	fans_cnt = 0;
 	armors_cnt = 0;
 	centerRs_cnt = 0;
@@ -40,6 +42,7 @@ void Energy::initEnergy() {
 	last_mark = 0;
 
 	target_cnt = 0;
+    big_energy_shoot = false;
     small_energy_shoot = false;
 	predict_rad = 20;
 

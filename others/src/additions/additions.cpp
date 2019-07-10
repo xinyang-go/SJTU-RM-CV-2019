@@ -116,7 +116,7 @@ void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src){
     else if(!gimble_src.empty() && chassis_src.empty()){
         gimble_video_writer.write(gimble_src);
     }
-    else if(gimble_src.empty() && !chassis_src.empty()){
+    else if(gimble_src.empty() && !chassis_src.empty()){    if (show_origin)imshow("src", gimble_src);
         Mat chassis_save = chassis_src.clone();
         cvtColor(chassis_save,chassis_save,COLOR_GRAY2BGR);
         chassis_video_writer.write(chassis_save);
