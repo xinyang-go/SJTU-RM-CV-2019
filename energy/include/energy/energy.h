@@ -37,8 +37,10 @@ public:
 
 private:
 	EnergyPartParam energy_part_param_;//能量机关的参数设置
+
 	bool isMark;//若操作手正在手动标定，则为true
-	bool centered=false;//云台是否对准中心
+	bool isGimble;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
+	bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
 	int fans_cnt;//图像中的扇叶个数
 	int armors_cnt;//图像中的装甲板个数
 	int centerRs_cnt;//图像中可能的风车中心字母R选区个数
@@ -48,7 +50,6 @@ private:
 	int last_armors_cnt;//上一帧的装甲板个数
 	int last_flow_strip_fans_cnt;//上一帧的含流动条扇叶个数
 	int last_flow_strips_cnt;//上一帧的流动条个数
-	int gimble_cnt; //经过的帧数
 	double radius;//大风车半径
 	float target_polar_angle;//待击打装甲板的极坐标角度
     float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度
@@ -81,7 +82,6 @@ private:
 	cv::Point target_point;//目标装甲板中心坐标
 	cv::Point last_target_point;//上一帧目标装甲板中心坐标
 	cv::Point predict_point;//预测的击打点坐标
-	cv::Point former_point;//之前预测的圆心坐标
 	std::vector<float>fan_polar_angle;//当前帧所有扇叶的极坐标角度
 	std::vector<float>armor_polar_angle;//当前帧所有装甲板的极坐标角度
     std::vector<cv::Point> all_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
@@ -90,6 +90,8 @@ private:
 	void initEnergy();//能量机关初始化
 	void initEnergyPartParam();//能量机关参数初始化
 	void initRotation();//顺逆时针初始化
+
+	bool isGimbleCentered();//判断云台摄像头对心是否完成
 
 	int findFan(const cv::Mat src, int &last_fans_cnt);//寻找图中所有扇叶
 	int findArmor(const cv::Mat src, int &last_armors_cnt);//寻找图中所有装甲板
@@ -113,6 +115,7 @@ private:
     void getFanPolarAngle();//获取扇叶极坐标角度
 	void getArmorPolarAngle();//获取装甲板极坐标角度
 	void getAllArmorCenters();//记录所有装甲板中心坐标
+	void getOrigin();//获得云台对心所需角度
 
     void circleLeastFit();//利用所有记录的装甲板中心最小二乘法计算圆心和半径
 

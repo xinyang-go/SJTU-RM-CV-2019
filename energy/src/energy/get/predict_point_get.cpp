@@ -20,18 +20,3 @@ void Energy::getPredictPoint(){
     if(energy_rotation_direction==-1) rotate();
 }
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于操作手手动标定
-// ---------------------------------------------------------------------------------------------------------------------
-bool Energy::changeTarget(){
-    if(pointDistance(target_point,last_target_point) < energy_part_param_.TARGET_CHANGE_DISTANCE_MAX){
-        last_target_point = target_point;
-        return false;
-    }
-    else{
-        last_target_point= target_point;
-        return true;
-    }
-}

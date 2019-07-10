@@ -20,6 +20,9 @@ Energy::Energy(Serial &u, uint8_t &color):serial(u),ally_color(color),
 	initEnergy();
 	initEnergyPartParam();
 
+    energy_rotation_init = false;
+    isGimble = true;
+    isChassis = false;
     save_new_mark = false;
 
     if(ally_color == ALLY_RED){
@@ -50,7 +53,10 @@ Energy::~Energy() = default;
 void Energy::setEnergyRotationInit() {
 	initEnergy();
 	initEnergyPartParam();
+
 	energy_rotation_init = true;
+    isGimble = true;
+    isChassis = false;
 
 	if(save_new_mark){
         FILE *fp = fopen(PROJECT_DIR"/Mark/mark.txt", "r");

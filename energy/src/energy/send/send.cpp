@@ -27,6 +27,7 @@ void Energy::sendBigTarget(Serial& serial, float x, float y, float z) {
     buff[7] = 'e';
     serial.WriteData(buff, sizeof(buff));
     send_cnt+=1;
+//    cout<<"send cnt: "<<send_cnt<<endl;
 }
 
 

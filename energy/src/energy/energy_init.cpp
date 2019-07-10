@@ -16,18 +16,15 @@ using std::vector;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergy() {
 	isMark = false;
-	centered=false;
 	fans_cnt = 0;
 	armors_cnt = 0;
 	centerRs_cnt = 0;
     flow_strips_cnt = 0;
     flow_strip_fans_cnt = 0;
-	gimble_cnt = 0;
     circle_center_point = Point(0, 0);
 	target_point = Point(0, 0);
     last_target_point = Point(0, 0);
     predict_point = Point(0, 0);
-	former_point = Point(0,0);
     target_polar_angle = -1000;
     last_target_polar_angle = -1000;
 	radius = 0;
@@ -42,14 +39,8 @@ void Energy::initEnergy() {
 	pitch_rotation = 0;
 	last_mark = 0;
 
-    red_origin_yaw = -0.35;
-    red_origin_pitch = 15.11719;
-    blue_origin_yaw = -0.439453;
-    blue_origin_pitch = 15.688477;
-
 	target_cnt = 0;
     small_energy_shoot = false;
-	energy_rotation_init = false;
 	predict_rad = 20;
 
 	fans.clear();
