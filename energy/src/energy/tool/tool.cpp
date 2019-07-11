@@ -9,10 +9,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+using namespace std;
 using namespace cv;
-using std::cout;
-using std::endl;
-using std::vector;
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -73,3 +71,69 @@ double Energy::pointDistance(cv::Point point_1, cv::Point point_2) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------------
+// 计算角度所处的极坐标分区，共五个
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::devide(float angle) {
+    if (angle < 0)angle += 360;//若angle小于0，说明当前角度范围为-180°~180°
+    int i = 0;
+    while (angle - 72 * i > 72)i++;
+    return i;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 计算直线上一点的横坐标
+// ---------------------------------------------------------------------------------------------------------------------
+int Energy::linePointX(const cv::Point2f &p1, const cv::Point2f &p2, int y) {
+    return (p2.x - p1.x) / (p2.y - p1.y) * (y - p1.y) + p1.x;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 计算旋转矩形内的两点占比
+// ---------------------------------------------------------------------------------------------------------------------
+
+double Energy::nonZeroRateOfRotateRect(const cv::Mat &bin, const cv::RotatedRect &rotatedRect) {
+    int cnt = 0;
+    cv::Point2f corners[4];
+    rotatedRect.points(corners);
+    sort(corners, &corners[4], [](cv::Point2f p1, cv::Point2f p2) {
+        return p1.y < p2.y;
+    });
+    for (int r = corners[0].y; r < corners[1].y; r++) {
+        auto start = min(linePointX(corners[0], corners[1], r), linePointX(corners[0], corners[2], r)) - 1;
+        auto end = max(linePointX(corners[0], corners[1], r), linePointX(corners[0], corners[2], r)) + 1;
+        if (start < 0)start = 0;
+        if (end > 640)end = 640;
+        for (int c = start; c < end; c++) {
+            if (bin.at<uint8_t>(r, c)) {
+                cnt++;
+            }
+        }
+    }
+    for (int r = corners[1].y; r < corners[2].y; r++) {
+        auto start = min(linePointX(corners[0], corners[2], r), linePointX(corners[1], corners[3], r)) - 1;
+        auto end = max(linePointX(corners[0], corners[2], r), linePointX(corners[1], corners[3], r)) + 1;
+        if (start < 0)start = 0;
+        if (end > 640)end = 640;
+        for (int c = start; c < end; c++) {
+            if (bin.at<uint8_t>(r, c)) {
+                cnt++;
+            }
+        }
+    }
+    for (int r = corners[2].y; r < corners[3].y; r++) {
+        auto start = min(linePointX(corners[1], corners[3], r), linePointX(corners[2], corners[3], r)) - 1;
+        auto end = max(linePointX(corners[1], corners[3], r), linePointX(corners[2], corners[3], r)) + 1;
+        if (start < 0)start = 0;
+        if (end > 640)end = 640;
+        for (int c = start; c < end; c++) {
+            if (bin.at<uint8_t>(r, c)) {
+                cnt++;
+            }
+        }
+    }
+    return double(cnt) / rotatedRect.size.area();
+}

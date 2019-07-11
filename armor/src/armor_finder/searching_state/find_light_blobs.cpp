@@ -58,7 +58,7 @@ static double nonZeroRateOfRotateRect_opt(const cv::Mat &bin, const cv::RotatedR
         auto end = max(linePointX(corners[0], corners[1], r), linePointX(corners[0], corners[2], r)) + 1;
         if (start < 0 || end > 640) return 0;
         for (int c = start; c < end; c++) {
-            if (bin.at<uint8_t>(c, r)) {
+            if (bin.at<uint8_t>(r, c)) {
                 cnt++;
             }
         }
@@ -78,7 +78,7 @@ static double nonZeroRateOfRotateRect_opt(const cv::Mat &bin, const cv::RotatedR
         auto end = max(linePointX(corners[1], corners[3], r), linePointX(corners[2], corners[3], r)) + 1;
         if (start < 0 || end > 640) return 0;
         for (int c = start; c < end; c++) {
-            if (bin.at<uint8_t>(c, r)) {
+            if (bin.at<uint8_t>(r, c)) {
                 cnt++;
             }
         }
@@ -90,8 +90,8 @@ static bool isValidLightBlob(const cv::Mat &bin, const cv::RotatedRect &rect) {
     return (lw_rate(rect) > 1.5) &&
            //           (rect.size.width*rect.size.height < 3000) &&
            (rect.size.width * rect.size.height > 1) &&
-           //           (nonZeroRateOfRotateRect_opt(bin, rect) > 0.8);
-           (nonZeroRateOfRotateRect(bin, rect) > 0.8);
+           (nonZeroRateOfRotateRect_opt(bin, rect) > 0.8);
+//           (nonZeroRateOfRotateRect(bin, rect) > 0.8);
 }
 
 void get_blob_color(const cv::Mat &src, std::vector<LightBlob> &blobs) {

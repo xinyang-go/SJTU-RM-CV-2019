@@ -57,14 +57,14 @@ void Energy::imagePreprocess(cv::Mat &src) {
         resize(channels.at(2), src_red, Size(src.size().width/2, src.size().height/2));
         if(ally_color == ALLY_RED)
         {
-            src = src_red-src_blue;
-            //src=src_red;
+//            src = src_red-src_blue;
+            src=src_red;
         }else if(ally_color == ALLY_BLUE){
-            src = src_blue-src_red;
-            //src=src_blue;
+//            src = src_blue-src_red;
+            src=src_blue;
         }
     }
     cv::resize(src, src, cv::Size(src.size().width * 2, src.size().height * 2), 2);
-    threshold(src, src, energy_part_param_.SPLIT_GRAY_THRESH, 255, THRESH_BINARY);
+//    threshold(src, src, energy_part_param_.SPLIT_GRAY_THRESH, 255, THRESH_BINARY);
 
 }

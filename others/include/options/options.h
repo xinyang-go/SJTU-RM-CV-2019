@@ -15,13 +15,9 @@ extern bool run_with_camera;
 extern bool save_video;
 extern bool wait_uart;
 extern bool save_labelled_boxes;
-extern bool show_bin;
-extern bool show_split;
-extern bool show_single;
-extern bool show_both;
-extern bool show_center;
-extern bool show_strip;
-extern bool write_down;
+extern bool show_process;
+extern bool show_energy;
+extern bool save_mark;
 
 void process_options(int argc, char *argv[]);
 

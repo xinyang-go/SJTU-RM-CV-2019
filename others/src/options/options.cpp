@@ -14,13 +14,9 @@ bool run_with_camera = false;
 bool save_video = false;
 bool wait_uart = false;
 bool save_labelled_boxes = false;
-bool show_bin = false;
-bool show_split = false;
-bool show_single = false;
-bool show_both = false;
-bool show_center = false;
-bool show_strip = false;
-bool write_down = false;
+bool show_process = false;
+bool show_energy = false;
+bool save_mark = false;
 
 void process_options(int argc, char *argv[]) {
     if (argc >= 2) {
@@ -54,18 +50,10 @@ void process_options(int argc, char *argv[]) {
                 LOGM("Enable show light blobs");
                 show_origin = true;
                 LOGM("Enable show origin");
-                show_bin = true;
-                LOGM("Enable show binary image");
-                show_split = true;
-                LOGM("Enable show split image");
-                show_single = true;
-                LOGM("Enable show single image");
-                show_both = true;
-                LOGM("Enable show both image");
-                show_center = true;
-                LOGM("Enable show circle center");
-                show_strip = true;
-                LOGM("Enable show strip");
+                show_process = true;
+                LOGM("Enable show processed image");
+                show_energy = true;
+                LOGM("Enable show energy part");
             } else if (strcmp(argv[i], "--run-with-camera") == 0) {
                 run_with_camera = true;
                 LOGM("Run with camera!");
@@ -78,26 +66,14 @@ void process_options(int argc, char *argv[]) {
             } else if (strcmp(argv[i], "--save-labelled-boxes") == 0) {
                 save_labelled_boxes = true;
                 LOGM("labelled armor boxes will be saved!");
-            } else if (strcmp(argv[i], "--show-bin") == 0) {
-                show_bin = true;
-                LOGM("Enable show binary image");
-            } else if (strcmp(argv[i], "--show-split") == 0) {
-                show_split = true;
-                LOGM("Enable show split image");
-            } else if (strcmp(argv[i], "--show-single") == 0) {
-                show_single = true;
-                LOGM("Enable show single image");
-            } else if (strcmp(argv[i], "--show-both") == 0) {
-                show_both = true;
-                LOGM("Enable show both image");
-            } else if (strcmp(argv[i], "--show-center") == 0) {
-                show_center = true;
-                LOGM("Enable show circle center");
-            } else if (strcmp(argv[i], "--show-strip") == 0) {
-                show_strip = true;
-                LOGM("Enable show strip");
+            } else if (strcmp(argv[i], "--show-process") == 0) {
+                show_process = true;
+                LOGM("Enable show processed image!");
+            } else if (strcmp(argv[i], "--show-energy") == 0) {
+                show_energy= true;
+                LOGM("Enable show energy part!");
             } else if (strcmp(argv[i], "--save-mark") == 0) {
-                write_down = true;
+                save_mark = true;
                 LOGM("Write down mark");
             } else {
                 LOGW("Unknown option: %s. Use --help to see options.", argv[i]);

@@ -16,10 +16,4 @@ void Energy::getAimPoint(){
     double dy = target_point.y - 240;
     yaw_rotation   = atan(dx / FOCUS_PIXAL) * 180 / PI;
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
-    if(fabs(yaw_rotation) < 0.5 && fabs(pitch_rotation) < 0.5){
-        small_energy_shoot = true;
-        cout<<"send"<<endl;
-    }
-    else
-        small_energy_shoot = false;
 }
