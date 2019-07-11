@@ -27,7 +27,7 @@ void Energy::extract(cv::Mat &src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于计算预测的击打点坐标
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::rotate() {
+void Energy::rotate(cv::Point target_point) {
     int x1, x2, y1, y2;
     //    为了减小强制转换的误差
     x1 = circle_center_point.x * 100;
@@ -94,8 +94,7 @@ int Energy::linePointX(const cv::Point2f &p1, const cv::Point2f &p2, int y) {
 //----------------------------------------------------------------------------------------------------------------------
 // 计算旋转矩形内的两点占比
 // ---------------------------------------------------------------------------------------------------------------------
-
-double Energy::nonZeroRateOfRotateRect(const cv::Mat &bin, const cv::RotatedRect &rotatedRect) {
+double Energy::nonZeroRateOfRotateRect(cv::Mat &bin, const cv::RotatedRect &rotatedRect) {
     int cnt = 0;
     cv::Point2f corners[4];
     rotatedRect.points(corners);

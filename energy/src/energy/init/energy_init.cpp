@@ -17,11 +17,6 @@ void Energy::initEnergy() {
     isMark = false;
     isPredicting = true;
     isGuessing = false;
-//	fans_cnt = 0;
-//	armors_cnt = 0;
-//	centerRs_cnt = 0;
-//    flow_strips_cnt = 0;
-//    flow_strip_fans_cnt = 0;
     circle_center_point = Point(0, 0);
     target_point = Point(0, 0);
     last_target_point = Point(0, 0);
@@ -34,8 +29,6 @@ void Energy::initEnergy() {
     energy_rotation_direction = ANTICLOCKWISE;
     attack_distance = ATTACK_DISTANCE;
     last_fans_cnt = 0;
-    last_flow_strips_cnt = 0;
-    last_flow_strip_fans_cnt = 0;
     send_cnt = 0;
     yaw_rotation = 0;
     pitch_rotation = 0;

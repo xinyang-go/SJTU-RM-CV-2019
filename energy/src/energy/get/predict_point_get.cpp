@@ -15,8 +15,8 @@ using std::vector;
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数获取预测点坐标
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::getPredictPoint(){
-    if(energy_rotation_direction==1) rotate();
-    if(energy_rotation_direction==-1) rotate();
+void Energy::getPredictPoint(cv::Point target_point){
+    if(energy_rotation_direction==1) rotate(target_point);
+    if(energy_rotation_direction==-1) rotate(target_point);
 }
 

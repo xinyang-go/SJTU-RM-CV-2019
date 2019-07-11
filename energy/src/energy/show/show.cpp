@@ -14,10 +14,10 @@ using std::vector;
 // 此函数用于显示图像中所有扇叶
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::showFanContours(std::string windows_name, const cv::Mat src) {
-	if (src.empty())return;
+    if (src.empty())return;
     static Mat image2show;
 
-    if(src.type() == CV_8UC1) // 黑白图像
+    if (src.type() == CV_8UC1) // 黑白图像
     {
         cvtColor(src, image2show, COLOR_GRAY2RGB);
 
@@ -25,26 +25,24 @@ void Energy::showFanContours(std::string windows_name, const cv::Mat src) {
     {
         image2show = src.clone();
     }
-	for (const auto &fan : fans)
-	{
-		Point2f vertices[4];      //定义矩形的4个顶点
-		fan.points(vertices);   //计算矩形的4个顶点
-		for (int i = 0; i < 4; i++)
-			line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 0, 0), 2);
-	}
-	imshow(windows_name, image2show);
+    for (const auto &fan : fans) {
+        Point2f vertices[4];      //定义矩形的4个顶点
+        fan.points(vertices);   //计算矩形的4个顶点
+        for (int i = 0; i < 4; i++)
+            line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 0, 0), 2);
+    }
+    imshow(windows_name, image2show);
 }
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有装甲板
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::showArmorContours(std::string windows_name, const cv::Mat src) {
-	if (src.empty())return;
+    if (src.empty())return;
     static Mat image2show;
 
-    if(src.type() == CV_8UC1) // 黑白图像
+    if (src.type() == CV_8UC1) // 黑白图像
     {
         cvtColor(src, image2show, COLOR_GRAY2RGB);
 
@@ -52,16 +50,14 @@ void Energy::showArmorContours(std::string windows_name, const cv::Mat src) {
     {
         image2show = src.clone();
     }
-	for (const auto &armor : armors)
-	{
-		Point2f vertices[4];      //定义矩形的4个顶点
-		armor.points(vertices);   //计算矩形的4个顶点
-		for (int i = 0; i < 4; i++)
-			line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 255), 2);
-	}
-	imshow(windows_name, image2show);
+    for (const auto &armor : armors) {
+        Point2f vertices[4];      //定义矩形的4个顶点
+        armor.points(vertices);   //计算矩形的4个顶点
+        for (int i = 0; i < 4; i++)
+            line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 255), 2);
+    }
+    imshow(windows_name, image2show);
 }
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -70,7 +66,7 @@ void Energy::showArmorContours(std::string windows_name, const cv::Mat src) {
 void Energy::showBothContours(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
-    if(src.type() == CV_8UC1) // 黑白图像
+    if (src.type() == CV_8UC1) // 黑白图像
     {
         cvtColor(src, image2show, COLOR_GRAY2RGB);
 
@@ -78,19 +74,17 @@ void Energy::showBothContours(std::string windows_name, const cv::Mat src) {
     {
         image2show = src.clone();
     }
-    for (const auto &fan : fans)
-    {
+    for (const auto &fan : fans) {
         Point2f vertices[4];      //定义矩形的4个顶点
         fan.points(vertices);   //计算矩形的4个顶点
         for (int i = 0; i < 4; i++)
             line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 0, 0), 4);
     }
-    for (const auto &armor : armors)
-    {
+    for (const auto &armor : armors) {
         Point2f vertices[4];      //定义矩形的4个顶点
         armor.points(vertices);   //计算矩形的4个顶点
-        for (int i = 0; i < 4; i++){
-            if(pointDistance(static_cast<cv::Point2f>(armor.center),target_point) < 5)
+        for (int i = 0; i < 4; i++) {
+            if (pointDistance(static_cast<cv::Point2f>(armor.center), target_point) < 5)
                 line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 255, 0), 4);
             else
                 line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 255), 4);
@@ -104,7 +98,6 @@ void Energy::showBothContours(std::string windows_name, const cv::Mat src) {
 }
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有可能的风车中心候选区R
 // ---------------------------------------------------------------------------------------------------------------------
@@ -112,7 +105,7 @@ void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
 
-    if(src.type() == CV_8UC1) // 黑白图像
+    if (src.type() == CV_8UC1) // 黑白图像
     {
         cvtColor(src, image2show, COLOR_GRAY2RGB);
 
@@ -125,10 +118,11 @@ void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
     centerR.points(vertices);   //计算矩形的4个顶点
     for (int i = 0; i < 4; i++)
         line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 0, 255), 2);
+
+    cv::circle(image2show, circle_center_point, 4, cv::Scalar(0, 0, 255), 2);//在图像中画出特征点，2是圆的半径
+
     imshow(windows_name, image2show);
 }
-
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -138,7 +132,7 @@ void Energy::showFlowStripFanContours(std::string windows_name, const cv::Mat sr
     if (src.empty())return;
     static Mat image2show;
 
-    if(src.type() == CV_8UC1) // 黑白图像
+    if (src.type() == CV_8UC1) // 黑白图像
     {
         cvtColor(src, image2show, COLOR_GRAY2RGB);
 
@@ -158,13 +152,13 @@ void Energy::showFlowStripFanContours(std::string windows_name, const cv::Mat sr
     for (int i = 0; i < 4; i++)
         line(image2show, strip_vertices[i], strip_vertices[(i + 1) % 4], Scalar(0, 255, 0), 2);
 
-    for (const auto &armor : armors){
-        if(pointDistance(armor.center, target_point) < energy_part_param_.TWIN_POINT_MAX){
+    for (const auto &armor : armors) {
+        if (pointDistance(armor.center, target_point) < energy_part_param_.TWIN_POINT_MAX) {
             Point2f vertices[4];      //定义矩形的4个顶点
             armor.points(vertices);   //计算矩形的4个顶点
             for (int i = 0; i < 4; i++)
                 line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 255, 0), 2);
-            }
+        }
     }
 
     Point2f ROI_vertices[4];      //定义矩形的4个顶点
@@ -175,7 +169,6 @@ void Energy::showFlowStripFanContours(std::string windows_name, const cv::Mat sr
 }
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示猜测的下一个目标点
 // ---------------------------------------------------------------------------------------------------------------------
@@ -183,7 +176,7 @@ void Energy::showGuessTarget(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
 
-    if(src.type() == CV_8UC1) // 黑白图像
+    if (src.type() == CV_8UC1) // 黑白图像
     {
         cvtColor(src, image2show, COLOR_GRAY2RGB);
 

@@ -27,7 +27,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
+        SMALL_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -61,8 +61,8 @@ int main(int argc, char *argv[]) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/home/sun/项目/RM2019 能量机关视频/大能量机关（红+开灯）.mov");
-            video_chassis = new VideoWrapper("/home/sun/项目/RM2019 能量机关视频/大能量机关（红+开灯）.mov");
+            video_gimble = new VideoWrapper("/home/sun/项目/RM2019 能量机关视频/小能量机关（红+开灯）.mov");
+            video_chassis = new VideoWrapper("/home/sun/项目/RM2019 能量机关视频/小能量机关（红+开灯）.mov");
         }
         if (video_gimble->init()) {
             LOGM("video_gimble source initialization successfully.");
@@ -100,10 +100,12 @@ int main(int argc, char *argv[]) {
                         cout << "set" << endl;
                     }
                     ok = checkReconnect(video_gimble->read(gimble_src), video_chassis->read(chassis_src));//检查有几个摄像头
-                    resize(gimble_src,gimble_src,cv::Size(853,480));
-                    resize(chassis_src,chassis_src,cv::Size(853,480));
-                    gimble_src = gimble_src(Rect(106, 0, 640, 480));
-                    chassis_src = chassis_src(Rect(106, 0, 640, 480));
+
+//                    resize(gimble_src,gimble_src,cv::Size(853,480));
+//                    resize(chassis_src,chassis_src,cv::Size(853,480));
+//                    gimble_src = gimble_src(Rect(106, 0, 640, 480));
+//                    chassis_src = chassis_src(Rect(106, 0, 640, 480));
+
                     if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
                     energy.runBig(gimble_src, chassis_src);//击打大符
@@ -115,9 +117,13 @@ int main(int argc, char *argv[]) {
                     }
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimble->read(gimble_src));
+
+//                    resize(gimble_src,gimble_src,cv::Size(853,480));
+//                    gimble_src = gimble_src(Rect(106, 0, 640, 480));
+
                     if (save_video) saveVideos(gimble_src);
                     if (show_origin) showOrigin(gimble_src);
-//                    energy.runSmall(gimble_src);
+                    energy.runSmall(gimble_src);
                 } else {                                         // 自瞄模式
                     if(last_state != ARMOR_STATE){
                         ((CameraWrapper*)video_gimble)->changeBrightness(40);

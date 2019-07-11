@@ -119,7 +119,10 @@ bool Energy::findCenterR(const cv::Mat src) {
             continue;
         }
         centerR = cv::minAreaRect(center_R_contour);
+        float target_length =
+                target_armor.size.height > target_armor.size.width ? target_armor.size.height : target_armor.size.width;
         circle_center_point = centerR.center;
+        circle_center_point.y += target_length / 7.5;//实际最小二乘得到的中心在R的下方
         return true;
 
 //        RotatedRect cur_rect = minAreaRect(center_R_contour);
@@ -148,7 +151,7 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
     StructingElementErodeDilate(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("flow strip fan struct", src_bin);
+//    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -435,10 +438,9 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
     if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN)
         return false;//轮廓对矩形的面积占有率不合适
     std::vector<cv::Point2f> intersection;
-    if (rotatedRectangleIntersection(cur_rect, flow_strip_fan, intersection) != 0) {
-        if (contourArea(intersection) < energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
-            return false;
-        }
+    if (rotatedRectangleIntersection(cur_rect, flow_strip_fan, intersection) == 0 ||
+        contourArea(intersection) < energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
+        return false;
     }
     return true;
 }

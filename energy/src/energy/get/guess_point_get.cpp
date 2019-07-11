@@ -28,7 +28,7 @@ void Energy::guessTarget() {
     float max_angle = all_fan_angles.at(all_fan_angles.size() - 1);
     float base_angle = min_angle;
     while (base_angle > 72)base_angle -= 72;
-    if (startguessing) {
+    if (startguessing) {cout<<"666"<<endl;
         int i = 0;
         for (i = 1; i < all_fan_angles.size(); ++i) {
             if (abs(min_angle + 72 * i - all_fan_angles.at(i)) > energy_part_param_.TWIN_ANGEL_MAX) {
