@@ -30,10 +30,13 @@ public:
 
     int runBig(cv::Mat &gimble_src);
 
+    int runSmall(cv::Mat &gimble_src, cv::Mat &chassis_src);
+
     int runSmall(cv::Mat &gimble_src);
 
     Serial &serial;//串口
-    void setEnergyRotationInit();//判断顺逆时针函数
+    void setBigEnergyInit();//设置大符初始化，判断顺逆时针函数
+    void setSmallEnergyInit();//设置小符初始化
     void extract(cv::Mat &src);//框取图像中的一块区域进行处理
     void sendTarget(Serial &serial, float x, float y, float z);
 
@@ -42,41 +45,45 @@ private:
     EnergyPartParam energy_part_param_;//能量机关的参数设置
     EnergyPartParam gimble_energy_part_param_;//云台摄像头能量机关的参数设置
     EnergyPartParam chassis_energy_part_param_;//底盘摄像头能量机关的参数设置
+
     bool isMark;//若操作手正在手动标定，则为true
     bool isGimble;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
     bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
     bool isGuessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
     bool isPredicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
-    int last_fans_cnt;//上一帧的扇叶个数
+    bool energy_rotation_init;//若仍在判断风车旋转方向，则为true
+    bool manual_mark;//若操作手进行过手动标定，则为true
+    bool shoot;//若为true，则要求主控板发弹
+    bool startguessing;//进入猜测状态的标志
+
+    uint8_t last_mark;//用于记录上一帧操作手是否进行标定
+    uint8_t &ally_color;//我方颜色
+
     double radius;//大风车半径
+
+    int send_cnt;//向主控板发送的数据总次数
+    int last_fans_cnt;//上一帧的扇叶个数
+    int guess_devide;//刚进入猜测状态时，猜测目标点在极坐标中的分区
+    int energy_rotation_direction;//风车旋转方向
+    int clockwise_rotation_init_cnt;//装甲板顺时针旋转次数
+    int anticlockwise_rotation_init_cnt;//装甲板逆时针旋转次数
+
     float target_polar_angle;//待击打装甲板的极坐标角度
     float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度
     float guess_polar_angle;//猜测的下一个目标装甲板极坐标角度
     float last_base_angle;//上一帧的各扇叶在0区（0°~72°）的基础角度
-    uint8_t &ally_color;//我方颜色
-    int energy_rotation_direction;//风车旋转方向
+    float predict_rad;//预测提前角
     float attack_distance;//步兵与风车平面距离
-    int send_cnt;//向主控板发送的数据总次数
     float yaw_rotation;//云台yaw轴应该转到的角度
     float pitch_rotation;//云台pitch轴应该转到的角度
-    uint8_t last_mark;//用于记录上一帧操作手是否进行标定
-    double predict_rad;//预测提前角
-    bool energy_rotation_init;//若仍在判断风车旋转方向，则为true
-    int clockwise_rotation_init_cnt;//装甲板顺时针旋转次数
-    int anticlockwise_rotation_init_cnt;//装甲板逆时针旋转次数
-    float red_origin_yaw, red_origin_pitch;//红方的初始云台对心角度设定值
-    float blue_origin_yaw, blue_origin_pitch;//蓝方的初始云台对心角度设定值
     float origin_yaw, origin_pitch;//初始的云台角度设定值
-    float target_cnt;//用于记录寻找到的装甲板总数，该值变化则立即中断主控板发射进程，防止重复击打已点亮的装甲板
-    bool save_new_mark;//若操作手进行过手动标定，则为true
-    bool shoot;//若为true，则要求主控板发弹
-    int guess_devide;//刚进入猜测状态时，猜测目标点在极坐标中的分区
-    bool startguessing;//进入猜测状态的标志
 
     timeval time_start_guess;
 
     std::vector<cv::RotatedRect> fans;//图像中所有扇叶
-    std::vector<cv::RotatedRect> armors;//图像中所有可能装甲板（可能存在误识别）
+    std::vector<cv::RotatedRect> armors;//图像中所有可能装甲板（可能存在误识别)
+
+    std::vector<cv::Point> all_target_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
 
     cv::RotatedRect centerR;//风车中心字母R的可能候选区
     cv::RotatedRect flow_strip;//图像中所有流动条（理论上只有一个）
@@ -89,9 +96,7 @@ private:
     cv::Point last_target_point;//上一帧目标装甲板中心坐标
     cv::Point guess_point;
     cv::Point predict_point;//预测的击打点坐标
-    std::vector<float> fan_polar_angle;//当前帧所有扇叶的极坐标角度
-    std::vector<float> armor_polar_angle;//当前帧所有装甲板的极坐标角度
-    std::vector<cv::Point> all_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
+
     cv::Mat src_blue, src_red, src_green;//通道分离中的三个图像通道
 
     void initEnergy();//能量机关初始化
@@ -102,6 +107,7 @@ private:
     void initImage(cv::Mat &src);//图像预处理
 
     void startChassis();//从云台摄像头对心状态进入底盘摄像头击打状态
+    bool stayGuessing();//保持在猜测模式
 
     int findFans(const cv::Mat src);//寻找图中所有扇叶
     int findArmors(const cv::Mat src);//寻找图中所有装甲板
@@ -128,7 +134,6 @@ private:
 
     void circleLeastFit();//利用所有记录的装甲板中心最小二乘法计算圆心和半径
 
-    void findTargetByPolar();//通过极坐标角度匹配获取目标装甲板的极坐标角度和装甲板中心坐标
     void findTargetByIntersection();//通过面积重合度匹配获取目标装甲板的极坐标角度和装甲板中心坐标
     bool findTargetInFlowStripFan();//在已发现的流动条区域中寻找待击打装甲板
 

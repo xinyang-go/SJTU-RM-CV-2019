@@ -19,7 +19,7 @@ void Energy::circleLeastFit()
     circle_center_point.x = 0;
     circle_center_point.y = 0;
     radius = 0.0f;
-    if (all_armor_centers.size() < 3)
+    if (all_target_armor_centers.size() < 3)
     {
 //        cout<<"Cannot calculate a circle"<<endl;
         return;
@@ -28,11 +28,11 @@ void Energy::circleLeastFit()
     double sum_x2 = 0.0f, sum_y2 = 0.0f;
     double sum_x3 = 0.0f, sum_y3 = 0.0f;
     double sum_xy = 0.0f, sum_x1y2 = 0.0f, sum_x2y1 = 0.0f;
-    int N = static_cast<int>(all_armor_centers.size());
+    int N = static_cast<int>(all_target_armor_centers.size());
     for (int i = 0; i < N; i++)
     {
-        double x = all_armor_centers.at(i).x;
-        double y = all_armor_centers.at(i).y;
+        double x = all_target_armor_centers.at(i).x;
+        double y = all_target_armor_centers.at(i).y;
         double x2 = x * x;
         double y2 = y * y;
         sum_x += x;

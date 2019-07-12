@@ -20,6 +20,7 @@ void Energy::changeMark() {
         origin_yaw = mcuData.curr_yaw;
         origin_pitch = mcuData.curr_pitch;
         isMark = false;
+        manual_mark = true;
 //        LOGM(STR_CTR(WORD_LIGHT_YELLOW, "IsMark"));
     } else if (mcuData.mark == 1) {//正在标定
         last_mark = mcuData.mark;

@@ -2,6 +2,7 @@
 // Created by sun on 19-7-10.
 //
 #include "energy/energy.h"
+#include "log.h"
 
 using namespace std;
 using namespace cv;
@@ -14,4 +15,19 @@ using namespace cv;
 void Energy::startChassis(){
     isChassis = true;
     isGimble = false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于判断是否应当继续保持猜测模式
+// ---------------------------------------------------------------------------------------------------------------------
+bool Energy::stayGuessing(){
+    if (changeTarget() || is_guessing_timeout()) {
+        isPredicting = true;
+        isGuessing = false;
+        LOGM(STR_CTR(WORD_LIGHT_YELLOW, "Start Predicting!"));
+        return false;
+    }
+    return true;
 }

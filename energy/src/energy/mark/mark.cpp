@@ -13,7 +13,6 @@ void Energy::writeDownMark() {
         if (fp) {
             fprintf(fp, "yaw: %f, pitch: %f\n", origin_yaw, origin_pitch);
             fclose(fp);
-            save_new_mark = true;
         }
         FILE *fp_all = fopen(PROJECT_DIR"/Mark/mark_all.txt", "a");
         if (fp_all) {

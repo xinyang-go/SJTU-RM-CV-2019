@@ -17,6 +17,7 @@ void Energy::initEnergy() {
     isMark = false;
     isPredicting = true;
     isGuessing = false;
+    manual_mark = false;
     circle_center_point = Point(0, 0);
     target_point = Point(0, 0);
     last_target_point = Point(0, 0);
@@ -34,7 +35,6 @@ void Energy::initEnergy() {
     pitch_rotation = 0;
     last_mark = 0;
 
-    target_cnt = 0;
     shoot = false;
     guess_devide = 0;
     startguessing = false;
@@ -43,10 +43,7 @@ void Energy::initEnergy() {
     fans.clear();
     armors.clear();
 
-    fan_polar_angle.clear();
-    armor_polar_angle.clear();
-
-    all_armor_centers.clear();
+    all_target_armor_centers.clear();
 
     clockwise_rotation_init_cnt = 0;
     anticlockwise_rotation_init_cnt = 0;
