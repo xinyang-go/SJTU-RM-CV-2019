@@ -70,15 +70,11 @@ int main(int argc, char *argv[]) {
             LOGM("video_gimble source initialization successfully.");
         } else {
             LOGW("video_gimble source unavailable!");
-            delete video_gimble;
-            video_gimble = nullptr;
         }
         if (video_chassis->init()) {
             LOGM("video_chassis source initialization successfully.");
         } else {
             LOGW("video_chassis source unavailable!");
-            delete video_chassis;
-            video_chassis = nullptr;
         }
 
         // 跳过前10帧噪声图像。
@@ -99,26 +95,13 @@ int main(int argc, char *argv[]) {
                     if (last_state == ARMOR_STATE) {//若上一帧是自瞄模式，即刚往完成切换，则需要初始化
                         ((CameraWrapper *) video_gimble)->changeBrightness(20);
                         energy.setEnergyInit();
+                        checkReconnect(video_chassis->read(chassis_src));
                     }
-                    ok = checkReconnect(video_gimble->read(gimble_src), video_chassis->read(chassis_src));//检查有几个摄像头
+                    ok = checkReconnect(video_gimble->read(gimble_src));
                     if (!from_camera) extract(gimble_src, chassis_src);
                     if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
                     energy.run(gimble_src, chassis_src);
-//                    if (mcuData.state == BIG_ENERGY_STATE) {
-//                        if (last_state != BIG_ENERGY_STATE) {
-//                            energy.setBigEnergyInit();
-//                            cout << "start big" << endl;
-//                        }
-//                        energy.run(gimble_src, chassis_src);
-//                    } else if (mcuData.state == SMALL_ENERGY_STATE) {
-//                        if (last_state != SMALL_ENERGY_STATE) {
-//                            energy.setSmallEnergyInit();
-//                            cout << "start small" << endl;
-//                        }
-//                        energy.run(gimble_src, chassis_src);
-//                    }
-
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {

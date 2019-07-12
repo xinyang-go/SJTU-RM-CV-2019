@@ -181,7 +181,6 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 // 此函数用于寻找流动条
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findFlowStrip(const cv::Mat src) {
-    imshow("1", src);
     if (src.empty())return false;
     cv::Mat src_bin;
     src_bin = src.clone();

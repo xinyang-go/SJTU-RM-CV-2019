@@ -73,33 +73,27 @@ cv::VideoWriter initVideoWriter(const std::string &filename_prefix) {
     return video;
 }
 
-bool checkReconnect(bool is_gimble_connect, bool is_chassis_connect) {
-    if (!is_gimble_connect) {
+bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
+    if (!is_camera_0_connect) {
+        delete video_gimble;
         video_gimble = new CameraWrapper(0, "armor");
-        if (!(is_gimble_connect = video_gimble->init())) {
-            delete video_gimble;
-            video_gimble = nullptr;
-        }
+        is_camera_0_connect = video_gimble->init();
     }
-    if (!is_chassis_connect) {
+    if (!is_camera_1_connect) {
+        delete video_chassis;
         video_chassis = new CameraWrapper(1, "energy");
-        if (!(is_chassis_connect = video_chassis->init())) {
-            delete video_chassis;
-            video_chassis = nullptr;
-        }
+        is_camera_1_connect = video_chassis->init();
     }
-    return is_gimble_connect && is_chassis_connect;
+    return is_camera_0_connect && is_camera_1_connect;
 }
 
-bool checkReconnect(bool is_gimble_connect) {
-    if (!is_gimble_connect) {
+bool checkReconnect(bool is_camera_connect) {
+    if (!is_camera_connect) {
+        delete video_gimble;
         video_gimble = new CameraWrapper(0, "armor");
-        if (!(is_gimble_connect = video_gimble->init())) {
-            delete video_gimble;
-            video_gimble = nullptr;
-        }
+        is_camera_connect = video_gimble->init();
     }
-    return is_gimble_connect;
+    return is_camera_connect;
 }
 
 auto gimble_video_writer = initVideoWriter(PROJECT_DIR"/gimble_video/");
