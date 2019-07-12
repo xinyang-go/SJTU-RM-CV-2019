@@ -51,6 +51,8 @@ void Energy::initEnergy() {
 
     clockwise_rotation_init_cnt = 0;
     anticlockwise_rotation_init_cnt = 0;
+
+    destroyAllWindows();
 }
 
 

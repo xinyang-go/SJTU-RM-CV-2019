@@ -29,10 +29,10 @@ void Energy::run(cv::Mat &gimble_src, cv::Mat &chassis_src) {
         if (show_energy)showFlowStripFan("strip", gimble_src);
         if (show_energy)showCenterR("R", gimble_src);
 
+        if (!getOrigin())return;
         startChassis();
-        getOrigin();
         initEnergy();
-        destroyAllWindows();
+
     } else if (isChassis) {
         energy_part_param_ = chassis_energy_part_param_;
         clearAll();
@@ -97,7 +97,7 @@ void Energy::run(cv::Mat &gimble_src) {
     getTargetPolarAngle();
     JudgeMode();
     if (energy_mode_init)return;
-    getOrigin();
+    if (!getOrigin())return;
     if (isBig & energy_rotation_init) {
         initRotation();
         return;

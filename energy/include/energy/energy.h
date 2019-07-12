@@ -76,6 +76,7 @@ private:
     float last_base_angle;//上一帧的各扇叶在0区（0°~72°）的基础角度
     float predict_rad;//预测提前角
     float attack_distance;//步兵与风车平面距离
+    float center_delta_yaw, center_delta_pitch;//对心时相差的角度
     float yaw_rotation, pitch_rotation;//云台yaw轴和pitch轴应该转到的角度
     float origin_yaw, origin_pitch;//初始的云台角度设定值
 
@@ -148,7 +149,7 @@ private:
 
     bool guessTarget();//获得猜测击打点位
     bool changeTarget();//判断目标是否改变
-    void getOrigin();//获得云台对心所需角度
+    bool getOrigin();//获得云台对心所需角度
     void getTargetPolarAngle();//获得目标装甲板极坐标角度
     void getPredictPoint(cv::Point target_point);//获取预测点位
     void getAimPoint(cv::Point target_point);//通过自瞄逻辑计算点位
