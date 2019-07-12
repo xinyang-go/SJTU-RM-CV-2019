@@ -23,7 +23,7 @@ void Energy::startChassis(){
 // 此函数用于判断是否应当继续保持猜测模式
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::stayGuessing(){
-    if (changeTarget() || is_guessing_timeout()) {
+    if (changeTarget() || isGuessingTimeout()) {
         isPredicting = true;
         isGuessing = false;
         LOGM(STR_CTR(WORD_LIGHT_YELLOW, "Start Predicting!"));

@@ -47,9 +47,4 @@ void Energy::gimbleRotation() {
     pitch_rotation = static_cast<float>(180 / PI *
                                         atan2((attack_distance * tan(origin_pitch * PI / 180) - real_predict_point.y),
                                               attack_distance));
-    if (abs(yaw_rotation - mcuData.curr_yaw) < 0.5 && fabs(pitch_rotation - mcuData.curr_pitch) < 0.5){
-        shoot = true;
-        isPredicting = false;
-        isGuessing = true;
-    }
 }

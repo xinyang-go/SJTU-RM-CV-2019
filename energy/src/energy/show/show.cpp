@@ -13,7 +13,7 @@ using std::vector;
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有扇叶
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::showFanContours(std::string windows_name, const cv::Mat src) {
+void Energy::showFans(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
 
@@ -38,7 +38,7 @@ void Energy::showFanContours(std::string windows_name, const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有装甲板
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::showArmorContours(std::string windows_name, const cv::Mat src) {
+void Energy::showArmors(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
 
@@ -63,7 +63,7 @@ void Energy::showArmorContours(std::string windows_name, const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有扇叶和装甲板,并框出待击打装甲板
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::showBothContours(std::string windows_name, const cv::Mat src) {
+void Energy::showBoth(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
     if (src.type() == CV_8UC1) // 黑白图像
@@ -101,7 +101,7 @@ void Energy::showBothContours(std::string windows_name, const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有可能的风车中心候选区R
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
+void Energy::showCenterR(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
 
@@ -117,7 +117,7 @@ void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
     Point2f vertices[4];      //定义矩形的4个顶点
     centerR.points(vertices);   //计算矩形的4个顶点
     for (int i = 0; i < 4; i++)
-        line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 0, 255), 2);
+        line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 255, 0), 2);
 
     cv::circle(image2show, circle_center_point, 4, cv::Scalar(0, 0, 255), 2);//在图像中画出特征点，2是圆的半径
 
@@ -128,7 +128,7 @@ void Energy::showCenterRContours(std::string windows_name, const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有流动条
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::showFlowStripFanContours(std::string windows_name, const cv::Mat src) {
+void Energy::showFlowStripFan(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
     static Mat image2show;
 

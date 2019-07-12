@@ -18,6 +18,8 @@ void Energy::initEnergy() {
     isPredicting = true;
     isGuessing = false;
     manual_mark = false;
+    auto_mark = false;
+    energy_mode_init = true;
     circle_center_point = Point(0, 0);
     target_point = Point(0, 0);
     last_target_point = Point(0, 0);
@@ -29,6 +31,7 @@ void Energy::initEnergy() {
     radius = 0;
     energy_rotation_direction = ANTICLOCKWISE;
     attack_distance = ATTACK_DISTANCE;
+    last_mode = -1;//既不是大符也不是小符
     last_fans_cnt = 0;
     send_cnt = 0;
     yaw_rotation = 0;
@@ -44,6 +47,7 @@ void Energy::initEnergy() {
     armors.clear();
 
     all_target_armor_centers.clear();
+    while(!recent_target_armor_centers.empty())recent_target_armor_centers.pop();
 
     clockwise_rotation_init_cnt = 0;
     anticlockwise_rotation_init_cnt = 0;

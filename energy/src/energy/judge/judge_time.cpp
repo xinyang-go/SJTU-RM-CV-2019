@@ -13,7 +13,7 @@ using namespace cv;
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于判断guess模式是否超时
 // ---------------------------------------------------------------------------------------------------------------------
-bool Energy::is_guessing_timeout() {
+bool Energy::isGuessingTimeout() {
     timeval cur_time;
     gettimeofday(&cur_time, NULL);
     return (cur_time.tv_sec - time_start_guess.tv_sec) * 1000.0 +

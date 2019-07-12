@@ -26,5 +26,7 @@ void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src);
 void saveVideos(const cv::Mat &gimble_src);
 void showOrigin(const cv::Mat &gimble_src, const cv::Mat &chassis_src);
 void showOrigin(const cv::Mat &gimble_src);
+void extract(cv::Mat &gimble_src, cv::Mat &chassis_src);
+void extract(cv::Mat &gimble_src);
 
 #endif /* _ADDITIONS_H_ */

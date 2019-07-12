@@ -18,5 +18,4 @@ bool VideoWrapper::init() {
 
 bool VideoWrapper::read(cv::Mat &src) {
     return video.read(src);
-
 }

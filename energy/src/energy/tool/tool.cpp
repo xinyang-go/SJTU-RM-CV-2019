@@ -13,16 +13,6 @@ using namespace std;
 using namespace cv;
 
 
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数选取图像中的一部分进行处理
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::extract(cv::Mat &src) {
-    cv::Rect rect(EXTRACT_POINT_X, EXTRACT_POINT_Y, EXTRACT_WIDTH, EXTRACT_HEIGHT);
-    src = src(rect).clone();
-    cv::resize(src, src, cv::Size(640, 480), 2);
-    imshow("extract", src);
-}
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于计算预测的击打点坐标
@@ -57,6 +47,8 @@ void Energy::stretch(cv::Point point_1, cv::Point2f &point_2) {
     point_2.x = static_cast<float >( ARMOR_CENTER_TO_CYCLE_CENTER * x_0 / r_0);
     point_2.y = static_cast<float >( ARMOR_CENTER_TO_CYCLE_CENTER * y_0 / r_0);
 }
+
+
 
 
 //----------------------------------------------------------------------------------------------------------------------

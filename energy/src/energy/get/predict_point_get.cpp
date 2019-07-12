@@ -11,12 +11,14 @@ using std::endl;
 using std::vector;
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数获取预测点坐标
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::getPredictPoint(cv::Point target_point){
-    if(energy_rotation_direction==1) rotate(target_point);
-    if(energy_rotation_direction==-1) rotate(target_point);
+void Energy::getPredictPoint(cv::Point target_point) {
+    if (isBig) {
+        if (energy_rotation_direction == 1) rotate(target_point);
+        if (energy_rotation_direction == -1) rotate(target_point);
+    } else if (isSmall) predict_point = target_point;
+
 }
 

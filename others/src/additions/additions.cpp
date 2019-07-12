@@ -29,37 +29,36 @@ extern uint8_t last_state;
 extern ArmorFinder armorFinder;
 extern Energy energy;
 
-void uartReceive(Serial* pSerial) {
+void uartReceive(Serial *pSerial) {
     char buffer[20];
     int cnt = 0;
-    LOGM(STR_CTR(WORD_LIGHT_WHITE,"data receive start!"));
+    LOGM(STR_CTR(WORD_LIGHT_WHITE, "data receive start!"));
     while (true) {
         char byte = 0;
         memset(buffer, 0, sizeof(buffer));
-        while (pSerial->ReadData((uint8_t*)&byte, 1) && byte!='\n') {
+        while (pSerial->ReadData((uint8_t *) &byte, 1) && byte != '\n') {
             buffer[cnt++] = byte;
             if (cnt >= sizeof(buffer)) {
 //                LOGE("data receive over flow!");
                 cnt = 0;
             }
         }
-        if (cnt==0 && byte=='\n'){
+        if (cnt == 0 && byte == '\n') {
             LOGM("%d", cnt);
         }
         if (cnt == sizeof(mcuData)) {
             memcpy(&mcuData, buffer, sizeof(mcuData));
-            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int)mcuData.mark);
+            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
         }
         cnt = 0;
     }
 }
 
-cv::VideoWriter initVideoWriter(const std::string &filename_prefix){
+cv::VideoWriter initVideoWriter(const std::string &filename_prefix) {
     cv::VideoWriter video;
     std::ifstream in(filename_prefix + "cnt.txt");
     int cnt = 0;
-    if (in.is_open())
-    {
+    if (in.is_open()) {
         in >> cnt;
         in.close();
     }
@@ -74,17 +73,17 @@ cv::VideoWriter initVideoWriter(const std::string &filename_prefix){
     return video;
 }
 
-bool checkReconnect(bool is_gimble_connect, bool is_chassis_connect){
-    if(!is_gimble_connect){
+bool checkReconnect(bool is_gimble_connect, bool is_chassis_connect) {
+    if (!is_gimble_connect) {
         video_gimble = new CameraWrapper(0, "armor");
-        if(!(is_gimble_connect = video_gimble->init())){
+        if (!(is_gimble_connect = video_gimble->init())) {
             delete video_gimble;
             video_gimble = nullptr;
         }
     }
-    if(!is_chassis_connect){
+    if (!is_chassis_connect) {
         video_chassis = new CameraWrapper(1, "energy");
-        if(!(is_chassis_connect = video_chassis->init())){
+        if (!(is_chassis_connect = video_chassis->init())) {
             delete video_chassis;
             video_chassis = nullptr;
         }
@@ -92,10 +91,10 @@ bool checkReconnect(bool is_gimble_connect, bool is_chassis_connect){
     return is_gimble_connect && is_chassis_connect;
 }
 
-bool checkReconnect(bool is_gimble_connect){
-    if(!is_gimble_connect){
+bool checkReconnect(bool is_gimble_connect) {
+    if (!is_gimble_connect) {
         video_gimble = new CameraWrapper(0, "armor");
-        if(!(is_gimble_connect = video_gimble->init())){
+        if (!(is_gimble_connect = video_gimble->init())) {
             delete video_gimble;
             video_gimble = nullptr;
         }
@@ -106,50 +105,69 @@ bool checkReconnect(bool is_gimble_connect){
 auto gimble_video_writer = initVideoWriter(PROJECT_DIR"/gimble_video/");
 auto chassis_video_writer = initVideoWriter(PROJECT_DIR"/chassis_video/");
 
-void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src){
-    if(!gimble_src.empty() && !chassis_src.empty()){
+void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src) {
+    if (!gimble_src.empty() && !chassis_src.empty()) {
         gimble_video_writer.write(gimble_src);
         Mat chassis_save = chassis_src.clone();
-        cvtColor(chassis_save,chassis_save,COLOR_GRAY2BGR);
+        cvtColor(chassis_save, chassis_save, COLOR_GRAY2BGR);
         chassis_video_writer.write(chassis_save);
-    }
-    else if(!gimble_src.empty() && chassis_src.empty()){
+    } else if (!gimble_src.empty() && chassis_src.empty()) {
         gimble_video_writer.write(gimble_src);
-    }
-    else if(gimble_src.empty() && !chassis_src.empty()){    if (show_origin)imshow("src", gimble_src);
+    } else if (gimble_src.empty() && !chassis_src.empty()) {
+        if (show_origin)imshow("src", gimble_src);
         Mat chassis_save = chassis_src.clone();
-        cvtColor(chassis_save,chassis_save,COLOR_GRAY2BGR);
+        cvtColor(chassis_save, chassis_save, COLOR_GRAY2BGR);
         chassis_video_writer.write(chassis_save);
-    }
-    else return;
+    } else return;
 }
 
-void saveVideos(const cv::Mat &gimble_src){
-    if(!gimble_src.empty()){
+void saveVideos(const cv::Mat &gimble_src) {
+    if (!gimble_src.empty()) {
         gimble_video_writer.write(gimble_src);
-    }
-    else return;
+    } else return;
 }
 
-void showOrigin(const cv::Mat &gimble_src, const cv::Mat &chassis_src){
-    if(!gimble_src.empty() && !chassis_src.empty()){
+void showOrigin(const cv::Mat &gimble_src, const cv::Mat &chassis_src) {
+    if (!gimble_src.empty() && !chassis_src.empty()) {
         imshow("gimble", gimble_src);
         imshow("chassis", chassis_src);
-    }
-    else if(!gimble_src.empty() && chassis_src.empty()){
+    } else if (!gimble_src.empty() && chassis_src.empty()) {
         imshow("gimble", gimble_src);
-    }
-    else if(gimble_src.empty() && !chassis_src.empty()){
+    } else if (gimble_src.empty() && !chassis_src.empty()) {
         imshow("chassis", chassis_src);
-    }
-    else return;
+    } else return;
     cv::waitKey(1);
 }
 
-void showOrigin(const cv::Mat &gimble_src){
-    if(!gimble_src.empty()){
+void showOrigin(const cv::Mat &gimble_src) {
+    if (!gimble_src.empty()) {
         imshow("gimble", gimble_src);
-    }
-    else return;
+    } else return;
     cv::waitKey(1);
+}
+
+void extract(cv::Mat &gimble_src, cv::Mat &chassis_src) {
+    if (!gimble_src.empty() && !chassis_src.empty()) {
+        extract(gimble_src);
+        extract(chassis_src);
+    } else if (!gimble_src.empty() && chassis_src.empty()) {
+        extract(gimble_src);
+    } else if (gimble_src.empty() && !chassis_src.empty()) {
+        extract(chassis_src);
+    } else return;
+}
+
+void extract(cv::Mat &gimble_src) {//图像预处理，将视频切成640×480的大小
+    if (gimble_src.empty()) return;
+    float length = static_cast<float>(gimble_src.cols);
+    float width = static_cast<float>(gimble_src.rows);
+    if (length / width > 640.0 / 480.0) {
+        length *= 480.0 / width;
+        resize(gimble_src, gimble_src, cv::Size(length, 480));
+        gimble_src = gimble_src(Rect((length - 640) / 2, 0, 640, 480));
+    } else {
+        width *= 640.0 / length;
+        resize(gimble_src, gimble_src, cv::Size(640, width));
+        gimble_src = gimble_src(Rect(0, (width - 480) / 2, 640, 480));
+    }
 }
