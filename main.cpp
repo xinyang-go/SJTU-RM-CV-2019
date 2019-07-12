@@ -29,17 +29,17 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        SMALL_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
-        ENEMY_RED,      // 敌方颜色
+        ENEMY_BLUE,      // 敌方颜色
 };
 
 WrapperHead *video_gimble = nullptr;    // 云台摄像头视频源
 WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 
 Serial serial(115200);                  // 串口对象
-uint8_t last_state = ARMOR_STATE;     // 上次状态，用于初始化
+uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化
 // 自瞄主程序对象
 ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
 // 能量机关主程序对象
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 //                    chassis_src = chassis_src(Rect(106, 0, 640, 480));
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {
-                        ((CameraWrapper *) video_gimble)->changeBrightness(40);
+                        ((CameraWrapper *) video_gimble)->changeBrightness(30);
                     }
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimble->read(gimble_src));

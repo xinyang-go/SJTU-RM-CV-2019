@@ -21,7 +21,7 @@ bool rectangleContainPoint(cv::RotatedRect rectangle, cv::Point2f point) {
     return indicator >= 0;
 }
 
-/// Todo: 下面的函数可以有性能优化，暂时未做。
+// 下面的函数可以有性能优化，暂时未做。
 static double nonZeroRateOfRotateRect(const cv::Mat &bin, const cv::RotatedRect &rotrect) {
     auto rect = rotrect.boundingRect();
     if (rect.x < 0 || rect.y < 0 || rect.x + rect.width > bin.cols || rect.y + rect.height > bin.rows) {
@@ -45,7 +45,7 @@ int linePointX(const cv::Point2f &p1, const cv::Point2f &p2, int y) {
     return (p2.x - p1.x) / (p2.y - p1.y) * (y - p1.y) + p1.x;
 }
 
-///Todo: 性能优化后的函数。(暂时还有点问题)
+// 性能优化后的函数
 static double nonZeroRateOfRotateRect_opt(const cv::Mat &bin, const cv::RotatedRect &rotrect) {
     int cnt = 0;
     cv::Point2f corners[4];
