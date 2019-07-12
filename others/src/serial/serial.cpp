@@ -227,7 +227,12 @@ bool Serial::InitPort(int nSpeed, char nEvent, int nBits, int nStop) {
 
 bool Serial::WriteData(const unsigned char *pData, unsigned int length) {
     int cnt = 0, curr = 0;
-    if (fd <= 0)return false;
+    if (fd <= 0){
+        if(wait_uart){
+            InitPort(nSpeed, nEvent, nBits, nStop);
+        }
+        return false;
+    }
     while ((curr = write(fd, pData + cnt, length - cnt)) > 0 && (cnt += curr) < length);
     if (cnt < 0) {
         LOGE("Serial offline!");
