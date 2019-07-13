@@ -29,7 +29,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
             video_gimble = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/home/sun/项目/RM2019 能量机关视频/小能量机关（红+开灯）.mov");
-            video_chassis = new VideoWrapper("/home/sun/项目/RM2019 能量机关视频/小能量机关（红+开灯）.mov");
+            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
         if (video_gimble->init()) {
             LOGM("video_gimble source initialization successfully.");
@@ -101,7 +101,8 @@ int main(int argc, char *argv[]) {
                     if (!from_camera) extract(gimble_src, chassis_src);
                     if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
-                    energy.run(gimble_src, chassis_src);
+//                    energy.run(gimble_src, chassis_src);
+                    energy.run(gimble_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {

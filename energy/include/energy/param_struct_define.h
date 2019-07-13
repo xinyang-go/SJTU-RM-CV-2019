@@ -79,7 +79,7 @@ struct EnergyPartParam {
     float FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN;//流动条占旋转矩形面积比最小值
 
 	float TWIN_ANGEL_MAX;//两个理论上相等的角度在计算时具有的可能最大差值
-	long INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积
+	long TARGET_INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积
 
 	long TARGET_CHANGE_DISTANCE_MAX;//目标未更改时，目标装甲板中心与原目标装甲板中心的距离变化最大值
 	long TWIN_POINT_MAX;//两个点相同时距离最大值

@@ -16,7 +16,7 @@ void Energy::run(cv::Mat &gimble_src, cv::Mat &chassis_src) {
     if (chassis_src.empty())
         run(gimble_src);//仅拥有云台摄像头则调用单摄像头的run函数
     else if (isGimble) {
-        energy_part_param_ = chassis_energy_part_param_;
+        energy_part_param_ = gimble_energy_part_param_;
         clearAll();
         initImage(gimble_src);
 
