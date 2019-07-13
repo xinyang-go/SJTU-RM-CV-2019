@@ -38,7 +38,7 @@ void Energy::changeMark() {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于计算云台应当转到的角度
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::gimbleRotation() {
+void Energy::gimbalRotation() {
     cv::Point2f real_predict_point;//计算在真实世界中的预测点位，进而计算云台的旋转角度
     stretch(predict_point, real_predict_point);
     yaw_rotation = static_cast<float>(180 / PI *

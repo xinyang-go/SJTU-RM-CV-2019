@@ -5,4 +5,5 @@ Mark
 armor_box_photo
 tools/TrainCNN/.idea
 tools/TrainCNN/__pycache__
+others/include/config/config.h
 .DS_Store

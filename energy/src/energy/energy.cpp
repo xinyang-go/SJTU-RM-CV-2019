@@ -22,7 +22,7 @@ Energy::Energy(Serial &u, uint8_t &color) : serial(u), ally_color(color),
     energy_rotation_init = false;
     isBig = false;
     isSmall = false;
-    isGimble = true;
+    isgimbal = true;
     isChassis = false;
 }
 
@@ -44,7 +44,7 @@ void Energy::setEnergyInit() {
     energy_rotation_init = true;
     isBig = false;
     isSmall = false;
-    isGimble = true;
+    isgimbal = true;
     isChassis = false;
 }
 
@@ -60,7 +60,7 @@ void Energy::setBigEnergyInit() {
     energy_rotation_init = true;
     isBig = true;
     isSmall = false;
-    isGimble = true;
+    isgimbal = true;
     isChassis = false;
 }
 
@@ -73,6 +73,6 @@ void Energy::setSmallEnergyInit() {
 
     isBig = false;
     isSmall = true;
-    isGimble = true;
+    isgimbal = true;
     isChassis = false;
 }

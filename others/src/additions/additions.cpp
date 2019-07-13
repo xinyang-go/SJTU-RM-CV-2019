@@ -20,7 +20,7 @@
 using namespace std;
 using namespace cv;
 
-extern WrapperHead *video_gimble;
+extern WrapperHead *video_gimbal;
 extern WrapperHead *video_chassis;
 
 extern Serial serial;
@@ -75,9 +75,9 @@ cv::VideoWriter initVideoWriter(const std::string &filename_prefix) {
 
 bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
     if (!is_camera_0_connect) {
-        delete video_gimble;
-        video_gimble = new CameraWrapper(0, "armor");
-        is_camera_0_connect = video_gimble->init();
+        delete video_gimbal;
+        video_gimbal = new CameraWrapper(0, "armor");
+        is_camera_0_connect = video_gimbal->init();
     }
     if (!is_camera_1_connect) {
         delete video_chassis;
@@ -89,79 +89,79 @@ bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
 
 bool checkReconnect(bool is_camera_connect) {
     if (!is_camera_connect) {
-        delete video_gimble;
-        video_gimble = new CameraWrapper(0, "armor");
-        is_camera_connect = video_gimble->init();
+        delete video_gimbal;
+        video_gimbal = new CameraWrapper(0, "armor");
+        is_camera_connect = video_gimbal->init();
     }
     return is_camera_connect;
 }
 
-auto gimble_video_writer = initVideoWriter(PROJECT_DIR"/gimble_video/");
+auto gimbal_video_writer = initVideoWriter(PROJECT_DIR"/gimbal_video/");
 auto chassis_video_writer = initVideoWriter(PROJECT_DIR"/chassis_video/");
 
-void saveVideos(const cv::Mat &gimble_src, const cv::Mat &chassis_src) {
-    if (!gimble_src.empty() && !chassis_src.empty()) {
-        gimble_video_writer.write(gimble_src);
+void saveVideos(const cv::Mat &gimbal_src, const cv::Mat &chassis_src) {
+    if (!gimbal_src.empty() && !chassis_src.empty()) {
+        gimbal_video_writer.write(gimbal_src);
         Mat chassis_save = chassis_src.clone();
         cvtColor(chassis_save, chassis_save, COLOR_GRAY2BGR);
         chassis_video_writer.write(chassis_save);
-    } else if (!gimble_src.empty() && chassis_src.empty()) {
-        gimble_video_writer.write(gimble_src);
-    } else if (gimble_src.empty() && !chassis_src.empty()) {
-        if (show_origin)imshow("src", gimble_src);
+    } else if (!gimbal_src.empty() && chassis_src.empty()) {
+        gimbal_video_writer.write(gimbal_src);
+    } else if (gimbal_src.empty() && !chassis_src.empty()) {
+        if (show_origin)imshow("src", gimbal_src);
         Mat chassis_save = chassis_src.clone();
         cvtColor(chassis_save, chassis_save, COLOR_GRAY2BGR);
         chassis_video_writer.write(chassis_save);
     } else return;
 }
 
-void saveVideos(const cv::Mat &gimble_src) {
-    if (!gimble_src.empty()) {
-        gimble_video_writer.write(gimble_src);
+void saveVideos(const cv::Mat &gimbal_src) {
+    if (!gimbal_src.empty()) {
+        gimbal_video_writer.write(gimbal_src);
     } else return;
 }
 
-void showOrigin(const cv::Mat &gimble_src, const cv::Mat &chassis_src) {
-    if (!gimble_src.empty() && !chassis_src.empty()) {
-        imshow("gimble", gimble_src);
+void showOrigin(const cv::Mat &gimbal_src, const cv::Mat &chassis_src) {
+    if (!gimbal_src.empty() && !chassis_src.empty()) {
+        imshow("gimbal", gimbal_src);
         imshow("chassis", chassis_src);
-    } else if (!gimble_src.empty() && chassis_src.empty()) {
-        imshow("gimble", gimble_src);
-    } else if (gimble_src.empty() && !chassis_src.empty()) {
+    } else if (!gimbal_src.empty() && chassis_src.empty()) {
+        imshow("gimbal", gimbal_src);
+    } else if (gimbal_src.empty() && !chassis_src.empty()) {
         imshow("chassis", chassis_src);
     } else return;
     cv::waitKey(1);
 }
 
-void showOrigin(const cv::Mat &gimble_src) {
-    if (!gimble_src.empty()) {
-        imshow("gimble", gimble_src);
+void showOrigin(const cv::Mat &gimbal_src) {
+    if (!gimbal_src.empty()) {
+        imshow("gimbal", gimbal_src);
     } else return;
     cv::waitKey(1);
 }
 
-void extract(cv::Mat &gimble_src, cv::Mat &chassis_src) {
-    if (!gimble_src.empty() && !chassis_src.empty()) {
-        extract(gimble_src);
+void extract(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
+    if (!gimbal_src.empty() && !chassis_src.empty()) {
+        extract(gimbal_src);
         extract(chassis_src);
-    } else if (!gimble_src.empty() && chassis_src.empty()) {
-        extract(gimble_src);
-    } else if (gimble_src.empty() && !chassis_src.empty()) {
+    } else if (!gimbal_src.empty() && chassis_src.empty()) {
+        extract(gimbal_src);
+    } else if (gimbal_src.empty() && !chassis_src.empty()) {
         extract(chassis_src);
     } else return;
 }
 
-void extract(cv::Mat &gimble_src) {//图像预处理，将视频切成640×480的大小
-    if (gimble_src.empty()) return;
-    float length = static_cast<float>(gimble_src.cols);
-    float width = static_cast<float>(gimble_src.rows);
+void extract(cv::Mat &gimbal_src) {//图像预处理，将视频切成640×480的大小
+    if (gimbal_src.empty()) return;
+    float length = static_cast<float>(gimbal_src.cols);
+    float width = static_cast<float>(gimbal_src.rows);
     if (length / width > 640.0 / 480.0) {
         length *= 480.0 / width;
-        resize(gimble_src, gimble_src, cv::Size(length, 480));
-        gimble_src = gimble_src(Rect((length - 640) / 2, 0, 640, 480));
+        resize(gimbal_src, gimbal_src, cv::Size(length, 480));
+        gimbal_src = gimbal_src(Rect((length - 640) / 2, 0, 640, 480));
     } else {
         width *= 640.0 / length;
-        resize(gimble_src, gimble_src, cv::Size(640, width));
-        gimble_src = gimble_src(Rect(0, (width - 480) / 2, 640, 480));
+        resize(gimbal_src, gimbal_src, cv::Size(640, width));
+        gimbal_src = gimbal_src(Rect(0, (width - 480) / 2, 640, 480));
     }
 }

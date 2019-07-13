@@ -27,9 +27,9 @@ public:
     Energy(Serial &u, uint8_t &color);//构造函数，参数为串口和敌方颜色
     ~Energy();//默认析构函数
 
-    void run(cv::Mat &gimble_src, cv::Mat &chassis_src);
+    void run(cv::Mat &gimbal_src, cv::Mat &chassis_src);
 
-    void run(cv::Mat &gimble_src);
+    void run(cv::Mat &gimbal_src);
 
     Serial &serial;//串口
     void setEnergyInit();//设置能量机关初始化
@@ -40,13 +40,13 @@ public:
 
 private:
     EnergyPartParam energy_part_param_;//能量机关的参数设置
-    EnergyPartParam gimble_energy_part_param_;//云台摄像头能量机关的参数设置
+    EnergyPartParam gimbal_energy_part_param_;//云台摄像头能量机关的参数设置
     EnergyPartParam chassis_energy_part_param_;//底盘摄像头能量机关的参数设置
 
     bool isMark;//若操作手正在手动标定，则为true
     bool isBig;//大符模式为true
     bool isSmall;//小符模式为true
-    bool isGimble;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
+    bool isgimbal;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
     bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
     bool isGuessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
     bool isPredicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
@@ -154,7 +154,7 @@ private:
     void getPredictPoint(cv::Point target_point);//获取预测点位
     void getAimPoint(cv::Point target_point);//通过自瞄逻辑计算点位
     void changeMark();//操作手手动修改标定值
-    void gimbleRotation();//计算云台旋转角度
+    void gimbalRotation();//计算云台旋转角度
     void getAllTargetArmorCenters();//记录所有目标装甲板中心坐标
     void getRecentTargetArmorCenters();//记录近30帧目标装甲板中心坐标
 

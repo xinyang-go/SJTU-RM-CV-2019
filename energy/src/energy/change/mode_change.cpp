@@ -14,7 +14,7 @@ using namespace cv;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::startChassis(){
     isChassis = true;
-    isGimble = false;
+    isgimbal = false;
 }
 
 

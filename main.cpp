@@ -18,6 +18,7 @@
 #include <armor_finder/armor_finder.h>
 #include <options/options.h>
 #include <additions/additions.h>
+#include <config/setconfig.h>
 
 #define DO_NOT_CNT_TIME
 
@@ -35,7 +36,7 @@ mcu_data mcuData = {    // 单片机端回传结构体
         ENEMY_RED,      // 敌方颜色
 };
 
-WrapperHead *video_gimble = nullptr;    // 云台摄像头视频源
+WrapperHead *video_gimbal = nullptr;    // 云台摄像头视频源
 WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 
 Serial serial(115200);                  // 串口对象
@@ -60,16 +61,16 @@ int main(int argc, char *argv[]) {
     while (true) {
         // 打开视频源
         if (from_camera) {
-            video_gimble = new CameraWrapper(0/*, "armor"*/);
+            video_gimbal = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimble = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
             video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
         }
-        if (video_gimble->init()) {
-            LOGM("video_gimble source initialization successfully.");
+        if (video_gimbal->init()) {
+            LOGM("video_gimbal source initialization successfully.");
         } else {
-            LOGW("video_gimble source unavailable!");
+            LOGW("video_gimbal source unavailable!");
         }
         if (video_chassis->init()) {
             LOGM("video_chassis source initialization successfully.");
@@ -78,10 +79,10 @@ int main(int argc, char *argv[]) {
         }
 
         // 跳过前10帧噪声图像。
-        Mat gimble_src, chassis_src;
+        Mat gimbal_src, chassis_src;
         for (int i = 0; i < 10; i++) {
-            if (video_gimble) {
-                video_gimble->read(gimble_src);
+            if (video_gimbal) {
+                video_gimbal->read(gimbal_src);
             }
             if (video_chassis) {
                 video_chassis->read(chassis_src);
@@ -93,35 +94,44 @@ int main(int argc, char *argv[]) {
             CNT_TIME("Total", {
                 if (mcuData.state != ARMOR_STATE) {//能量机关模式
                     if (last_state == ARMOR_STATE) {//若上一帧是自瞄模式，即刚往完成切换，则需要初始化
-                        ((CameraWrapper *) video_gimble)->changeBrightness(20);
+                        ((CameraWrapper *) video_gimbal)->changeBrightness(ENERGY_CAMERA_GAIN);
                         energy.setEnergyInit();
                         checkReconnect(video_chassis->read(chassis_src));
+#ifdef CHASSIS_FLIP_MODE
+                        flip(chassis_src, chassis_src, CHASSIS_FLIP_MODE);
+#endif
                     }
-                    ok = checkReconnect(video_gimble->read(gimble_src));
-                    if (!from_camera) extract(gimble_src, chassis_src);
-                    if (save_video) saveVideos(gimble_src, chassis_src);//保存视频
-                    if (show_origin) showOrigin(gimble_src, chassis_src);//显示原始图像
-//                    energy.run(gimble_src, chassis_src);
-                    energy.run(gimble_src);
+                    ok = checkReconnect(video_gimbal->read(gimbal_src));
+#ifdef GIMBAL_FLIP_MODE
+                    flip(gimbal_src, gimbal_src, CHASSIS_FLIP_MODE);
+#endif
+                    if (!from_camera) extract(gimbal_src, chassis_src);
+                    if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
+                    if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
+//                    energy.run(gimbal_src, chassis_src);
+                    energy.run(gimbal_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {
-                        ((CameraWrapper *) video_gimble)->changeBrightness(30);
+                        ((CameraWrapper *) video_gimbal)->changeBrightness(ARMOR_CAMERA_GAIN);
                     }
                     last_state = mcuData.state;
-                    ok = checkReconnect(video_gimble->read(gimble_src));
-                    if (!from_camera) extract(gimble_src);
-                    if (save_video) saveVideos(gimble_src);
-                    if (show_origin) showOrigin(gimble_src);
+                    ok = checkReconnect(video_gimbal->read(gimbal_src));
+#ifdef GIMBAL_FLIP_MODE
+                    flip(gimbal_src, gimbal_src, CHASSIS_FLIP_MODE);
+#endif
+                    if (!from_camera) extract(gimbal_src);
+                    if (save_video) saveVideos(gimbal_src);
+                    if (show_origin) showOrigin(gimbal_src);
                     CNT_TIME("Armor Time", {
-                            armorFinder.run(gimble_src);
+                            armorFinder.run(gimbal_src);
                     });
                 }
 //                cv::waitKey(0);
             });
         } while (ok);
-        delete video_gimble;
-        video_gimble = nullptr;
+        delete video_gimbal;
+        video_gimbal = nullptr;
         delete video_chassis;
         video_chassis = nullptr;
         cout << "Program fails. Restarting" << endl;
