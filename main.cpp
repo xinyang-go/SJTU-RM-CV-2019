@@ -30,7 +30,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
                     }
                     ok = checkReconnect(video_gimbal->read(gimbal_src));
 #ifdef GIMBAL_FLIP_MODE
-                    flip(gimbal_src, gimbal_src, CHASSIS_FLIP_MODE);
+                    flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
 #endif
                     if (!from_camera) extract(gimbal_src, chassis_src);
                     if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimbal->read(gimbal_src));
 #ifdef GIMBAL_FLIP_MODE
-                    flip(gimbal_src, gimbal_src, CHASSIS_FLIP_MODE);
+                    flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
 #endif
                     if (!from_camera) extract(gimbal_src);
                     if (save_video) saveVideos(gimbal_src);
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
                             armorFinder.run(gimbal_src);
                     });
                 }
-//                cv::waitKey(0);
+//                cv::waitKey(1);
             });
         } while (ok);
         delete video_gimbal;

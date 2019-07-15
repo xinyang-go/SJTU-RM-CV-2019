@@ -5,6 +5,7 @@
 #include <camera/camera_wrapper.h>
 #include <log.h>
 #include <options/options.h>
+#include <config/setconfig.h>
 
 using namespace std;
 
@@ -75,10 +76,10 @@ bool CameraWrapper::init() {
 	LOGM("successfully loaded %s!", filepath);
 #elif defined(Linux)
     CameraSetAeState(h_camera, false);
-    CameraSetExposureTime(h_camera, 10*1000);
-    CameraSetAnalogGain(h_camera, 50);
+    CameraSetExposureTime(h_camera, CAMERA_EXPOSURE*1000);
+    CameraSetAnalogGain(h_camera, ARMOR_CAMERA_GAIN);
     if(mode == 0){
-        CameraSetGain(h_camera, 100, 100, 100);
+        CameraSetGain(h_camera, CAMERA_BLUE_GAIN, CAMERA_GREEN_GAIN, CAMERA_RED_GAIN);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
     }
 #endif
