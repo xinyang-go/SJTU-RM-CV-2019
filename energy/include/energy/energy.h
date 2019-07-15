@@ -33,8 +33,6 @@ public:
 
     Serial &serial;//串口
     void setEnergyInit();//设置能量机关初始化
-    void setBigEnergyInit();//设置大符初始化，判断顺逆时针函数
-    void setSmallEnergyInit();//设置小符初始化
     void sendTarget(Serial &serial, float x, float y, float z);
 
 
@@ -46,7 +44,7 @@ private:
     bool isMark;//若操作手正在手动标定，则为true
     bool isBig;//大符模式为true
     bool isSmall;//小符模式为true
-    bool isgimbal;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
+    bool isGimbal;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
     bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
     bool isGuessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
     bool isPredicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
@@ -166,10 +164,11 @@ private:
     void imagePreprocess(cv::Mat &src);//图像通道分离
     void hsvFilter(cv::Mat &src);//此函数通过HSV颜色空间对图像纯度进行限制，进行滤光
 
-    void StructingElementClose(cv::Mat &src, int length, int width);//闭运算
-    void StructingElementErodeDilate(cv::Mat &src);//腐蚀和膨胀
-    void StructingElementDilateErode(cv::Mat &src);//腐蚀和膨胀
-
+    void FanStruct(cv::Mat &src);//腐蚀和膨胀
+    void ArmorStruct(cv::Mat &src);//腐蚀和膨胀
+    void FlowStripFanStruct(cv::Mat &src);//腐蚀和膨胀
+    void FlowStripStruct(cv::Mat &src);//腐蚀和膨胀
+    void CenterRStruct(cv::Mat &src);//腐蚀和膨胀
 };
 
 #endif //ENERGY_H

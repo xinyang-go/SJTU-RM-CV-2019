@@ -78,7 +78,7 @@ bool CameraWrapper::init() {
     CameraSetExposureTime(h_camera, 10*1000);
     CameraSetAnalogGain(h_camera, 50);
     if(mode == 0){
-        CameraSetGain(h_camera, 100, 100, 100);
+        CameraSetGain(h_camera, 100, 135, 119);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
     }
 #endif

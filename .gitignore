@@ -7,3 +7,5 @@ tools/TrainCNN/.idea
 tools/TrainCNN/__pycache__
 others/include/config/config.h
 .DS_Store
+gimble_video
+chassis_video

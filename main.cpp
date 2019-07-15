@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/energy_test.avi");
+            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/147.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/147.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -102,14 +102,15 @@ int main(int argc, char *argv[]) {
 #endif
                     }
                     ok = checkReconnect(video_gimbal->read(gimbal_src));
+                    video_chassis->read(chassis_src);
 #ifdef GIMBAL_FLIP_MODE
-                    flip(gimbal_src, gimbal_src, CHASSIS_FLIP_MODE);
+                    flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
 #endif
                     if (!from_camera) extract(gimbal_src, chassis_src);
                     if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-//                    energy.run(gimbal_src, chassis_src);
-                    energy.run(gimbal_src);
+                    energy.run(gimbal_src, chassis_src);
+//                    energy.run(gimbal_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {
@@ -118,7 +119,7 @@ int main(int argc, char *argv[]) {
                     last_state = mcuData.state;
                     ok = checkReconnect(video_gimbal->read(gimbal_src));
 #ifdef GIMBAL_FLIP_MODE
-                    flip(gimbal_src, gimbal_src, CHASSIS_FLIP_MODE);
+                    flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
 #endif
                     if (!from_camera) extract(gimbal_src);
                     if (save_video) saveVideos(gimbal_src);
@@ -127,7 +128,7 @@ int main(int argc, char *argv[]) {
                             armorFinder.run(gimbal_src);
                     });
                 }
-//                cv::waitKey(0);
+                cv::waitKey(0);
             });
         } while (ok);
         delete video_gimbal;
