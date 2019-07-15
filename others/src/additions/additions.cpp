@@ -44,11 +44,11 @@ void uartReceive(Serial *pSerial) {
             }
         }
         if (cnt == 0 && byte == '\n') {
-            LOGM("%d", cnt);
+//            LOGM("%d", cnt);
         }
         if (cnt == sizeof(mcuData)) {
             memcpy(&mcuData, buffer, sizeof(mcuData));
-            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
+//            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
         }
         cnt = 0;
     }

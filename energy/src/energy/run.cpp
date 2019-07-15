@@ -19,6 +19,8 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         energy_part_param_ = gimbal_energy_part_param_;
         clearAll();
         initImage(gimbal_src);
+//        findFans(gimbal_src);
+//        showFans("fan",gimbal_src);
 
         if (findArmors(gimbal_src) < 1)return;
         if (show_energy)showArmors("armor", gimbal_src);

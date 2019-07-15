@@ -69,8 +69,8 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-//    gimbal_energy_part_param_.GRAY_THRESH = 80;
-    gimbal_energy_part_param_.GRAY_THRESH = 225;
+    gimbal_energy_part_param_.GRAY_THRESH = 120;
+//    gimbal_energy_part_param_.GRAY_THRESH = 225;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
@@ -141,8 +141,8 @@ void Energy::initEnergyPartParam() {
 
 
 
-//    chassis_energy_part_param_.GRAY_THRESH = 80;
-    chassis_energy_part_param_.GRAY_THRESH = 225;
+    chassis_energy_part_param_.GRAY_THRESH = 120;
+//    chassis_energy_part_param_.GRAY_THRESH = 225;
     chassis_energy_part_param_.SPLIT_GRAY_THRESH = 230;
     chassis_energy_part_param_.FAN_GRAY_THRESH = 75;
     chassis_energy_part_param_.ARMOR_GRAY_THRESH = 80;
@@ -199,12 +199,13 @@ void Energy::initEnergyPartParam() {
 
     chassis_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MAX = 100000;
     chassis_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MIN = 0;
-    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 50;
-    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 90;
-    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 3;
-    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 20;
+    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 55;
+    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 95;
+    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 13;
+    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 35;
     chassis_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 12;
-    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 4;
+//    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 4;
+    chassis_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 2.7;
     chassis_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.5;
     chassis_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 300;
 
