@@ -19,11 +19,10 @@ Energy::Energy(Serial &u, uint8_t &color) : serial(u), ally_color(color),
     initEnergy();
     initEnergyPartParam();
 
-    energy_rotation_init = false;
-    isBig = false;
-    isSmall = false;
-    isGimbal = true;
-    isChassis = false;
+    is_big = false;
+    is_small = false;
+    is_gimbal = true;
+    is_chassis = false;
 }
 
 
@@ -41,9 +40,8 @@ void Energy::setEnergyInit() {
     initEnergy();
     initEnergyPartParam();
 
-    energy_rotation_init = true;
-    isBig = false;
-    isSmall = false;
-    isGimbal = true;
-    isChassis = false;
+    is_big = false;
+    is_small = false;
+    is_gimbal = true;
+    is_chassis = false;
 }

@@ -12,7 +12,7 @@ using namespace cv;
 // 此函数获得猜测的击打点
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::guessTarget() {
-    vector<int> all_fan_angles;
+    vector<float> all_fan_angles;
     float angle;
     for (const auto &fan : fans) {
         angle = static_cast<float>(180 / PI * atan2(-1 * (fan.center.y - circle_center_point.y),
@@ -33,7 +33,7 @@ bool Energy::guessTarget() {
     float max_angle = all_fan_angles.at(all_fan_angles.size() - 1);
     float base_angle = min_angle;
     while (base_angle > 72)base_angle -= 72;
-    if (startguessing) {
+    if (start_guess) {
         int i = 0;
         for (i = 1; i < all_fan_angles.size(); ++i) {
             if (abs(min_angle + 72 * i - all_fan_angles.at(i)) > energy_part_param_.TWIN_ANGEL_MAX) {
@@ -41,8 +41,8 @@ bool Energy::guessTarget() {
                 break;
             }
         }
-        if (i == all_fan_angles.size()) guess_polar_angle = max_angle + 72;
-        startguessing = false;
+        if (i == all_fan_angles.size()) guess_polar_angle = (max_angle + 72);
+        start_guess = false;
         guess_devide = devide(guess_polar_angle);
     } else if (abs(base_angle - last_base_angle) > 20) {
         if (energy_rotation_direction == CLOCKWISE)guess_devide = (guess_devide + 4) % 5;

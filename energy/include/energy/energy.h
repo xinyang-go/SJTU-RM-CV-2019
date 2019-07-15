@@ -28,7 +28,6 @@ public:
     ~Energy();//默认析构函数
 
     void run(cv::Mat &gimbal_src, cv::Mat &chassis_src);
-
     void run(cv::Mat &gimbal_src);
 
     Serial &serial;//串口
@@ -41,19 +40,20 @@ private:
     EnergyPartParam gimbal_energy_part_param_;//云台摄像头能量机关的参数设置
     EnergyPartParam chassis_energy_part_param_;//底盘摄像头能量机关的参数设置
 
-    bool isMark;//若操作手正在手动标定，则为true
-    bool isBig;//大符模式为true
-    bool isSmall;//小符模式为true
-    bool isGimbal;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
-    bool isChassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
-    bool isGuessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
-    bool isPredicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
+    bool is_mark;//若操作手正在手动标定，则为true
+    bool is_big;//大符模式为true
+    bool is_small;//小符模式为true
+    bool is_gimbal;//同时具有底盘和云台摄像头时，处于云台摄像头对心过程
+    bool is_chassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
+    bool is_guessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
+    bool is_predicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
     bool energy_mode_init;//正在进行大小符判断
     bool energy_rotation_init;//若仍在判断风车旋转方向，则为true
     bool manual_mark;//若操作手进行过手动标定，则为true
     bool auto_mark;//云台完成自动对心，则置为true
     bool shoot;//若为true，则要求主控板发弹
-    bool startguessing;//进入猜测状态的标志
+    bool start_guess;//进入猜测状态的标志
+    bool change_target;//目标切换的标志
 
     uint8_t last_mark;//用于记录上一帧操作手是否进行标定
     uint8_t &ally_color;//我方颜色
@@ -80,13 +80,6 @@ private:
 
     timeval time_start_guess;
 
-    std::vector<cv::RotatedRect> fans;//图像中所有扇叶
-    std::vector<cv::RotatedRect> armors;//图像中所有可能装甲板（可能存在误识别)
-
-    std::vector<cv::Point> all_target_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
-
-    std::queue<float> recent_target_armor_centers;//记录最近一段时间的装甲板中心，用于判断大符还是小符
-
     cv::RotatedRect centerR;//风车中心字母R的可能候选区
     cv::RotatedRect flow_strip;//图像中所有流动条（理论上只有一个）
     cv::RotatedRect flow_strip_fan;//图像中所有流动条所在扇叶（理论上只有一个）
@@ -100,6 +93,15 @@ private:
     cv::Point predict_point;//预测的击打点坐标
 
     cv::Mat src_blue, src_red, src_green;//通道分离中的三个图像通道
+
+    std::vector<cv::RotatedRect> fans;//图像中所有扇叶
+    std::vector<cv::RotatedRect> armors;//图像中所有可能装甲板（可能存在误识别)
+    std::vector<cv::Point> all_target_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
+
+    std::queue<float> recent_target_armor_centers;//记录最近一段时间的装甲板中心，用于判断大符还是小符
+
+
+
 
     void initEnergy();//能量机关初始化
     void initEnergyPartParam();//能量机关参数初始化
@@ -146,7 +148,7 @@ private:
     void writeDownMark();//记录操作手标定的云台初始角度
 
     bool guessTarget();//获得猜测击打点位
-    bool changeTarget();//判断目标是否改变
+    void changeTarget();//判断目标是否改变
     bool getOrigin();//获得云台对心所需角度
     void getTargetPolarAngle();//获得目标装甲板极坐标角度
     void getPredictPoint(cv::Point target_point);//获取预测点位

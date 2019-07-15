@@ -28,7 +28,7 @@ void Energy::getAllTargetArmorCenters() {
 // 此函数用于存储近30帧图像中所有装甲板的中心坐标，用于判断小符和大符
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::getRecentTargetArmorCenters() {
-    if (changeTarget()) {
+    if (change_target) {
         while (!recent_target_armor_centers.empty())recent_target_armor_centers.pop();//目标切换时清空
         return;
     }

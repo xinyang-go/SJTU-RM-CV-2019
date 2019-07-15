@@ -14,43 +14,54 @@ using std::vector;
 // 此函数对能量机关成员变量进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergy() {
-    isMark = false;
-    isPredicting = true;
-    isGuessing = false;
+    is_mark = false;
+    is_guessing = false;
+    is_predicting = true;
+    energy_mode_init = true;
+    energy_rotation_init = true;
     manual_mark = false;
     auto_mark = false;
-    energy_mode_init = true;
+    shoot = false;
+    start_guess = false;
+    change_target = false;
+
+    last_mark = 0;
+
+    radius = 0;
+
+    send_cnt = 0;
+    last_fans_cnt = 0;
+    guess_devide = 0;
+    energy_rotation_direction = ANTICLOCKWISE;
+    clockwise_rotation_init_cnt = 0;
+    anticlockwise_rotation_init_cnt = 0;
+    last_mode = -1;//既不是大符也不是小符
+
+    target_polar_angle = -1000;
+    last_target_polar_angle = -1000;
+    guess_polar_angle = -1000;
+    last_base_angle = -1000;
+    predict_rad = 20;
+    attack_distance = ATTACK_DISTANCE;
+    center_delta_yaw = 1000;
+    center_delta_pitch = 1000;
+    yaw_rotation = 0;
+    pitch_rotation = 0;
+    origin_yaw = 0;
+    origin_pitch = 0;
+
     circle_center_point = Point(0, 0);
     target_point = Point(0, 0);
     last_target_point = Point(0, 0);
     guess_point = Point(0, 0);
     predict_point = Point(0, 0);
-    target_polar_angle = -1000;
-    guess_polar_angle = -1000;
-    last_target_polar_angle = -1000;
-    radius = 0;
-    energy_rotation_direction = ANTICLOCKWISE;
-    attack_distance = ATTACK_DISTANCE;
-    last_mode = -1;//既不是大符也不是小符
-    last_fans_cnt = 0;
-    send_cnt = 0;
-    yaw_rotation = 0;
-    pitch_rotation = 0;
-    last_mark = 0;
-
-    shoot = false;
-    guess_devide = 0;
-    startguessing = false;
-    predict_rad = 20;
 
     fans.clear();
     armors.clear();
-
     all_target_armor_centers.clear();
     while(!recent_target_armor_centers.empty())recent_target_armor_centers.pop();
 
-    clockwise_rotation_init_cnt = 0;
-    anticlockwise_rotation_init_cnt = 0;
+
 }
 
 
@@ -58,19 +69,21 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-    gimbal_energy_part_param_.GRAY_THRESH = 80;
+//    gimbal_energy_part_param_.GRAY_THRESH = 80;
+    gimbal_energy_part_param_.GRAY_THRESH = 225;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
 
     gimbal_energy_part_param_.FAN_CONTOUR_AREA_MAX = 6600;
     gimbal_energy_part_param_.FAN_CONTOUR_AREA_MIN = 0;
-    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 56;
-    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 88;
-    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 21;
-    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 40;
+    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 80;
+    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 100;
+    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 20;
+    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 50;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 4;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN = 1;
+    gimbal_energy_part_param_.FAN_CONTOUR_AREA_RATIO_MIN = 0.65;
     gimbal_energy_part_param_.FAN_NON_ZERO_RATE_MAX = 0.8;
     gimbal_energy_part_param_.FAN_NON_ZERO_RATE_MIN = 0.48;
 //    gimbal_energy_part_param_.FAN_NON_ZERO_RATE_MAX = 0.3;
@@ -80,8 +93,8 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.ARMOR_CONTOUR_AREA_MIN = 0;
     gimbal_energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 16;
     gimbal_energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 32;
-    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 7;
-    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 25;
+    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 5;
+    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 20;
     gimbal_energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX = 3;
     gimbal_energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN = 1;
 
@@ -128,7 +141,8 @@ void Energy::initEnergyPartParam() {
 
 
 
-    chassis_energy_part_param_.GRAY_THRESH = 80;
+//    chassis_energy_part_param_.GRAY_THRESH = 80;
+    chassis_energy_part_param_.GRAY_THRESH = 225;
     chassis_energy_part_param_.SPLIT_GRAY_THRESH = 230;
     chassis_energy_part_param_.FAN_GRAY_THRESH = 75;
     chassis_energy_part_param_.ARMOR_GRAY_THRESH = 80;
@@ -151,8 +165,8 @@ void Energy::initEnergyPartParam() {
     chassis_energy_part_param_.ARMOR_CONTOUR_AREA_MIN = 0;
     chassis_energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 30;
     chassis_energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 50;
-    chassis_energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 15;
-    chassis_energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 45;
+    chassis_energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 13;
+    chassis_energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 33;
     chassis_energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX = 3;
     chassis_energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN = 1;
     chassis_energy_part_param_.ARMOR_CONTOUR_AREA_RATIO_MIN = 0.7;

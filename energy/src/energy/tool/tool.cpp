@@ -68,9 +68,7 @@ double Energy::pointDistance(cv::Point point_1, cv::Point point_2) {
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::devide(float angle) {
     if (angle < 0)angle += 360;//若angle小于0，说明当前角度范围为-180°~180°
-    int i = 0;
-    while (angle - 72 * i > 72)i++;
-    return i;
+    return angle / 72.0;
 }
 
 

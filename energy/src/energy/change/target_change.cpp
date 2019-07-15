@@ -12,13 +12,11 @@ using namespace cv;
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于判断目标是否切换
 // ---------------------------------------------------------------------------------------------------------------------
-bool Energy::changeTarget(){
-    if(pointDistance(target_point,last_target_point) < energy_part_param_.TARGET_CHANGE_DISTANCE_MAX){
-        last_target_point = target_point;
-        return false;
+void Energy::changeTarget(){
+    if (pointDistance(target_point, last_target_point) < energy_part_param_.TARGET_CHANGE_DISTANCE_MAX) {
+        change_target = false;
+    } else {
+        change_target = true;
     }
-    else{
-        last_target_point= target_point;
-        return true;
-    }
+    last_target_point = target_point;
 }

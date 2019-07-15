@@ -34,12 +34,17 @@ int Energy::findFans(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if(length>20&&width>20){
-//			fans.emplace_back(cv::minAreaRect(fan_contour));
-//			cout<<"fan area: "<<length<<'\t'<<width<<endl;
-//			cout<<nonZeroRateOfRotateRect(src_bin,cur_rect)<<endl;
-//		}
+//        double cur_contour_area = contourArea(fan_contour);
+//        double non_zero_rate = nonZeroRateOfRotateRect(src_bin, cur_rect);
+//        if (length > 60 && width > 20) {
+//            fans.emplace_back(cv::minAreaRect(fan_contour));
+//            cout << cur_rect.center << endl;
+//            cout << "fan area: " << length << '\t' << width << endl;
+//            cout << "non zero: " << nonZeroRateOfRotateRect(src_bin, cur_rect) << endl;
+//            cout << "rate: " << cur_contour_area / cur_size.area() << endl;
+//        }
     }
+//    showFans("fan", src_bin);
     if (fans.size() < last_fans_cnt) {
         last_fans_cnt = static_cast<int>(fans.size());
         return -1;//寻找到的扇叶比上一帧少，说明该帧有误，返回-1
@@ -63,10 +68,10 @@ int Energy::findArmors(const cv::Mat src) {
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("armor struct", src_bin);
+    imshow("armor struct", src_bin);
 
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+//    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
 //    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
 //    {
@@ -85,12 +90,11 @@ int Energy::findArmors(const cv::Mat src) {
             continue;
         }
         armors.emplace_back(cv::minAreaRect(armor_contour));
-
 //        RotatedRect cur_rect = minAreaRect(armor_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length > 10 && width > 7) {
+//        if (length > 5 && width > 5) {
 //            armors.emplace_back(cv::minAreaRect(armor_contour));
 //            cout << "armor area: " << length << '\t' << width << '\t' << cur_rect.center << endl;
 //        }
@@ -98,7 +102,9 @@ int Energy::findArmors(const cv::Mat src) {
     }
 //    cout<<armors.size()<<endl;
 //    showArmors("armor",src);
-    if (armors.size() < 1)cout << "no armors!" << endl;
+
+//    if (armors.size() < 1)cout << "no armors!" << endl;
+
     return static_cast<int>(armors.size());
 }
 
@@ -165,7 +171,7 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
     FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("flow strip fan struct", src_bin);
+    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -208,7 +214,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
     FlowStripStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("flow strip struct", src_bin);
+//    imshow("flow strip struct", src_bin);
 
     std::vector<vector<Point> > flow_strip_contours;
     findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);

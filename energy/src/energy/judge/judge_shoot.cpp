@@ -16,9 +16,9 @@ using namespace cv;
 void Energy::judgeShoot(){
     if (abs(yaw_rotation - mcuData.curr_yaw) < 0.3 && fabs(pitch_rotation - mcuData.curr_pitch) < 0.3) {
         shoot = true;
-        isPredicting = false;
-        isGuessing = true;
-        startguessing = true;
+        is_predicting = false;
+        is_guessing = true;
+        start_guess = true;
         gettimeofday(&time_start_guess, NULL);
         LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else

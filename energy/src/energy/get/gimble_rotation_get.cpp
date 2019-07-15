@@ -19,17 +19,17 @@ void Energy::changeMark() {
         last_mark = mcuData.mark;
         origin_yaw = mcuData.curr_yaw;
         origin_pitch = mcuData.curr_pitch;
-        isMark = false;
+        is_mark = false;
         manual_mark = true;
 //        LOGM(STR_CTR(WORD_LIGHT_YELLOW, "IsMark"));
     } else if (mcuData.mark == 1) {//正在标定
         last_mark = mcuData.mark;
-        isMark = true;
+        is_mark = true;
 //		LOGM(STR_CTR(WORD_BLUE,"Marking..."));
 
     } else {//未在标定
         last_mark = mcuData.mark;
-        isMark = false;
+        is_mark = false;
     }
     //cout<<"mark: "<<int(mcuData.mark)<<endl;
 }

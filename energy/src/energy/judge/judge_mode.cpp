@@ -19,16 +19,16 @@ void Energy::JudgeMode() {
     } else {
         if (abs(recent_target_armor_centers.back() - recent_target_armor_centers.front()) > 10) {
             if(last_mode!=BIG){
-                isBig = true;
-                isSmall = false;
+                is_big = true;
+                is_small = false;
                 energy_mode_init = false;
                 LOGM(STR_CTR(WORD_CYAN,"start big!"));
             }
             last_mode = BIG;
         } else {
             if(last_mode!=SMALL){
-                isBig = false;
-                isSmall = true;
+                is_big = false;
+                is_small = true;
                 energy_mode_init = false;
                 LOGM(STR_CTR(WORD_GREEN,"start small!"));
             }
