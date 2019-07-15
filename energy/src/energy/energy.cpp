@@ -22,7 +22,7 @@ Energy::Energy(Serial &u, uint8_t &color) : serial(u), ally_color(color),
     energy_rotation_init = false;
     isBig = false;
     isSmall = false;
-    isgimbal = true;
+    isGimbal = true;
     isChassis = false;
 }
 
@@ -44,35 +44,6 @@ void Energy::setEnergyInit() {
     energy_rotation_init = true;
     isBig = false;
     isSmall = false;
-    isgimbal = true;
-    isChassis = false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数为大能量机关再初始化函数
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::setBigEnergyInit() {
-    initEnergy();
-    initEnergyPartParam();
-
-    energy_rotation_init = true;
-    isBig = true;
-    isSmall = false;
-    isgimbal = true;
-    isChassis = false;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数为小能量机关再初始化函数
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::setSmallEnergyInit() {
-    initEnergy();
-    initEnergyPartParam();
-
-    isBig = false;
-    isSmall = true;
-    isgimbal = true;
+    isGimbal = true;
     isChassis = false;
 }

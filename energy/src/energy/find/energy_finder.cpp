@@ -20,7 +20,7 @@ int Energy::findFans(const cv::Mat src) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
     std::vector<vector<Point> > fan_contours;
-    StructingElementErodeDilate(src_bin);//图像膨胀，防止图像断开并更方便寻找
+    FanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
 //	imshow("fan struct",src_bin);
     findContours(src_bin, fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -62,24 +62,24 @@ int Energy::findArmors(const cv::Mat src) {
     std::vector<vector<Point> > armor_contours;
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
-    StructingElementErodeDilate(src_bin);//图像膨胀，防止图像断开并更方便寻找
+    ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
 //    imshow("armor struct", src_bin);
 
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
     findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
-    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
-    {
-        unsigned long external_contour_size = armor_contours_external[i].size();
-        for (int j = 0; j < armor_contours.size(); j++) {
-            unsigned long all_size = armor_contours[j].size();
-            if (external_contour_size == all_size) {
-                swap(armor_contours[j], armor_contours[armor_contours.size() - 1]);
-                armor_contours.pop_back();
-                break;
-            }
-        }
-    }
+//    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
+//    {
+//        unsigned long external_contour_size = armor_contours_external[i].size();
+//        for (int j = 0; j < armor_contours.size(); j++) {
+//            unsigned long all_size = armor_contours[j].size();
+//            if (external_contour_size == all_size) {
+//                swap(armor_contours[j], armor_contours[armor_contours.size() - 1]);
+//                armor_contours.pop_back();
+//                break;
+//            }
+//        }
+//    }
     for (auto &armor_contour : armor_contours) {
         if (!isValidArmorContour(armor_contour)) {
             continue;
@@ -90,12 +90,15 @@ int Energy::findArmors(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if(length>10&&width>5){
+//        if (length > 10 && width > 7) {
 //            armors.emplace_back(cv::minAreaRect(armor_contour));
-//            cout<<"armor area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
+//            cout << "armor area: " << length << '\t' << width << '\t' << cur_rect.center << endl;
 //        }
 
     }
+//    cout<<armors.size()<<endl;
+//    showArmors("armor",src);
+    if (armors.size() < 1)cout << "no armors!" << endl;
     return static_cast<int>(armors.size());
 }
 
@@ -111,7 +114,7 @@ bool Energy::findCenterR(const cv::Mat src) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);
     }
     std::vector<vector<Point> > center_R_contours;
-    StructingElementErodeDilate(src_bin);
+    CenterRStruct(src_bin);
 //    imshow("R struct",src_bin);
     findContours(src_bin, center_R_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     for (auto &center_R_contour : center_R_contours) {
@@ -123,17 +126,26 @@ bool Energy::findCenterR(const cv::Mat src) {
                 target_armor.size.height > target_armor.size.width ? target_armor.size.height : target_armor.size.width;
         circle_center_point = centerR.center;
         circle_center_point.y += target_length / 7.5;//实际最小二乘得到的中心在R的下方
-        return true;
 
 //        RotatedRect cur_rect = minAreaRect(center_R_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if(length>10 && width>5){
-//            centerRs.emplace_back(cv::minAreaRect(center_R_contour));
-//            cout<<"center R area: "<<length<<'\t'<<width<<'\t'<<cur_rect.center<<endl;
+//        if (length < 10 || width < 5 || length>19) {
+//            continue;
 //        }
+//        std::vector<cv::Point2f> intersection;
+//        if (rotatedRectangleIntersection(cur_rect, center_ROI, intersection) != 0 &&
+//            contourArea(intersection) > energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN) {
+//            centerR = cv::minAreaRect(center_R_contour);
+//            cout << "center R area: " << length << '\t' << width << '\t' << cur_rect.center << endl;
+//            cout << "R intersection: " << contourArea(intersection) << endl;
+//            return true;
+//        }
+
+        return true;
     }
+    cout << "find center R false!" << endl;
     return false;
 
 }
@@ -145,12 +157,14 @@ bool Energy::findCenterR(const cv::Mat src) {
 bool Energy::findFlowStripFan(const cv::Mat src) {
     if (src.empty())return false;
     static Mat src_bin;
+    static Mat src_copy;
     src_bin = src.clone();
+    src_copy = src.clone();
     if (src.type() == CV_8UC3) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
-    StructingElementErodeDilate(src_bin);//图像膨胀，防止图像断开并更方便寻找
+    FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
 //    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -165,14 +179,20 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length > 10 && width > 10) {
-//            cout << cur_rect.center;
+//        double cur_contour_area = contourArea(flow_strip_fan_contour);
+//        double non_zero_rate = nonZeroRateOfRotateRect(src_bin, cur_rect);
+//        if (length > 40 && width > 30 && length < 110 && width < 100) {
+//            cout << cur_rect.center<<endl;
 //            flow_strip_fan = cv::minAreaRect(flow_strip_fan_contour);
 //            cout << "flow strip fan area: " << length << '\t' << width << endl;
+//            cout << "non zero: " << non_zero_rate << endl;
+//            cout<<cur_contour_area / cur_size.area()<<endl;
 //        }
 
         return true;
     }
+//    showFlowStripFan("strip fan", src_bin);
+    cout << "flow strip fan false!" << endl;
     return false;
 }
 
@@ -187,8 +207,8 @@ bool Energy::findFlowStrip(const cv::Mat src) {
     if (src.type() == CV_8UC3) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
-    StructingElementErodeDilate(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("flow strip struct", src_bin);
+    FlowStripStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
+    imshow("flow strip struct", src_bin);
 
     std::vector<vector<Point> > flow_strip_contours;
     findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -202,13 +222,14 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length > 40 && width > 5) {
+//        if (length > 20 && width > 5) {
 //            cout << cur_rect.center << endl;
 //            flow_strip = cv::minAreaRect(flow_strip_contour);
 //            cout << "flow strip fan area: " << length << '\t' << width << endl;
 //        }
         return true;
     }
+    cout << "flow strip false!" << endl;
     return false;
 
 }
@@ -235,211 +256,9 @@ bool Energy::findCenterROI(const cv::Mat src) {
                 flow_strip.center.y - target_point.y);
     p2p = p2p / pointDistance(flow_strip.center, target_point);//单位化
     center_ROI = cv::RotatedRect(cv::Point2f(flow_strip.center + p2p * length * 1.4),
-                                 Size2f(length * 1.2, length * 1.2), -90);
+                                 Size2f(length * 1.4, length * 1.4), -90);
     return true;
 
 }
 
 
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于判断找到的矩形候选区是否为扇叶
-// ---------------------------------------------------------------------------------------------------------------------
-bool Energy::isValidFanContour(cv::Mat &src, const vector<cv::Point> &fan_contour) {
-    double cur_contour_area = contourArea(fan_contour);
-    if (cur_contour_area > energy_part_param_.FAN_CONTOUR_AREA_MAX ||
-        cur_contour_area < energy_part_param_.FAN_CONTOUR_AREA_MIN) {
-        //cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
-        //cout<<"area fail."<<endl;
-        return false;
-        //选区面积大小不合适
-    }
-    RotatedRect cur_rect = minAreaRect(fan_contour);
-    Size2f cur_size = cur_rect.size;
-    float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
-    float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽
-    if (length < energy_part_param_.FAN_CONTOUR_LENGTH_MIN || width < energy_part_param_.FAN_CONTOUR_WIDTH_MIN ||
-        length > energy_part_param_.FAN_CONTOUR_LENGTH_MAX || width > energy_part_param_.FAN_CONTOUR_WIDTH_MAX) {
-        //cout<<"length width fail."<<endl;
-        return false;
-        //矩形边长不合适
-    }
-    float length_width_ratio = length / width;//计算矩形长宽比
-    if (length_width_ratio > energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX ||
-        length_width_ratio < energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN) {
-        //cout<<"length width ratio fail."<<endl;
-        return false;
-        //长宽比不合适
-    }
-//    if (cur_contour_area / cur_size.area() < energy_part_param_.FAN_CONTOUR_AREA_RATIO_MIN)
-//        return false;//轮廓对矩形的面积占有率不合适
-    double non_zero_rate = nonZeroRateOfRotateRect(src, cur_rect);
-    if (non_zero_rate > energy_part_param_.FAN_NON_ZERO_RATE_MAX ||
-        non_zero_rate < energy_part_param_.FAN_NON_ZERO_RATE_MIN)
-        return false;
-    //亮点占比不合格
-    return true;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于判断找到的矩形候选区是否为装甲板
-// ---------------------------------------------------------------------------------------------------------------------
-bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
-    double cur_contour_area = contourArea(armor_contour);
-    if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
-        cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN) {
-        //cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
-        //cout<<"area fail."<<endl;
-        return false;
-        //选区面积大小不合适
-    }
-    RotatedRect cur_rect = minAreaRect(armor_contour);
-    Size2f cur_size = cur_rect.size;
-    float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
-    float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽
-    if (length < energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN || width < energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN ||
-        length > energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX || width > energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX) {
-        //cout<<"length width fail."<<endl;
-        return false;
-        //矩形边长不合适
-    }
-
-    float length_width_ratio = length / width;//计算矩形长宽比
-    if (length_width_ratio > energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX ||
-        length_width_ratio < energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN) {
-        //cout<<"length width ratio fail."<<endl;
-        return false;
-        //长宽比不合适
-    }
-    if (cur_contour_area / cur_size.area() < energy_part_param_.ARMOR_CONTOUR_AREA_RATIO_MIN)
-        return false;//轮廓对矩形的面积占有率不合适
-    return true;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于判断找到的矩形候选区是否为可能的风车中心R候选区
-// ---------------------------------------------------------------------------------------------------------------------
-bool Energy::isValidCenterRContour(const vector<cv::Point> &center_R_contour) {
-    double cur_contour_area = contourArea(center_R_contour);
-    if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
-        cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN) {
-        //cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
-        //cout<<"area fail."<<endl;
-        return false;
-        //选区面积大小不合适
-    }
-    RotatedRect cur_rect = minAreaRect(center_R_contour);
-    Size2f cur_size = cur_rect.size;
-    float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
-    float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽
-    if (length < energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN || width < energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN
-        || length > energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX ||
-        width > energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX) {
-        //cout<<"length width fail."<<endl;
-        return false;
-        //矩形边长不合适
-    }
-    float length_width_ratio = length / width;//计算矩形长宽比
-    if (length_width_ratio > energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX ||
-        length_width_ratio < energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN) {
-        //cout<<"length width ratio fail."<<endl;
-        return false;
-        //长宽比不合适
-    }
-    if (cur_contour_area / cur_size.area() < energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN)
-        return false;//轮廓对矩形的面积占有率不合适
-    std::vector<cv::Point2f> intersection;
-    if (rotatedRectangleIntersection(cur_rect, center_ROI, intersection) == 0 ||
-        contourArea(intersection) < energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN) {
-        return false;
-    }
-    return true;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于判断找到的矩形候选区是否为流动条扇叶
-// ---------------------------------------------------------------------------------------------------------------------
-bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &flow_strip_fan_contour) {
-    double cur_contour_area = contourArea(flow_strip_fan_contour);
-    if (cur_contour_area > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MAX ||
-        cur_contour_area < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MIN) {
-        //cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
-        //cout<<"area fail."<<endl;
-        return false;
-        //选区面积大小不合适
-    }
-    RotatedRect cur_rect = minAreaRect(flow_strip_fan_contour);
-    Size2f cur_size = cur_rect.size;
-    float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
-    float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽
-    if (length < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MIN
-        || width < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MIN
-        || length > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX
-        || width > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX) {
-        //cout<<"length width fail."<<endl;
-        return false;
-        //矩形边长不合适
-    }
-
-    float length_width_ratio = length / width;//计算矩形长宽比
-    if (length_width_ratio > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX ||
-        length_width_ratio < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN) {
-        //cout<<"length width ratio fail."<<endl;
-        return false;
-        //长宽比不合适
-    }
-//    if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN
-//    || cur_contour_area / cur_size.area() > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX)
-//        //    轮廓对矩形的面积占有率不合适
-//        return false;
-    double non_zero_rate = nonZeroRateOfRotateRect(src, cur_rect);
-    if (non_zero_rate > energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MAX ||
-        non_zero_rate < energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MIN)
-        return false;
-    //亮点占比不合格
-    return true;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于判断找到的矩形候选区是否为流动条
-// ---------------------------------------------------------------------------------------------------------------------
-bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour) {
-    double cur_contour_area = contourArea(flow_strip_contour);
-    if (cur_contour_area > energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MAX ||
-        cur_contour_area < energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MIN) {
-//        cout<<"area fail."<<endl;
-
-        return false;
-        //选区面积大小不合适
-    }
-    RotatedRect cur_rect = minAreaRect(flow_strip_contour);
-    Size2f cur_size = cur_rect.size;
-    float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
-    float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;//将矩形的短边设置为宽
-    if (length < energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN ||
-        width < energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN ||
-        length > energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX ||
-        width > energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX) {
-//        cout<<"length width fail."<<endl;
-        return false;
-        //矩形边长不合适
-    }
-    float length_width_ratio = length / width;//计算矩形长宽比
-    if (length_width_ratio > energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX ||
-        length_width_ratio < energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN) {
-//        cout<<"hw fail."<<endl;
-        return false;
-        //长宽比不合适
-    }
-    if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN)
-        return false;//轮廓对矩形的面积占有率不合适
-    std::vector<cv::Point2f> intersection;
-    if (rotatedRectangleIntersection(cur_rect, flow_strip_fan, intersection) == 0 ||
-        contourArea(intersection) < energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
-        return false;
-    }
-    return true;
-}

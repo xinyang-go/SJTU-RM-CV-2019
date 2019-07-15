@@ -108,8 +108,8 @@ int main(int argc, char *argv[]) {
                     if (!from_camera) extract(gimbal_src, chassis_src);
                     if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-//                    energy.run(gimbal_src, chassis_src);
-                    energy.run(gimbal_src);
+                    energy.run(gimbal_src, chassis_src);
+//                    energy.run(gimbal_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {

@@ -59,6 +59,7 @@ bool Energy::findTargetInFlowStripFan() {
         if (rotatedRectangleIntersection(armors.at(i), flow_strip_fan, intersection) == 0)
             continue;//返回0表示没有重合面积
         double cur_contour_area = contourArea(intersection);
+//        cout<<cur_contour_area<<endl;
         if (cur_contour_area < energy_part_param_.TARGET_INTERSETION_CONTOUR_AREA_MIN)
             continue;
         else {
@@ -67,5 +68,7 @@ bool Energy::findTargetInFlowStripFan() {
             return true;
         }
     }
+//    cout<<"find target false"<<endl;
+//    cout<<armors.size()<<'\t'<<armors.at(0).size<<endl;
     return false;
 }

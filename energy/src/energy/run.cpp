@@ -15,7 +15,7 @@ using namespace cv;
 void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
     if (chassis_src.empty())
         run(gimbal_src);//仅拥有云台摄像头则调用单摄像头的run函数
-    else if (isgimbal) {
+    else if (isGimbal) {
         energy_part_param_ = gimbal_energy_part_param_;
         clearAll();
         initImage(gimbal_src);
@@ -24,17 +24,16 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (!findFlowStripFan(gimbal_src))return;
         if (!findTargetInFlowStripFan()) return;
         if (!findCenterROI(gimbal_src))return;
-        if (!findCenterR(gimbal_src))return;
-
         if (show_energy)showFlowStripFan("strip", gimbal_src);
+        if (!findCenterR(gimbal_src))return;
         if (show_energy)showCenterR("R", gimbal_src);
 
         if (!getOrigin())return;
         startChassis();
         initEnergy();
-
+        destroyAllWindows();
     } else if (isChassis) {
-        energy_part_param_ = chassis_energy_part_param_;
+        energy_part_param_ = gimbal_energy_part_param_;
         clearAll();
         initImage(chassis_src);
 
@@ -42,12 +41,11 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (isMark)return;//操作手强制手动标定origin_yaw和origin_pitch
 
         if (findArmors(chassis_src) < 1)return;
-        if (!findFlowStripFan(chassis_src))return;
+        if (!findFlowStripFan(chassis_src))return;showFlowStripFan("flow strip fan", chassis_src);
         if (!findTargetInFlowStripFan()) return;
         if (!findCenterROI(chassis_src))return;
-        if (!findCenterR(chassis_src))return;
-
         if (show_energy)showFlowStripFan("strip", chassis_src);
+        if (!findCenterR(chassis_src))return;
         if (show_energy)showCenterR("R", chassis_src);
 
         getTargetPolarAngle();
