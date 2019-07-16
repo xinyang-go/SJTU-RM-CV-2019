@@ -30,27 +30,18 @@ extern ArmorFinder armorFinder;
 extern Energy energy;
 
 void uartReceive(Serial *pSerial) {
-    char buffer[20];
-    int cnt = 0;
+    char buffer[30];
     LOGM(STR_CTR(WORD_LIGHT_WHITE, "data receive start!"));
     while (true) {
         char byte = 0;
         memset(buffer, 0, sizeof(buffer));
-        while (pSerial->ReadData((uint8_t *) &byte, 1) && byte != '\n') {
-            buffer[cnt++] = byte;
-            if (cnt >= sizeof(buffer)) {
-//                LOGE("data receive over flow!");
-                cnt = 0;
-            }
-        }
-        if (cnt == 0 && byte == '\n') {
-            LOGM("%d", cnt);
-        }
-        if (cnt == sizeof(mcuData)) {
+        pSerial->ReadData((uint8_t *) &byte, sizeof(mcuData)+1);
+        if (buffer[sizeof(mcuData)] == '\n') {
             memcpy(&mcuData, buffer, sizeof(mcuData));
             LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
+        }else{
+            LOGW("corrupt data!");
         }
-        cnt = 0;
     }
 }
 

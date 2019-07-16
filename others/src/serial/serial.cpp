@@ -191,7 +191,7 @@ Serial::Serial(int nSpeed, char nEvent, int nBits, int nStop) :
         nSpeed(nSpeed), nEvent(nEvent), nBits(nBits), nStop(nStop) {
     if (wait_uart) {
         LOGM("Wait for serial be ready!");
-        while (InitPort(nSpeed, nEvent, nBits, nStop) == false);
+        while (!InitPort(nSpeed, nEvent, nBits, nStop));
         LOGM("Port set successfully!");
     } else {
         if (InitPort(nSpeed, nEvent, nBits, nStop)) {
