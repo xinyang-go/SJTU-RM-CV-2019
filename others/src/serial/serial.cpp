@@ -234,7 +234,7 @@ bool Serial::WriteData(const unsigned char *pData, unsigned int length) {
         return false;
     }
     while ((curr = write(fd, pData + cnt, length - cnt)) > 0 && (cnt += curr) < length);
-    if (cnt < 0) {
+    if (curr < 0) {
         LOGE("Serial offline!");
         close(fd);
         if (wait_uart) {
@@ -248,7 +248,7 @@ bool Serial::WriteData(const unsigned char *pData, unsigned int length) {
 bool Serial::ReadData(unsigned char *buffer, unsigned int length) {
     int cnt = 0, curr = 0;
     while ((curr = read(fd, buffer + cnt, length - cnt)) > 0 && (cnt += curr) < length);
-    if (cnt < 0) {
+    if (curr < 0) {
         LOGE("Serial offline!");
         close(fd);
         if (wait_uart) {
