@@ -16,11 +16,12 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
     if (chassis_src.empty())
         run(gimbal_src);//仅拥有云台摄像头则调用单摄像头的run函数
     else if (is_gimbal) {
-        energy_part_param_ = gimbal_energy_part_param_;
+//        energy_part_param_ = chassis_energy_part_param_;
+        energy_part_param_ = chassis_energy_part_param_;
         clearAll();
         initImage(gimbal_src);
-//        findFans(gimbal_src);
-//        showFans("fan",gimbal_src);
+        findFans(gimbal_src);
+        showFans("fan",gimbal_src);
 
         if (findArmors(gimbal_src) < 1)return;
         if (show_energy)showArmors("armor", gimbal_src);
@@ -36,6 +37,7 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         initEnergy();
         destroyAllWindows();
     } else if (is_chassis) {
+//        energy_part_param_ = chassis_energy_part_param_;
         energy_part_param_ = chassis_energy_part_param_;
         clearAll();
         initImage(chassis_src);
@@ -45,8 +47,7 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
 
         if (findArmors(chassis_src) < 1)return;
         if (show_energy)showArmors("armor", chassis_src);
-        if (!findFlowStripFan(chassis_src))return;
-        showFlowStripFan("flow strip fan", chassis_src);
+        if (!findFlowStripFan(chassis_src)) return;
         if (!findTargetInFlowStripFan()) return;
         if (!findCenterROI(chassis_src))return;
         if (show_energy)showFlowStripFan("strip", chassis_src);

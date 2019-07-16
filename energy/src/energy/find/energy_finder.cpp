@@ -68,8 +68,6 @@ int Energy::findArmors(const cv::Mat src) {
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("armor struct", src_bin);
-
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 //    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -100,6 +98,7 @@ int Energy::findArmors(const cv::Mat src) {
 //        }
 
     }
+
 //    cout<<armors.size()<<endl;
 //    showArmors("armor",src);
 
@@ -160,7 +159,7 @@ bool Energy::findCenterR(const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于判断找到的矩形候选区是否为含流动条的扇叶
 // ---------------------------------------------------------------------------------------------------------------------
-bool Energy::findFlowStripFan(const cv::Mat src) {
+bool Energy:: findFlowStripFan(const cv::Mat src) {
     if (src.empty())return false;
     static Mat src_bin;
     static Mat src_copy;
@@ -228,7 +227,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length / width > 2 && width > 5) {
+//        if (length / width > 4 && width > 7 && width<30) {
 //            cout << cur_rect.center << endl;
 //            flow_strip = cv::minAreaRect(flow_strip_contour);
 //            cout << "flow strip area: " << length << '\t' << width << endl;
@@ -261,7 +260,7 @@ bool Energy::findCenterROI(const cv::Mat src) {
     Point2f p2p(flow_strip.center.x - target_point.x,
                 flow_strip.center.y - target_point.y);
     p2p = p2p / pointDistance(flow_strip.center, target_point);//单位化
-    center_ROI = cv::RotatedRect(cv::Point2f(flow_strip.center + p2p * length * 1.4),
+    center_ROI = cv::RotatedRect(cv::Point2f(flow_strip.center + p2p * length * 1.25),
                                  Size2f(length * 1.4, length * 1.4), -90);
     return true;
 
