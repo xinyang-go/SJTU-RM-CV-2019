@@ -40,7 +40,7 @@ class DataSet:
             files = os.listdir(dir)
             for file in tqdm(files, postfix={"loading id": i}, dynamic_ncols=True):
                 if file[-3:] == "jpg":
-                    if random.random() > 0.2:
+                    if random.random() > 0.7:
                         self.train_samples.append(self.file2nparray("%s/%s" % (dir, file)))
                         self.train_labels.append(self.id2label(i))
                     else:
@@ -59,6 +59,15 @@ class DataSet:
             id = random.randint(0, len(self.train_samples)-1)
             samples.append(self.train_samples[id])
             labels.append(self.train_labels[id])
+        return np.array(samples), np.array(labels)
+
+    def sample_test_sets(self, length):
+        samples = []
+        labels = []
+        for i in range(length):
+            id = random.randint(0, len(self.test_samples)-1)
+            samples.append(self.test_samples[id])
+            labels.append(self.test_labels[id])
         return np.array(samples), np.array(labels)
 
     def all_train_sets(self):
