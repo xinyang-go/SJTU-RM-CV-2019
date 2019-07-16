@@ -33,9 +33,8 @@ void uartReceive(Serial *pSerial) {
     char buffer[30];
     LOGM(STR_CTR(WORD_LIGHT_WHITE, "data receive start!"));
     while (true) {
-        char byte = 0;
         memset(buffer, 0, sizeof(buffer));
-        pSerial->ReadData((uint8_t *) &byte, sizeof(mcuData)+1);
+        pSerial->ReadData((uint8_t *) &buffer, sizeof(mcuData)+1);
         if (buffer[sizeof(mcuData)] == '\n') {
             memcpy(&mcuData, buffer, sizeof(mcuData));
             LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
