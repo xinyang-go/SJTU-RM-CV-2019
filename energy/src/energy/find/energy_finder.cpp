@@ -68,7 +68,7 @@ int Energy::findArmors(const cv::Mat src) {
     std::vector<vector<Point> > armor_contours_external;//用总轮廓减去外轮廓，只保留内轮廓，除去流动条的影响。
 
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("armor struct", src_bin);
+//    imshow("armor struct", src_bin);
 
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 //    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -171,7 +171,7 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
     FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("flow strip fan struct", src_bin);
+//    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -214,7 +214,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
     FlowStripStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("flow strip struct", src_bin);
+    imshow("flow strip struct", src_bin);
 
     std::vector<vector<Point> > flow_strip_contours;
     findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
@@ -228,10 +228,10 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length > 20 && width > 5) {
+//        if (length / width > 2 && width > 5) {
 //            cout << cur_rect.center << endl;
 //            flow_strip = cv::minAreaRect(flow_strip_contour);
-//            cout << "flow strip fan area: " << length << '\t' << width << endl;
+//            cout << "flow strip area: " << length << '\t' << width << endl;
 //        }
         return true;
     }

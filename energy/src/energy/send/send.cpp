@@ -17,6 +17,7 @@ void Energy::sendTarget(Serial& serial, float x, float y, float z){
     uint8_t buff[8];
     x_tmp = static_cast<short>(x * (32768 - 1) / 100);
     y_tmp = static_cast<short>(y * (32768 - 1) / 100);
+    z_tmp = static_cast<short>(z * (32768 - 1) / 100);
     buff[0] = 's';
     buff[1] = static_cast<char>((x_tmp >> 8) & 0xFF);
     buff[2] = static_cast<char>((x_tmp >> 0) & 0xFF);
