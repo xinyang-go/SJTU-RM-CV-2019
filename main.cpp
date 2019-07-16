@@ -64,8 +64,10 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/148.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/148.avi");
+//            video_gimbal = new VideoWrapper("/home/sjturm/Desktop/videos/147.avi");
+//            video_chassis = new VideoWrapper("/home/sjturm/Desktop/videos/147.avi");
+            video_gimbal = new VideoWrapper("/home/sjturm/Desktop/RM2019 能量机关视频/大能量机关（蓝+开灯）.mov");
+            video_chassis = new VideoWrapper("/home/sjturm/Desktop/RM2019 能量机关视频/大能量机关（蓝+开灯）.mov");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
