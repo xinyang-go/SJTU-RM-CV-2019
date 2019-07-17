@@ -143,6 +143,7 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
         return false;
         //选区面积大小不合适
     }
+//    cout << "area: " << cur_contour_area << endl;
     RotatedRect cur_rect = minAreaRect(flow_strip_fan_contour);
     Size2f cur_size = cur_rect.size;
     float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;//将矩形的长边设置为长
@@ -151,11 +152,11 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
         || width < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MIN
         || length > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX
         || width > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX) {
-        //cout<<"length width fail."<<endl;
+//        cout<<"length width fail."<<endl;
+//        cout << "length: " << length << '\t' << "width: " << width << endl;
         return false;
         //矩形边长不合适
     }
-
     float length_width_ratio = length / width;//计算矩形长宽比
     if (length_width_ratio > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN) {
@@ -166,6 +167,7 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
 //    cout << cur_contour_area / cur_size.area() << endl;
     if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN
         || cur_contour_area / cur_size.area() > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX) {
+//        cout << "rate: " << cur_contour_area / cur_size.area() << endl;
         return false;
     }
     //    轮廓对矩形的面积占有率不合适
@@ -205,6 +207,7 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
         return false;
         //矩形边长不合适
     }
+//    cout << length << '\t' << width << endl;
     float length_width_ratio = length / width;//计算矩形长宽比
     if (length_width_ratio > energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN) {

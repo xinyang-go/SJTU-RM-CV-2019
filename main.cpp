@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/148.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/148.avi");
+            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/gimble3.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/gimble3.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
         bool ok = true;
         cout << "start running" << endl;
         do {
-            CNT_TIME("Total", {
+//            CNT_TIME("Total", {
                 if (mcuData.state == BIG_ENERGY_STATE) {//大能量机关模式
                     if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
                         destroyAllWindows();
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
                     });
                 }
 //                cv::waitKey(1);
-            });
+//            });
         } while (ok);
         delete video_gimbal;
         video_gimbal = nullptr;
