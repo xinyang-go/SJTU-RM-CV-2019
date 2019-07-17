@@ -72,6 +72,6 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
 //
 //    }
 
-    sendBoxPosition();
+//    sendBoxPosition();
     return true;
 }
