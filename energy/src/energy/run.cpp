@@ -17,7 +17,7 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         run(gimbal_src);//仅拥有云台摄像头则调用单摄像头的run函数
     else if (is_gimbal) {
 //        energy_part_param_ = chassis_energy_part_param_;
-        energy_part_param_ = chassis_energy_part_param_;
+        energy_part_param_ = gimbal_energy_part_param_;
         clearAll();
         initImage(gimbal_src);
         findFans(gimbal_src);

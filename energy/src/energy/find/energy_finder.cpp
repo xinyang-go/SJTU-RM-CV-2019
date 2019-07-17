@@ -234,6 +234,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        }
         return true;
     }
+//    waitKey();
     cout << "flow strip false!" << endl;
     return false;
 
