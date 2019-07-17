@@ -69,6 +69,7 @@ int Energy::findArmors(const cv::Mat src) {
 
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+    imshow("armor struct", src_bin);
 //    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
 //    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓

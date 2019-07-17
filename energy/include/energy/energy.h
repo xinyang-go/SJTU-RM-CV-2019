@@ -29,6 +29,7 @@ public:
 
     void run(cv::Mat &gimbal_src, cv::Mat &chassis_src);
     void run(cv::Mat &gimbal_src);
+    void runSmall(cv::Mat &gimbal_src);
 
     Serial &serial;//串口
     void setEnergyInit();//设置能量机关初始化
@@ -51,7 +52,6 @@ private:
     bool energy_rotation_init;//若仍在判断风车旋转方向，则为true
     bool manual_mark;//若操作手进行过手动标定，则为true
     bool auto_mark;//云台完成自动对心，则置为true
-    bool shoot;//若为true，则要求主控板发弹
     bool start_guess;//进入猜测状态的标志
     bool change_target;//目标切换的标志
 
@@ -77,6 +77,7 @@ private:
     float center_delta_yaw, center_delta_pitch;//对心时相差的角度
     float yaw_rotation, pitch_rotation;//云台yaw轴和pitch轴应该转到的角度
     float origin_yaw, origin_pitch;//初始的云台角度设定值
+    float shoot;//若为2，则要求主控板发弹
 
     timeval time_start_guess;
 
@@ -158,8 +159,9 @@ private:
     void getAllTargetArmorCenters();//记录所有目标装甲板中心坐标
     void getRecentTargetArmorCenters();//记录近30帧目标装甲板中心坐标
 
-    void judgeShoot();//判断是否可以发弹
-    void JudgeMode();//判断大符还是小符
+    void judgeMode();//判断大符还是小符
+    void judgeShootInGimbal();//在云台坐标系中判断是否可以发弹
+    void judgeShootInWorld();//在世界坐标系中判断是否可以发弹
     bool isGuessingTimeout();//判断猜测模式是否超时（没打中）
 
     void splitBayerBG(cv::Mat src, cv::Mat &blue, cv::Mat &red);//拜耳阵列分离
