@@ -12,9 +12,9 @@ using namespace cv;
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数为能量机关模式主控制流函数，且步兵需要同时拥有云台摄像头和底盘摄像头
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
+void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
     if (chassis_src.empty())
-        run(gimbal_src);//仅拥有云台摄像头则调用单摄像头的run函数
+        runBig(gimbal_src);//仅拥有云台摄像头则调用单摄像头的run函数
     else if (is_gimbal) {
         energy_part_param_ = gimbal_energy_part_param_;
         clearAll();
@@ -82,7 +82,7 @@ void Energy::run(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数为能量机关模式主控制流函数，且步兵仅拥有云台摄像头
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::run(cv::Mat &gimbal_src) {
+void Energy::runBig(cv::Mat &gimbal_src) {
     energy_part_param_ = gimbal_energy_part_param_;
     clearAll();
     initImage(gimbal_src);
@@ -127,11 +127,10 @@ void Energy::run(cv::Mat &gimbal_src) {
 }
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数为小能量机关模式主控制流函数，击打小符只需要拥有云台摄像头
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::runSmall(cv::Mat &gimbal_src){
+void Energy::runSmall(cv::Mat &gimbal_src) {
     energy_part_param_ = gimbal_energy_part_param_;
     clearAll();
     initImage(gimbal_src);

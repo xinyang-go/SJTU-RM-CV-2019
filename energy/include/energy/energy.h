@@ -27,12 +27,14 @@ public:
     Energy(Serial &u, uint8_t &color);//构造函数，参数为串口和敌方颜色
     ~Energy();//默认析构函数
 
-    void run(cv::Mat &gimbal_src, cv::Mat &chassis_src);
-    void run(cv::Mat &gimbal_src);
+    void runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src);
+    void runBig(cv::Mat &gimbal_src);
     void runSmall(cv::Mat &gimbal_src);
 
     Serial &serial;//串口
     void setEnergyInit();//设置能量机关初始化
+    void setBigEnergyInit();//设置大能量机关初始化
+    void setSmallEnergyInit();//设置小能量机关初始化
     void sendTarget(Serial &serial, float x, float y, float z);
 
 

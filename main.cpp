@@ -92,11 +92,11 @@ int main(int argc, char *argv[]) {
         cout << "start running" << endl;
         do {
             CNT_TIME("Total", {
-                if (mcuData.state != ARMOR_STATE) {//能量机关模式
-                    if (last_state == ARMOR_STATE) {//若上一帧是自瞄模式，即刚往完成切换，则需要初始化
+                if (mcuData.state == BIG_ENERGY_STATE) {//大能量机关模式
+                    if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
                         destroyAllWindows();
                         ((CameraWrapper *) video_gimbal)->changeBrightness(ENERGY_CAMERA_GAIN);
-                        energy.setEnergyInit();
+                        energy.setBigEnergyInit();
                         checkReconnect(video_chassis->read(chassis_src));
 #ifdef CHASSIS_FLIP_MODE
                         flip(chassis_src, chassis_src, CHASSIS_FLIP_MODE);
@@ -110,8 +110,22 @@ int main(int argc, char *argv[]) {
                     if (!from_camera) extract(gimbal_src, chassis_src);
                     if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-//                    energy.run(gimbal_src, chassis_src);
-                    energy.run(gimbal_src);
+                    energy.runBig(gimbal_src, chassis_src);
+                    last_state = mcuData.state;//更新上一帧状态
+                } else if (mcuData.state == SMALL_ENERGY_STATE) {
+                    if (mcuData.state != SMALL_ENERGY_STATE) {
+                        destroyAllWindows();
+                        ((CameraWrapper *) video_gimbal)->changeBrightness(ENERGY_CAMERA_GAIN);
+                        energy.setSmallEnergyInit();
+                    }
+                    ok = checkReconnect(video_gimbal->read(gimbal_src));
+#ifdef GIMBAL_FLIP_MODE
+                    flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
+#endif
+                    if (!from_camera) extract(gimbal_src);
+                    if (save_video) saveVideos(gimbal_src);//保存视频
+                    if (show_origin) showOrigin(gimbal_src);//显示原始图像
+                    energy.runSmall(gimbal_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {
