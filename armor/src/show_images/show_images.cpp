@@ -94,8 +94,8 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &
 //    static FILE *fp = fopen(PROJECT_DIR"/ratio.txt", "w");
 //    if(box.light_blobs.size() == 2)
 //        fprintf(fp, "%lf %lf %lf\n", box.light_blobs[0].length, box.light_blobs[1].length, box.blobsDistance())
-//    cout << box.rect.width/box.rect.height << endl;
-    if(box.rect.width/box.rect.height > 1.6){
+//    cout << box.lengthDistanceRatio() << endl;
+    if(box.lengthDistanceRatio() < 0.4 && box.lengthRatio() > 0.9){
         rectangle(image2show, box.rect, Scalar(0, 255, 0), 3);
     }else{
         rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);

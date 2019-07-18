@@ -52,22 +52,9 @@ public:
 
     explicit ArmorBox(const cv::Rect &pos=cv::Rect2d(), const LightBlobs &blobs=LightBlobs(), uint8_t color=0, int i=0);
 
-    double blobsDistance() const{
-        if(light_blobs.size() == 2){
-            auto &x = light_blobs[0].rect.center;
-            auto &y = light_blobs[1].rect.center;
-            return sqrt((x.x-y.x)*(x.x-y.x) + (x.y-y.y)*(x.y-y.y));
-        }
-    }
-
-    double lengthDistanceRatio() const {
-        if(light_blobs.size() == 2){
-            return (light_blobs[0].length+light_blobs[1].length)/2.0
-                   / blobsDistance();
-        }else{
-            return 100;
-        }
-    }
+    double blobsDistance() const;
+    double lengthRatio() const;
+    double lengthDistanceRatio() const;
 };
 
 typedef std::vector<ArmorBox> ArmorBoxes;

@@ -17,10 +17,10 @@ static double areaRatio(const std::vector<cv::Point> &contour, const cv::Rotated
 }
 
 static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect) {
-    return (lw_rate(rect) > 1.5) &&
+    return (1.5 < lw_rate(rect) && lw_rate(rect) < 10) &&
 //           (rect.size.area() < 3000) &&
-           (rect.size.area() > 5) &&
-           (areaRatio(contour, rect) > 0.7);
+            ((rect.size.area() < 50 && areaRatio(contour, rect) > 0.5) ||
+            (rect.size.area() >= 50 && areaRatio(contour, rect) > 0.7));
 }
 
 // 此函数可以有性能优化.
@@ -50,7 +50,7 @@ static float linePointX(const cv::Point2f &p1, const cv::Point2f &p2, int y) {
     return (p2.x - p1.x) / (p2.y - p1.y) * (y - p1.y) + p1.x;
 }
 
-// 性能优化后的函数
+/// Todo:性能优化后的函数（还有点问题）
 static double get_blob_color_opt(const cv::Mat &src, cv::RotatedRect blobPos) {
     int blue_cnt=0, red_cnt=0;
     blobPos.size.height *= 1.05;
@@ -123,6 +123,9 @@ bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
         color_channel = channels[2];        /************************/
     cv::threshold(color_channel, src_bin, 160, 255, CV_THRESH_BINARY); // 二值化对应通道
     imagePreProcess(src_bin);                                  // 开闭运算
+
+    if(src_bin.size() == cv::Size(640, 480))
+        imshow("bin", src_bin);
 
     std::vector<std::vector<cv::Point> > light_contours;
     cv::findContours(src_bin, light_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
