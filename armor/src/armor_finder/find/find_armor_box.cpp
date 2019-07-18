@@ -72,20 +72,11 @@ static bool boxAngleJudge(const LightBlob &light_blob_i, const LightBlob &light_
 }
 
 static bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j, uint8_t enemy_color) {
-//    cout << (light_blob_i.blob_color==BLOB_RED) << endl;
-//    cout << (light_blob_j.blob_color==BLOB_RED) << endl;
-//    cout << lengthRatioJudge(light_blob_i, light_blob_j) << endl;
-//    cout << lengthJudge(light_blob_i, light_blob_j) << endl;
-////    cout << heightJudge(light_blob_i, light_blob_j) << endl;
-//    cout << angelJudge(light_blob_i, light_blob_j) << endl;
-//    cout << boxAngleJudge(light_blob_i, light_blob_j) << endl;
-//    cout << CuoWeiDuJudge(light_blob_i, light_blob_j) << endl;
-//    cout << "=============" << endl;
     return light_blob_i.blob_color == enemy_color &&
            light_blob_j.blob_color == enemy_color &&
            lengthRatioJudge(light_blob_i, light_blob_j) &&
            lengthJudge(light_blob_i, light_blob_j) &&
-           //           heightJudge(light_blob_i, light_blob_j) &&
+//           heightJudge(light_blob_i, light_blob_j) &&
            angelJudge(light_blob_i, light_blob_j) &&
            boxAngleJudge(light_blob_i, light_blob_j) &&
            CuoWeiDuJudge(light_blob_i, light_blob_j);

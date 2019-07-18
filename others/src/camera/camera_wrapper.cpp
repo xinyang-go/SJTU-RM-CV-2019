@@ -78,10 +78,12 @@ bool CameraWrapper::init() {
     CameraSetAeState(h_camera, false);
     CameraSetExposureTime(h_camera, CAMERA_EXPOSURE*1000);
     CameraSetAnalogGain(h_camera, ARMOR_CAMERA_GAIN);
+    CameraSetWbMode(h_camera, false);
     if(mode == 0){
         CameraSetGain(h_camera, CAMERA_BLUE_GAIN, CAMERA_GREEN_GAIN, CAMERA_RED_GAIN);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
     }
+    CameraSetOnceWB(h_camera);
 #endif
 	double t;
 	CameraGetExposureTime(h_camera, &t);

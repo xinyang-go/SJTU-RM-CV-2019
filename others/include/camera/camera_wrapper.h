@@ -48,6 +48,7 @@ public:
     bool readRaw(cv::Mat& src);
     bool readProcessed(cv::Mat& src);
     bool changeBrightness(int brightness);
+//    bool once
 };
 
 
