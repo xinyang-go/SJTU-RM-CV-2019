@@ -168,8 +168,8 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
 //    cout << cur_contour_area / cur_size.area() << endl;
     if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN
         || cur_contour_area / cur_size.area() > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX) {
-        if(cur_contour_area>1600)
-            cout<<"size ratio: "<<cur_contour_area / cur_size.area()<<endl;
+//        if(cur_contour_area>1900)
+//            cout<<"size ratio: "<<cur_contour_area / cur_size.area()<<endl;
         return false;
     }
     //    轮廓对矩形的面积占有率不合适

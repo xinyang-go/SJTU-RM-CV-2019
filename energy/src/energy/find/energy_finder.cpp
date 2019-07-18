@@ -172,11 +172,23 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
     FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
 //    imshow("flow strip fan struct", src_bin);
 
+//    vector<vector<Point>> contours;
+//    findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+//    for (auto &flow_strip_fan_contour : flow_strip_fan_contours) {
+//        if(contourArea(flow_strip_fan_contour)>1800&&contourArea(flow_strip_fan_contour)<2300)
+//            contours.push_back(flow_strip_fan_contour);
+////        cout<<contourArea(flow_strip_fan_contour)<<endl;
+//    }
+//    Mat draw(src.size(),CV_8UC3,Scalar(0,0,0));
+//    drawContours(draw,contours,-1,Scalar(255,255,255),1);
+//    imshow("draw",draw);
+//    waitKey();
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     for (auto &flow_strip_fan_contour : flow_strip_fan_contours) {
         if (!isValidFlowStripFanContour(src_bin, flow_strip_fan_contour)) {
             continue;
         }
+//        cout<<contourArea(flow_strip_fan_contour)<<endl;
         flow_strip_fan = cv::minAreaRect(flow_strip_fan_contour);
 
 //        RotatedRect cur_rect = minAreaRect(flow_strip_fan_contour);
