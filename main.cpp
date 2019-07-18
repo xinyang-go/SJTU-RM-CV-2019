@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
                             armorFinder.run(gimbal_src);
                     });
                 }
-                cv::waitKey(20);
+                cv::waitKey(1);
             });
         } while (ok);
         delete video_gimbal;
