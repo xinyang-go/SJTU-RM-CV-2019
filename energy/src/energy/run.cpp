@@ -101,9 +101,11 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showCenterR("R", gimbal_src);
     changeTarget();
     getTargetPolarAngle();
+//    cout << circle_center_point<< endl;
+
 //    judgeMode();
 //    if (energy_mode_init)return;
-    if (!getOrigin())return;
+//    if (!getOrigin())return;
     if (energy_rotation_init) {
         initRotation();
         return;
@@ -112,9 +114,8 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (is_predicting) {
         getPredictPoint(target_point);
         getAimPoint(predict_point);
-        cout << yaw_rotation << '\t' << pitch_rotation << endl;
+//        cout << yaw_rotation << '\t' << pitch_rotation << endl;
         judgeShootInGimbal();
-
         sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
     } else if (is_guessing && stayGuessing()) {
         findFans(gimbal_src);
@@ -127,21 +128,21 @@ void Energy::runBig(cv::Mat &gimbal_src) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 5);
     }
 
-//    if (is_predicting) {
-//        getPredictPoint(target_point);
-//        gimbalRotation();
-//        judgeShootInWorld();
-//        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-//    } else if (is_guessing && stayGuessing()) {
-//        findFans(gimbal_src);
-//        if (show_energy)showFans("fans", gimbal_src);
-//        if (save_mark)writeDownMark();
-//        guessTarget();
-//        if (show_energy)showGuessTarget("guess", gimbal_src);
-//        getPredictPoint(guess_point);
-//        gimbalRotation();
-//        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-//    }
+    if (is_predicting) {
+        getPredictPoint(target_point);
+        gimbalRotation();
+        judgeShootInWorld();
+        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
+    } else if (is_guessing && stayGuessing()) {
+        findFans(gimbal_src);
+        if (show_energy)showFans("fans", gimbal_src);
+        if (save_mark)writeDownMark();
+        guessTarget();
+        if (show_energy)showGuessTarget("guess", gimbal_src);
+        getPredictPoint(guess_point);
+        gimbalRotation();
+        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
+    }
 
 }
 

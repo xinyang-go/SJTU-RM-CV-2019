@@ -13,8 +13,8 @@ using namespace cv;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::getAimPoint(cv::Point target_point) {
 //五号车
-    double dx = -(target_point.x - 320 - 10);
-    double dy = -(target_point.y - 240 - 22);
+    double dx = -(target_point.x - 320 - 3);
+    double dy = -(target_point.y - 240 - 74);
 //四号车
 //    double dx = -(target_point.x - 320 + 16);
 //    double dy = -(target_point.y - 240 - 82);

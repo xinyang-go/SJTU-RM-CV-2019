@@ -228,7 +228,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length / width > 4 && width > 7 && width<30) {
+//        if (length / width > 2.5 && width > 7 && width<40) {
 //            cout << cur_rect.center << endl;
 //            flow_strip = cv::minAreaRect(flow_strip_contour);
 //            cout << "flow strip area: " << length << '\t' << width << endl;
@@ -252,7 +252,7 @@ bool Energy::findCenterROI(const cv::Mat src) {
     vector<Point2f> mask_rect;
     target_armor.points(vertices);   //计算矩形的4个顶点
     for (int i = 0; i < 4; i++)
-        line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 15);
+        line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
 //    imshow("fill", src_mask);
     if (!findFlowStrip(src_mask))return false;
     float length = target_armor.size.height > target_armor.size.width ?

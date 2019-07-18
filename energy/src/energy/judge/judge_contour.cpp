@@ -204,6 +204,7 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
         length > energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX ||
         width > energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX) {
 //        cout<<"length width fail."<<endl;
+//        cout << "length: " << length << '\t' << "width: " << width << endl;
         return false;
         //矩形边长不合适
     }

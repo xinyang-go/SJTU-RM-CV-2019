@@ -125,15 +125,15 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MAX = 100000;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MIN = 0;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 40;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 65;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 8;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 20;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 45;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 70;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 12;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 24;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 12;
 //    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 4;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 2.7;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.5;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 117;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 2.5;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.6;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 100;
 
     gimbal_energy_part_param_.TWIN_ANGEL_MAX = 10;
     gimbal_energy_part_param_.TARGET_INTERSETION_CONTOUR_AREA_MIN = 40;
@@ -229,11 +229,11 @@ void Energy::initRotation() {
         else if (target_polar_angle > last_target_polar_angle) anticlockwise_rotation_init_cnt++;
     }
     //由于刚开始圆心判断不准，角度变化可能计算有误，因此需要在角度正向或逆向变化足够大时才可确定是否为顺逆时针
-    if (clockwise_rotation_init_cnt == 30) {
+    if (clockwise_rotation_init_cnt == 15) {
         energy_rotation_direction = CLOCKWISE;//顺时针变化30次，确定为顺时针
         cout << "rotation: " << energy_rotation_direction << endl;
         energy_rotation_init = false;
-    } else if (anticlockwise_rotation_init_cnt == 30) {
+    } else if (anticlockwise_rotation_init_cnt == 15) {
         energy_rotation_direction = ANTICLOCKWISE;//逆时针变化30次，确定为顺时针
         cout << "rotation: " << energy_rotation_direction << endl;
         energy_rotation_init = false;
