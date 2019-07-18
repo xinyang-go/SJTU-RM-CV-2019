@@ -64,10 +64,10 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-//            video_gimbal = new VideoWrapper("/home/sjturm/Desktop/videos/147.avi");
-//            video_chassis = new VideoWrapper("/home/sjturm/Desktop/videos/147.avi");
-            video_gimbal = new VideoWrapper("/home/sjturm/Desktop/dafu/gimble3.avi");
-            video_chassis = new VideoWrapper("/home/sjturm/Desktop/dafu/chassis3.avi");
+            video_gimbal = new VideoWrapper("/home/sjturm/Desktop/videos/gimbal84.avi");
+            video_chassis = new VideoWrapper("/home/sjturm/Desktop/videos/gimbal84.avi");
+//            video_gimbal = new VideoWrapper("/home/sjturm/Desktop/dafu/gimble3.avi");
+//            video_chassis = new VideoWrapper("/home/sjturm/Desktop/dafu/chassis3.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
                     if (!from_camera) extract(gimbal_src, chassis_src);
                     if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-                    energy.run(gimbal_src, chassis_src);
-//                    energy.run(gimbal_src);
+//                    energy.run(gimbal_src, chassis_src);
+                    energy.run(gimbal_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else {                                         // 自瞄模式
                     if (last_state != ARMOR_STATE) {
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
                             armorFinder.run(gimbal_src);
                     });
                 }
-                cv::waitKey(1);
+                cv::waitKey(20);
             });
         } while (ok);
         delete video_gimbal;

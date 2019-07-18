@@ -173,7 +173,6 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
 //    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
-
     for (auto &flow_strip_fan_contour : flow_strip_fan_contours) {
         if (!isValidFlowStripFanContour(src_bin, flow_strip_fan_contour)) {
             continue;
@@ -198,6 +197,7 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
     }
 //    showFlowStripFan("strip fan", src_bin);
     cout << "flow strip fan false!" << endl;
+//    waitKey();
     return false;
 }
 
@@ -222,6 +222,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
         if (!isValidFlowStripContour(flow_strip_contour)) {
             continue;
         }
+//        cout<<"size: "<<contourArea(flow_strip_contour)<<endl;
         flow_strip = cv::minAreaRect(flow_strip_contour);
 //        RotatedRect cur_rect = minAreaRect(flow_strip_contour);
 //        Size2f cur_size = cur_rect.size;
@@ -234,8 +235,8 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        }
         return true;
     }
-//    waitKey();
     cout << "flow strip false!" << endl;
+//    waitKey();
     return false;
 
 }
