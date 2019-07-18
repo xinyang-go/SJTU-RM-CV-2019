@@ -29,7 +29,7 @@ void Energy::judgeShootInWorld(){
 // 此函数用于判断云台坐标系下是否可以发弹
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::judgeShootInGimbal(){
-    if (abs(yaw_rotation) < 0.3 && fabs(pitch_rotation) < 0.3) {
+    if (abs(yaw_rotation) < 0.5 && fabs(pitch_rotation) < 0.5) {
         shoot = 4;
         is_predicting = false;
         is_guessing = true;
@@ -43,6 +43,6 @@ void Energy::judgeShootInGimbal(){
     static float sum_pitch = 0;
     sum_yaw += yaw_rotation;
     sum_pitch += pitch_rotation;
-    yaw_rotation = 2.5 * yaw_rotation + 0.1 * sum_yaw;
-    pitch_rotation = 2.5 * pitch_rotation + 0.1 * sum_pitch;
+    yaw_rotation = 6 * yaw_rotation + 0.1 * sum_yaw;
+    pitch_rotation = 6 * pitch_rotation + 0.1 * sum_pitch;
 }

@@ -37,8 +37,9 @@ void uartReceive(Serial *pSerial) {
         pSerial->ReadData((uint8_t *) buffer, sizeof(mcuData)+1);
         if (buffer[sizeof(mcuData)] == '\n') {
             memcpy(&mcuData, buffer, sizeof(mcuData));
-            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
-//            LOGM("Get yaw: %f, pitch: %f!", mcuData.curr_yaw, mcuData.curr_pitch);
+//            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
+//            LOGM("Get yaw: %f, pitch: %f!ake
+//            ", mcuData.curr_yaw, mcuData.curr_pitch);
 //            static int t = time(nullptr);
 //            static int cnt = 0;
 //            if(time(nullptr) > t){

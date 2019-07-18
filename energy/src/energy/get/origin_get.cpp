@@ -17,8 +17,8 @@ bool Energy::getOrigin() {
 //        double dx = -(circle_center_point.x - 320 - 10);
 //        double dy = -(circle_center_point.y - 240 - 22);
 //四号车
-        double dx = -(circle_center_point.x - 320 - 3);
-        double dy = -(circle_center_point.y - 240 - 74);
+        double dx = -(circle_center_point.x - 320 - 7);
+        double dy = -(circle_center_point.y - 240 - 64);
         center_delta_yaw = static_cast<float>(atan(dx / FOCUS_PIXAL) * 180 / PI);
         center_delta_pitch = static_cast<float>(atan(dy / FOCUS_PIXAL) * 180 / PI);
         if (abs(center_delta_yaw) > 0.3 || abs(center_delta_pitch) > 0.3) {
