@@ -3,6 +3,7 @@
 //
 
 #include <armor_finder/armor_finder.h>
+#include <options/options.h>
 #include <opencv2/highgui.hpp>
 
 static double lw_rate(const cv::RotatedRect &rect) {
@@ -124,7 +125,7 @@ bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
     cv::threshold(color_channel, src_bin, 170, 255, CV_THRESH_BINARY); // 二值化对应通道
     imagePreProcess(src_bin);                                  // 开闭运算
 
-    if(src_bin.size() == cv::Size(640, 480))
+    if(src_bin.size() == cv::Size(640, 480) && show_light_blobs)
         imshow("bin", src_bin);
 
     std::vector<std::vector<cv::Point> > light_contours;
