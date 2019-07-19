@@ -83,7 +83,7 @@ bool CameraWrapper::init() {
         CameraSetGain(h_camera, CAMERA_BLUE_GAIN, CAMERA_GREEN_GAIN, CAMERA_RED_GAIN);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
     }
-    CameraSetOnceWB(h_camera);
+//    CameraSetOnceWB(h_camera);
 #endif
 	double t;
 	CameraGetExposureTime(h_camera, &t);

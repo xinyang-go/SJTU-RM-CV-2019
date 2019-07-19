@@ -35,6 +35,7 @@ static bool sendTarget(Serial &serial, double x, double y, double z) {
 }
 
 bool ArmorFinder::sendBoxPosition() {
+    if(armor_box.rect == cv::Rect2d()) return false;
     auto rect = armor_box.rect;
     double dx = rect.x + rect.width / 2 - 320;
     double dy = rect.y + rect.height / 2 - 240 - 20;
