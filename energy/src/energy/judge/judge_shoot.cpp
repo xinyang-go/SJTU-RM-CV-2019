@@ -4,6 +4,7 @@
 
 #include "energy/energy.h"
 #include "log.h"
+#include "config/setconfig.h"
 
 using namespace std;
 using namespace cv;
@@ -43,6 +44,8 @@ void Energy::judgeShootInGimbal(){
     static float sum_pitch = 0;
     sum_yaw += yaw_rotation;
     sum_pitch += pitch_rotation;
-    yaw_rotation = 6 * yaw_rotation + 0.1 * sum_yaw;
-    pitch_rotation = 6 * pitch_rotation + 0.1 * sum_pitch;
+#ifndef AIM_KP  AIM_KI
+    yaw_rotation = AIM_KP * yaw_rotation +  AIM_KI * sum_yaw;
+    pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
+#endif
 }
