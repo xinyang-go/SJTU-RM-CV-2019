@@ -133,7 +133,7 @@ bool Energy::findCenterR(const cv::Mat src) {
         circle_center_point = centerR.center;
         circle_center_point.y += target_length / 7.5;//实际最小二乘得到的中心在R的下方
 
-//        RotatedRect cur_rect = minAreaRect(center_R_contour);
+        RotatedRect cur_rect = minAreaRect(center_R_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
@@ -148,10 +148,11 @@ bool Energy::findCenterR(const cv::Mat src) {
 //            cout << "R intersection: " << contourArea(intersection) << endl;
 //            return true;
 //        }
-
+//        cout << cur_rect.center << endl;
         return true;
     }
     cout << "find center R false!" << endl;
+//    cv::waitKey(0);
     return false;
 
 }
@@ -160,7 +161,7 @@ bool Energy::findCenterR(const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于判断找到的矩形候选区是否为含流动条的扇叶
 // ---------------------------------------------------------------------------------------------------------------------
-bool Energy:: findFlowStripFan(const cv::Mat src) {
+bool Energy::findFlowStripFan(const cv::Mat src) {
     if (src.empty())return false;
     static Mat src_bin;
     static Mat src_copy;
@@ -171,7 +172,7 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
     FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("flow strip fan struct", src_bin);
+    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -194,11 +195,12 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
 //            cout << "non zero: " << non_zero_rate << endl;
 //            cout<<cur_contour_area / cur_size.area()<<endl;
 //        }
-
+//        cout << cur_rect.center << endl;
         return true;
     }
 //    showFlowStripFan("strip fan", src_bin);
     cout << "flow strip fan false!" << endl;
+//    waitKey(0);
     return false;
 }
 
@@ -233,9 +235,11 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //            flow_strip = cv::minAreaRect(flow_strip_contour);
 //            cout << "flow strip area: " << length << '\t' << width << endl;
 //        }
+//        cout << cur_rect.center << endl;
         return true;
     }
     cout << "flow strip false!" << endl;
+//    waitKey(0);
     return false;
 
 }

@@ -125,7 +125,7 @@ void Energy::FlowStripStruct(cv::Mat &src) {
 // 此函数对图像进行腐蚀与膨胀操作
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::CenterRStruct(cv::Mat &src) {
-    Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(8, 6));
+    Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(4, 4));
     Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(2, 1));
     Mat element_dilate_2 = getStructuringElement(MORPH_RECT, Size(3, 3));
     Mat element_erode_2 = getStructuringElement(MORPH_RECT, Size(4 , 4));
@@ -134,8 +134,8 @@ void Energy::CenterRStruct(cv::Mat &src) {
 //    imshow("erode_1", src);
     dilate(src, src, element_dilate_1);
 //    imshow("dilate_1", src);
-    dilate(src, src, element_dilate_2);
+//    dilate(src, src, element_dilate_2);
 //    imshow("dilate_2", src);
-    erode(src,src, element_erode_2);
+//    erode(src,src, element_erode_2);
 //    imshow("erode_2", src);
 }

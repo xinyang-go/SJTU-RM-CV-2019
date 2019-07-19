@@ -27,6 +27,7 @@ bool Energy::isValidFanContour(cv::Mat &src, const vector<cv::Point> &fan_contou
     if (length < energy_part_param_.FAN_CONTOUR_LENGTH_MIN || width < energy_part_param_.FAN_CONTOUR_WIDTH_MIN ||
         length > energy_part_param_.FAN_CONTOUR_LENGTH_MAX || width > energy_part_param_.FAN_CONTOUR_WIDTH_MAX) {
         //cout<<"length width fail."<<endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
         return false;
         //矩形边长不合适
     }
@@ -34,12 +35,14 @@ bool Energy::isValidFanContour(cv::Mat &src, const vector<cv::Point> &fan_contou
     if (length_width_ratio > energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN) {
         //cout<<"length width ratio fail."<<endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
         return false;
         //长宽比不合适
     }
 //    cout << cur_contour_area / cur_size.area() << endl;
     if (cur_contour_area / cur_size.area() < energy_part_param_.FAN_CONTOUR_AREA_RATIO_MIN) {
 //        cout << cur_contour_area / cur_size.area() << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;//轮廓对矩形的面积占有率不合适
     }
     double non_zero_rate = nonZeroRateOfRotateRect(src, cur_rect);
@@ -71,6 +74,7 @@ bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
     if (length < energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN || width < energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN ||
         length > energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX || width > energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX) {
         //cout<<"length width fail."<<endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
         return false;
         //矩形边长不合适
     }
@@ -79,11 +83,14 @@ bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
     if (length_width_ratio > energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN) {
         //cout<<"length width ratio fail."<<endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
         return false;
         //长宽比不合适
     }
-    if (cur_contour_area / cur_size.area() < energy_part_param_.ARMOR_CONTOUR_AREA_RATIO_MIN)
+    if (cur_contour_area / cur_size.area() < energy_part_param_.ARMOR_CONTOUR_AREA_RATIO_MIN) {
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;//轮廓对矩形的面积占有率不合适
+    }
     return true;
 }
 
@@ -108,6 +115,7 @@ bool Energy::isValidCenterRContour(const vector<cv::Point> &center_R_contour) {
         || length > energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX ||
         width > energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX) {
         //cout<<"length width fail."<<endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
         return false;
         //矩形边长不合适
     }
@@ -115,16 +123,19 @@ bool Energy::isValidCenterRContour(const vector<cv::Point> &center_R_contour) {
     if (length_width_ratio > energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN) {
         //cout<<"length width ratio fail."<<endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
         return false;
         //长宽比不合适
     }
-    if (cur_contour_area / cur_size.area() < energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN)
+    if (cur_contour_area / cur_size.area() < energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN) {
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;//轮廓对矩形的面积占有率不合适
+    }
     std::vector<cv::Point2f> intersection;
     if (rotatedRectangleIntersection(cur_rect, center_ROI, intersection) == 0) {
         return false;
     } else if (contourArea(intersection) < energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN) {
-        cout << "R intersection: " << contourArea(intersection) << endl;
+//        cout << "R intersection: " << contourArea(intersection) << '\t' << cur_rect.center << endl;
         return false;
     }
     return true;
@@ -138,8 +149,8 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
     double cur_contour_area = contourArea(flow_strip_fan_contour);
     if (cur_contour_area > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MAX ||
         cur_contour_area < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MIN) {
-        //cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
         //cout<<"area fail."<<endl;
+//        cout << "area: " << cur_contour_area << '\t' << endl;
         return false;
         //选区面积大小不合适
     }
@@ -153,7 +164,7 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
         || length > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX
         || width > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX) {
 //        cout<<"length width fail."<<endl;
-//        cout << "length: " << length << '\t' << "width: " << width << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
         return false;
         //矩形边长不合适
     }
@@ -161,13 +172,14 @@ bool Energy::isValidFlowStripFanContour(cv::Mat &src, const vector<cv::Point> &f
     if (length_width_ratio > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN) {
         //cout<<"length width ratio fail."<<endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
         return false;
         //长宽比不合适
     }
 //    cout << cur_contour_area / cur_size.area() << endl;
     if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN
         || cur_contour_area / cur_size.area() > energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX) {
-//        cout << "rate: " << cur_contour_area / cur_size.area() << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;
     }
     //    轮廓对矩形的面积占有率不合适
@@ -204,7 +216,7 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
         length > energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX ||
         width > energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX) {
 //        cout<<"length width fail."<<endl;
-//        cout << "length: " << length << '\t' << "width: " << width << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
         return false;
         //矩形边长不合适
     }
@@ -213,14 +225,19 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
     if (length_width_ratio > energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN) {
 //        cout<<"hw fail."<<endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
         return false;
         //长宽比不合适
     }
-    if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN)
+    if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN) {
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;//轮廓对矩形的面积占有率不合适
+    }
     std::vector<cv::Point2f> intersection;
-    if (rotatedRectangleIntersection(cur_rect, flow_strip_fan, intersection) == 0 ||
-        contourArea(intersection) < energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
+    if (rotatedRectangleIntersection(cur_rect, flow_strip_fan, intersection) == 0) {
+        return false;
+    } else if (contourArea(intersection) < energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
+//        cout << "intersection: " << contourArea(intersection) << '\t' << cur_rect.center << endl;
         return false;
     }
     return true;
