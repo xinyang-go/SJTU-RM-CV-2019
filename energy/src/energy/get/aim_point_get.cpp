@@ -16,9 +16,9 @@ void Energy::getAimPoint(cv::Point target_point) {
 //    double dx = -(target_point.x - 320 - 10);
 //    double dy = -(target_point.y - 240 - 22);
 //四号车
-    double dx = -(target_point.x - 320 - 0);
-    double dy = -(target_point.y - 240 - 69);
+    double dx = -(target_point.x - 320 - 5);
+    double dy = -(target_point.y - 240 - 74);
     yaw_rotation = atan(dx / FOCUS_PIXAL) * 180 / PI;
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
-    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
+//    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
 }

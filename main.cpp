@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(0/*, "armor"*/);
             video_chassis = new CameraWrapper(1/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/gimbal106.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/gimbal106.avi");
+            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/gimbal132.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/gimbal132.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -110,7 +110,8 @@ int main(int argc, char *argv[]) {
                     if (!from_camera) extract(gimbal_src, chassis_src);
                     if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                     if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-                    energy.runBig(gimbal_src, chassis_src);
+//                    energy.runBig(gimbal_src, chassis_src);
+                    energy.runBig(gimbal_src);
                     last_state = mcuData.state;//更新上一帧状态
                 } else if (mcuData.state == SMALL_ENERGY_STATE) {
                     if (mcuData.state != SMALL_ENERGY_STATE) {

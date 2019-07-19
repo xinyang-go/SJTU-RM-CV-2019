@@ -101,16 +101,18 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showCenterR("R", gimbal_src);
     changeTarget();
     getTargetPolarAngle();
+//    cout<<circle_center_point<<endl;
 //    cout << target_point << '\t' << target_polar_angle << endl;
 //    cout << circle_center_point<< endl;
 
 //    judgeMode();
 //    if (energy_mode_init)return;
-    if (!getOrigin())return;
+//    if (!getOrigin())return;
     if (energy_rotation_init) {
         initRotation();
         return;
     }
+
 
     if (is_predicting) {
         getPredictPoint(target_point);
@@ -144,7 +146,11 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     if (show_energy)showArmors("armor", gimbal_src);
     if (!findFlowStripFan(gimbal_src))return;
     if (!findTargetInFlowStripFan()) return;
-    if (show_energy)showFlowStripFan("strip", gimbal_src);
+//
+//    if (!findCenterROI(gimbal_src))return;
+//    if (show_energy)showFlowStripFan("strip", gimbal_src);
+//    if (!findCenterR(gimbal_src))return;
+//    if (show_energy)showCenterR("R", gimbal_src);
 
     changeTarget();
 //    cout << "target point: " << target_point << endl;
