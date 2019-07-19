@@ -44,8 +44,12 @@ void Energy::judgeShootInGimbal(){
     static float sum_pitch = 0;
     sum_yaw += yaw_rotation;
     sum_pitch += pitch_rotation;
-#ifndef AIM_KP  AIM_KI
-    yaw_rotation = AIM_KP * yaw_rotation +  AIM_KI * sum_yaw;
-    pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
+#ifndef AIM_KP
+    yaw_rotation = AIM_KP * yaw_rotation;
+    pitch_rotation = AIM_KP * pitch_rotation;
+#endif
+#ifndef AIM_KI
+    yaw_rotation = yaw_rotation +  AIM_KI * sum_yaw;
+    pitch_rotation = pitch_rotation * pitch_rotation + AIM_KI * sum_pitch;
 #endif
 }
