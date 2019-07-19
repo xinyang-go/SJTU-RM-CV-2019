@@ -108,7 +108,7 @@ private:
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
     const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
     ArmorBox::BoxOrientation last_orient;               // 上一帧目标装甲板方向，用于反陀螺
-    timeval last_switch_time;                           // 上一次发生装甲板方向切换的时间
+    timeval last_front_time;                           // 上一次发生装甲板方向切换的时间
     int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
     AntiTopState anti_top_state;                        // 当前是否识别到陀螺
 
@@ -123,7 +123,7 @@ private:
 
 public:
     void run(cv::Mat &src);                             // 自瞄主函数
-    bool sendBoxPosition();                             // 和主控板通讯
+    bool sendBoxPosition(bool shoot);                             // 和主控板通讯
 };
 
 #endif /* _ARMOR_FINDER_H_ */
