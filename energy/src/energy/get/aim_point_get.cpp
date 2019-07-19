@@ -13,11 +13,12 @@ using namespace cv;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::getAimPoint(cv::Point target_point) {
 //五号车
-    double dx = -(target_point.x - 320 - 3);
-    double dy = -(target_point.y - 240 - 74);
+//    double dx = -(target_point.x - 320 - 10);
+//    double dy = -(target_point.y - 240 - 22);
 //四号车
-//    double dx = -(target_point.x - 320 + 16);
-//    double dy = -(target_point.y - 240 - 82);
+    double dx = -(target_point.x - 320 - 0);
+    double dy = -(target_point.y - 240 - 69);
     yaw_rotation = atan(dx / FOCUS_PIXAL) * 180 / PI;
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
+    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
 }
