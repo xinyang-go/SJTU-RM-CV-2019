@@ -4,11 +4,11 @@
 
 #include <armor_finder/armor_finder.h>
 
-static bool sendTarget(Serial &serial, double x, double y, double z) {
+static bool sendTarget(Serial &serial, double x, double y, double z, uint8_t shoot) {
     static short x_tmp, y_tmp, z_tmp;
     static time_t last_time = time(nullptr);
     static int fps;
-    uint8_t buff[8];
+    uint8_t buff[9];
 
     time_t t = time(nullptr);
     if (last_time != t) {
@@ -29,12 +29,13 @@ static bool sendTarget(Serial &serial, double x, double y, double z) {
     buff[4] = static_cast<char>((y_tmp >> 0) & 0xFF);
     buff[5] = static_cast<char>((z_tmp >> 8) & 0xFF);
     buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
-    buff[7] = 'e';
+    buff[7] = shoot;
+    buff[8] = 'e';
 
     return serial.WriteData(buff, sizeof(buff));
 }
 
-bool ArmorFinder::sendBoxPosition() {
+bool ArmorFinder::sendBoxPosition(bool shoot) {
     if(armor_box.rect == cv::Rect2d()) return false;
     auto rect = armor_box.rect;
     double dx = rect.x + rect.width / 2 - 320;
@@ -43,5 +44,5 @@ bool ArmorFinder::sendBoxPosition() {
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / PI;
     double dist = DISTANCE_HEIGHT / rect.height;
 //    cout << yaw << endl;
-    return sendTarget(serial, yaw, -pitch, dist);
+    return sendTarget(serial, yaw, -pitch, dist, shoot);
 }

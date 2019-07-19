@@ -123,7 +123,7 @@ private:
 
 public:
     void run(cv::Mat &src);                             // 自瞄主函数
-    bool sendBoxPosition();                             // 和主控板通讯
+    bool sendBoxPosition(bool shoot);                             // 和主控板通讯
 };
 
 #endif /* _ARMOR_FINDER_H_ */
