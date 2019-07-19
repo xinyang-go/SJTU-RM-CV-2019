@@ -31,7 +31,7 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (!findCenterR(gimbal_src))return;
         if (show_energy)showCenterR("R", gimbal_src);
 
-        if (!getOrigin())return;
+//        if (!getOrigin())return;
         startChassis();
         initEnergy();
         destroyAllWindows();
@@ -60,21 +60,21 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
             initRotation();
             return;
         }
-        if (is_predicting) {
-            getPredictPoint(target_point);
-            gimbalRotation();
-            judgeShootInWorld();
-            sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-        } else if (is_guessing && stayGuessing()) {
-            findFans(chassis_src);
-            if (show_energy)showFans("fans", chassis_src);
-            if (save_mark)writeDownMark();
-            if (!guessTarget()) return;
-            if (show_energy)showGuessTarget("guess", chassis_src);
-            getPredictPoint(guess_point);
-            gimbalRotation();
-            sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-        }
+//        if (is_predicting) {
+//            getPredictPoint(target_point);
+//            gimbalRotation();
+//            judgeShootInWorld();
+//            sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
+//        } else if (is_guessing && stayGuessing()) {
+//            findFans(chassis_src);
+//            if (show_energy)showFans("fans", chassis_src);
+//            if (save_mark)writeDownMark();
+//            if (!guessTarget()) return;
+//            if (show_energy)showGuessTarget("guess", chassis_src);
+//            getPredictPoint(guess_point);
+//            gimbalRotation();
+//            sendTarget(serial, yaw_rotation, pitch_rotation, 5);
+//        }
     }
 }
 
@@ -101,11 +101,12 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showCenterR("R", gimbal_src);
     changeTarget();
     getTargetPolarAngle();
+//    cout << target_point << '\t' << target_polar_angle << endl;
 //    cout << circle_center_point<< endl;
 
 //    judgeMode();
 //    if (energy_mode_init)return;
-//    if (!getOrigin())return;
+    if (!getOrigin())return;
     if (energy_rotation_init) {
         initRotation();
         return;
@@ -127,23 +128,6 @@ void Energy::runBig(cv::Mat &gimbal_src) {
         getAimPoint(predict_point);
         sendTarget(serial, yaw_rotation, pitch_rotation, 5);
     }
-
-    if (is_predicting) {
-        getPredictPoint(target_point);
-        gimbalRotation();
-        judgeShootInWorld();
-        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-    } else if (is_guessing && stayGuessing()) {
-        findFans(gimbal_src);
-        if (show_energy)showFans("fans", gimbal_src);
-        if (save_mark)writeDownMark();
-        guessTarget();
-        if (show_energy)showGuessTarget("guess", gimbal_src);
-        getPredictPoint(guess_point);
-        gimbalRotation();
-        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-    }
-
 }
 
 
@@ -163,7 +147,7 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     if (show_energy)showFlowStripFan("strip", gimbal_src);
 
     changeTarget();
-    cout << "target point: " << target_point << endl;
+//    cout << "target point: " << target_point << endl;
 
     if (is_predicting) {
         getAimPoint(target_point);
