@@ -70,7 +70,7 @@ ArmorBox::BoxOrientation ArmorBox::getOrientation() const{
         case B3:
         case B4:
         case B5:
-            if (lengthDistanceRatio() < 0.45) {
+            if (lengthDistanceRatio() < 0.46) {
                 return FRONT;
             }else{
                 return SIDE;

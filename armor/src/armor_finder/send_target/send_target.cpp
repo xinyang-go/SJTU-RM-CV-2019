@@ -3,6 +3,7 @@
 //
 
 #include <armor_finder/armor_finder.h>
+#include<log.h>
 
 static bool sendTarget(Serial &serial, double x, double y, double z, uint8_t shoot) {
     static short x_tmp, y_tmp, z_tmp;
@@ -35,7 +36,7 @@ static bool sendTarget(Serial &serial, double x, double y, double z, uint8_t sho
     return serial.WriteData(buff, sizeof(buff));
 }
 
-bool ArmorFinder::sendBoxPosition(bool shoot) {
+bool ArmorFinder::sendBoxPosition(uint8_t shoot, bool isTrack) {
     if(armor_box.rect == cv::Rect2d()) return false;
     auto rect = armor_box.rect;
     double dx = rect.x + rect.width / 2 - 320;
@@ -44,5 +45,15 @@ bool ArmorFinder::sendBoxPosition(bool shoot) {
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / PI;
     double dist = DISTANCE_HEIGHT / rect.height;
 //    cout << yaw << endl;
-    return sendTarget(serial, yaw, -pitch, dist, shoot);
+    if(isTrack){
+        if(shoot){
+            LOGM(STR_CTR(WORD_RED,"Shoot!!!"));
+        }
+        return sendTarget(serial, yaw, -pitch, dist, shoot);
+        LOGM(STR_CTR(WORD_RED,"Shoot!!!"));
+        return sendTarget(serial, 0, -0, dist, 1);
+    }else if(shoot){
+        LOGM(STR_CTR(WORD_RED,"Shoot!!!"));
+        return sendTarget(serial, 0, 0, 4, 1);
+    }
 }
