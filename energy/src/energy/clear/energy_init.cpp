@@ -47,6 +47,8 @@ void Energy::initEnergy() {
     yaw_rotation = 0;
     pitch_rotation = 0;
     shoot = 0;
+    sum_yaw = 0;
+    sum_pitch = 0;
 
     circle_center_point = Point(0, 0);
     target_point = Point(0, 0);
