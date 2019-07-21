@@ -95,38 +95,12 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &
 //    if(box.light_blobs.size() == 2)
 //        fprintf(fp, "%lf %lf %lf\n", box.light_blobs[0].length, box.light_blobs[1].length, box.blobsDistance())
 //    cout << box.lengthDistanceRatio() << endl;
-    switch (box.id) {
-        case R1:
-        case R7:
-        case B1:
-        case B7:
-            if(box.lengthDistanceRatio() < 0.3){
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 3);
-            }else{
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-            }
-        case R2:
-        case R3:
-        case R4:
-        case R5:
-        case B2:
-        case B3:
-        case B4:
-        case B5:
-            if (box.lengthDistanceRatio() < 0.42) {
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 3);
-            }else{
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-            }
-            break;
-        default:
-            rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-    }
-//    if((id2name.at(box.id)=="B1"||id2name.at(box.id)=="B7") && box.lengthDistanceRatio() < 0.3/* && box.lengthRatio() > 0.9*/){
-//        rectangle(image2show, box.rect, Scalar(0, 255, 0), 3);
-//    }else{
-//        rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-//    };
+
+    if(box.getOrientation() == ArmorBox::FRONT){
+        rectangle(image2show, box.rect, Scalar(0, 255, 0), 3);
+    }else{
+        rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
+    };
 
     char dist[5];
     sprintf(dist, "%.1f", box.getDistance());

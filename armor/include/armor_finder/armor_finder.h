@@ -20,7 +20,7 @@
 #define BOX_RED     ENEMY_RED
 #define BOX_BLUE    ENEMY_BLUE
 
-#define DISTANCE_HEIGHT_5MM (113.0)     // 单位: m*pixel
+#define DISTANCE_HEIGHT_5MM (107.0)     // 单位: m*pixel
 #define DISTANCE_HEIGHT     DISTANCE_HEIGHT_5MM
 
 #define         B1 1
@@ -123,7 +123,7 @@ private:
 
 public:
     void run(cv::Mat &src);                             // 自瞄主函数
-    bool sendBoxPosition(uint8_t shoot, bool isTrack);                             // 和主控板通讯
+    bool sendBoxPosition(uint16_t shoot);                             // 和主控板通讯
 };
 
 #endif /* _ARMOR_FINDER_H_ */

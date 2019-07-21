@@ -23,7 +23,7 @@ static bool angelJudge(const LightBlob &light_blob_i, const LightBlob &light_blo
                     light_blob_i.rect.angle - 90;
     float angle_j = light_blob_j.rect.size.width > light_blob_j.rect.size.height ? light_blob_j.rect.angle :
                     light_blob_j.rect.angle - 90;
-    return abs(angle_i - angle_j) < 10;
+    return abs(angle_i - angle_j) < 20;
 }
 
 static bool heightJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
@@ -35,12 +35,12 @@ static bool lengthJudge(const LightBlob &light_blob_i, const LightBlob &light_bl
     double side_length;
     cv::Point2f centers = light_blob_i.rect.center - light_blob_j.rect.center;
     side_length = sqrt(centers.ddot(centers));
-    return (side_length / light_blob_i.length < 6 && side_length / light_blob_i.length > 0.5);
+    return (side_length / light_blob_i.length < 8 && side_length / light_blob_i.length > 0.5);
 }
 
 static bool lengthRatioJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
-    return (light_blob_i.length / light_blob_j.length < 2
-            && light_blob_i.length / light_blob_j.length > 0.5);
+    return (light_blob_i.length / light_blob_j.length < 2.5
+            && light_blob_i.length / light_blob_j.length > 0.4);
 }
 
 /* 判断两个灯条的错位度，不知道英文是什么！！！ */
@@ -56,7 +56,7 @@ static bool CuoWeiDuJudge(const LightBlob &light_blob_i, const LightBlob &light_
     Vector2f orientation(cos(angle), sin(angle));
     Vector2f p2p(light_blob_j.rect.center.x - light_blob_i.rect.center.x,
                  light_blob_j.rect.center.y - light_blob_i.rect.center.y);
-    return abs(orientation.dot(p2p)) < 20;
+    return abs(orientation.dot(p2p)) < 25;
 }
 
 static bool boxAngleJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {

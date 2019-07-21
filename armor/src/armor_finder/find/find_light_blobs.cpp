@@ -20,8 +20,8 @@ static double areaRatio(const std::vector<cv::Point> &contour, const cv::Rotated
 static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect) {
     return (1.5 < lw_rate(rect) && lw_rate(rect) < 10) &&
 //           (rect.size.area() < 3000) &&
-            ((rect.size.area() < 50 && areaRatio(contour, rect) > 0.5) ||
-            (rect.size.area() >= 50 && areaRatio(contour, rect) > 0.7));
+            ((rect.size.area() < 50 && areaRatio(contour, rect) > 0.4) ||
+            (rect.size.area() >= 50 && areaRatio(contour, rect) > 0.6));
 }
 
 // 此函数可以有性能优化.
@@ -114,23 +114,40 @@ static void imagePreProcess(cv::Mat &src) {
 }
 
 bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
-    cv::Mat src_bin, color_channel;
+    cv::Mat color_channel;
+    cv::Mat src_bin_light, src_bin_dim;
     std::vector<cv::Mat> channels;       // 通道拆分
 
     cv::split(src, channels);               /************************/
-    if (enemy_color == ENEMY_BLUE)          /*                      */
+    if (enemy_color == ENEMY_BLUE){         /*                      */
         color_channel = channels[0];        /* 根据目标颜色进行通道提取 */
-    else if (enemy_color == ENEMY_RED)      /*                      */
+    }else if (enemy_color == ENEMY_RED){    /*                      */
         color_channel = channels[2];        /************************/
-    cv::threshold(color_channel, src_bin, 140, 255, CV_THRESH_BINARY); // 二值化对应通道
-    imagePreProcess(src_bin);                                  // 开闭运算
+    }
 
-    if(src_bin.size() == cv::Size(640, 480) && show_light_blobs)
-        imshow("bin", src_bin);
 
-    std::vector<std::vector<cv::Point> > light_contours;
-    cv::findContours(src_bin, light_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-    for (auto &light_contour : light_contours) {
+
+    cv::threshold(color_channel, src_bin_light, 200, 255, CV_THRESH_BINARY); // 二值化对应通道
+    imagePreProcess(src_bin_light);                                  // 开闭运算
+
+    cv::threshold(color_channel, src_bin_dim, 160, 255, CV_THRESH_BINARY); // 二值化对应通道
+    imagePreProcess(src_bin_dim);                                  // 开闭运算
+
+    if(src_bin_light.size() == cv::Size(640, 480) && show_light_blobs) {
+        imshow("bin_light", src_bin_light);
+        imshow("bin_dim", src_bin_dim);
+    }
+
+    std::vector<std::vector<cv::Point> > light_contours_light, light_contours_dim;
+    cv::findContours(src_bin_light, light_contours_light, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+    cv::findContours(src_bin_dim, light_contours_dim, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+    for (auto &light_contour : light_contours_light) {
+        cv::RotatedRect rect = cv::minAreaRect(light_contour);
+        if (isValidLightBlob(light_contour, rect)) {
+            light_blobs.emplace_back(rect, get_blob_color(src, rect));
+        }
+    }
+    for (auto &light_contour : light_contours_dim) {
         cv::RotatedRect rect = cv::minAreaRect(light_contour);
         if (isValidLightBlob(light_contour, rect)) {
             light_blobs.emplace_back(rect, get_blob_color(src, rect));

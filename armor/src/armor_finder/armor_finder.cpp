@@ -46,8 +46,8 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
 }
 
 void ArmorFinder::run(cv::Mat &src) {
-//    stateSearchingTarget(src_use);                    // for debug
-//    return;
+//    stateSearchingTarget(src);                    // for debug
+//    goto end;
     switch (state) {
         case SEARCHING_STATE:
             if (stateSearchingTarget(src)) {
@@ -77,7 +77,7 @@ void ArmorFinder::run(cv::Mat &src) {
         default:
             stateStandBy();
     }
-
+end:
     antiTop();
 
     if (show_armor_box) {                 // 根据条件显示当前目标装甲板
