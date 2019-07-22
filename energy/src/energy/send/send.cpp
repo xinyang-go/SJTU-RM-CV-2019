@@ -3,6 +3,7 @@
 //
 #include "energy/energy.h"
 #include <iostream>
+#include <config/setconfig.h>
 #include "log.h"
 
 using namespace std;

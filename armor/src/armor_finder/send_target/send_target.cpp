@@ -3,7 +3,8 @@
 //
 
 #include <armor_finder/armor_finder.h>
-#include<log.h>
+#include <config/setconfig.h>
+#include <log.h>
 
 static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t shoot_delay) {
     static short x_tmp, y_tmp, z_tmp;
@@ -41,8 +42,8 @@ static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t sh
 }
 
 bool ArmorFinder::sendBoxPosition(uint16_t shoot_delay) {
-    if(armor_box.rect == cv::Rect2d()) return false;
-    if(shoot_delay){
+    if (armor_box.rect == cv::Rect2d()) return false;
+    if (shoot_delay) {
         LOGM(STR_CTR(WORD_BLUE, "shoot after %dms"), shoot_delay);
     }
     auto rect = armor_box.rect;
