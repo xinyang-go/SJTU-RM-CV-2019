@@ -96,6 +96,7 @@ bool CameraWrapper::init() {
     } else {
         gain = 50;
     }
+    CameraSetAnalogGain(h_camera, gain);
 #endif
     if (mode == 0) {
         CameraSetGain(h_camera, CAMERA_BLUE_GAIN, CAMERA_GREEN_GAIN, CAMERA_RED_GAIN);
