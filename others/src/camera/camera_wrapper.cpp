@@ -80,11 +80,13 @@ bool CameraWrapper::init() {
 #ifndef WITH_TIME_BASED_CAMERA_GAIN
     CameraSetAnalogGain(h_camera, ARMOR_CAMERA_GAIN);
 #else
-    #include <sys/time.h>
+
+#include <sys/time.h>
+
     timeval tv;
     int gain;
     gettimeofday(&tv, nullptr);
-    float hour = tv.tv_sec / 3600.0;
+    float hour = (tv.tv_sec % (3600 * 24)) / 3600.0;
     if (6 <= hour && hour < 10) {
         gain = 20;
     } else if (10 <= hour && hour < 16) {
