@@ -9,9 +9,10 @@
 #include <armor_finder/armor_finder.h>
 
 //
-void showArmorBoxVector(std::string windows_name, const cv::Mat &src, const std::vector<cv::Rect2d> &armor_box);
-void showArmorBox(std::string windows_name, const cv::Mat &src, cv::Rect2d armor_box, int boxid);
-void showContours(std::string windows_name, const cv::Mat &src, const std::vector<LightBlob> &light_blobs);
-void showArmorBoxClass(std::string window_names, const cv::Mat &src, vector<cv::Rect2d> boxes[10]);
+void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);
+void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &armor_box);
+void showLightBlobs(std::string windows_name, const cv::Mat &src, const LightBlobs &light_blobs);
+void showArmorBoxesClass(std::string window_names, const cv::Mat &src, const ArmorBoxes boxes[15]);
+void showTrackSearchingPos(std::string window_names, const cv::Mat &src, const cv::Rect2d pos);
 
 #endif /* _SHOW_IMAGES_H_ */

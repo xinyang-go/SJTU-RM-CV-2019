@@ -42,32 +42,25 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
         classifier(paras_folder),
         contour_area(0),
         use_classifier(use),
-        boxid(-1),
         tracking_cnt(0) {
 }
 
 void ArmorFinder::run(cv::Mat &src) {
-    src_raw = src;
-    cv::Mat src_use = src.clone();      // 实际参与计算的图像对象
-
-    if (show_armor_box) {                 // 根据条件显示当前目标装甲板
-        showArmorBox("box", src, armor_box, boxid);
-        cv::waitKey(1);
-    }
-//    stateSearchingTarget(src_use);                    // for debug
-//    return;
+//    stateSearchingTarget(src);                    // for debug
+//    goto end;
     switch (state) {
         case SEARCHING_STATE:
-            if (stateSearchingTarget(src_use)) {
-                if ((armor_box & cv::Rect2d(0, 0, 640, 480)) == armor_box) { // 判断装甲板区域是否脱离图像区域
+            if (stateSearchingTarget(src)) {
+//                cout << armor_box.rect << endl;
+                if ((armor_box.rect & cv::Rect2d(0, 0, 640, 480)) == armor_box.rect) { // 判断装甲板区域是否脱离图像区域
                     if (!classifier || !use_classifier) {                    /* 如果分类器不可用或者不使用分类器 */
-                        cv::Mat roi = src_use.clone()(armor_box), roi_gray;  /* 就使用装甲区域亮点数判断是否跟丢 */
+                        cv::Mat roi = src(armor_box.rect).clone(), roi_gray;  /* 就使用装甲区域亮点数判断是否跟丢 */
                         cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
                         cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
                         contour_area = cv::countNonZero(roi_gray);
                     }
                     tracker = TrackerToUse::create();                       // 成功搜寻到装甲板，创建tracker对象
-                    tracker->init(src_use, armor_box);
+                    tracker->init(src, armor_box.rect);
                     state = TRACKING_STATE;
                     tracking_cnt = 0;
                     LOGM(STR_CTR(WORD_LIGHT_CYAN, "into track"));
@@ -75,7 +68,7 @@ void ArmorFinder::run(cv::Mat &src) {
             }
             break;
         case TRACKING_STATE:
-            if (!stateTrackingTarget(src_use) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
+            if (!stateTrackingTarget(src) || ++tracking_cnt > 100) {    // 最多追踪100帧图像
                 state = SEARCHING_STATE;
                 LOGM(STR_CTR(WORD_LIGHT_YELLOW, "into search!"));
             }
@@ -83,6 +76,13 @@ void ArmorFinder::run(cv::Mat &src) {
         case STANDBY_STATE:
         default:
             stateStandBy();
+    }
+end:
+    antiTop();
+
+    if (show_armor_box) {                 // 根据条件显示当前目标装甲板
+        showArmorBox("box", src, armor_box);
+        cv::waitKey(1);
     }
 }
 

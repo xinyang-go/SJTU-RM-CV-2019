@@ -30,6 +30,18 @@
 #ifndef ENERGY_CAMERA_GAIN
     #define ENERGY_CAMERA_GAIN  (20)
 #endif
+#ifndef AIM_KP
+    #define AIM_KP (6)
+#endif
+#ifndef AIM_KI
+    #define AIM_KI (0.1)
+#endif
+#ifndef COMPENSATE_YAW
+    #define COMPENSATE_YAW (5)
+#endif
+#ifndef COMPENSATE_PITCH
+    #define COMPENSATE_PITCH (74)
+#endif
 
 //#define GIMBAL_FLIP_MODE    (-1)
 //#define CHASSIS_FLIP_MODE   (-1)

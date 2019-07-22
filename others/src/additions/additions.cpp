@@ -30,27 +30,27 @@ extern ArmorFinder armorFinder;
 extern Energy energy;
 
 void uartReceive(Serial *pSerial) {
-    char buffer[20];
-    int cnt = 0;
+    char buffer[30];
     LOGM(STR_CTR(WORD_LIGHT_WHITE, "data receive start!"));
     while (true) {
-        char byte = 0;
         memset(buffer, 0, sizeof(buffer));
-        while (pSerial->ReadData((uint8_t *) &byte, 1) && byte != '\n') {
-            buffer[cnt++] = byte;
-            if (cnt >= sizeof(buffer)) {
-//                LOGE("data receive over flow!");
-                cnt = 0;
-            }
-        }
-        if (cnt == 0 && byte == '\n') {
-//            LOGM("%d", cnt);
-        }
-        if (cnt == sizeof(mcuData)) {
+        pSerial->ReadData((uint8_t *) buffer, sizeof(mcuData)+1);
+        if (buffer[sizeof(mcuData)] == '\n') {
             memcpy(&mcuData, buffer, sizeof(mcuData));
 //            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
+//            LOGM("Get yaw: %f, pitch: %f!", mcuData.curr_yaw, mcuData.curr_pitch);
+//            static int t = time(nullptr);
+//            static int cnt = 0;
+//            if(time(nullptr) > t){
+//                t = time(nullptr);
+//                LOGM("fps:%d", cnt);
+//                cnt = 0;
+//            }else{
+//                cnt++;
+//            }
+        }else{
+//            LOGW("corrupt data!");
         }
-        cnt = 0;
     }
 }
 
@@ -76,12 +76,12 @@ cv::VideoWriter initVideoWriter(const std::string &filename_prefix) {
 bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
     if (!is_camera_0_connect) {
         delete video_gimbal;
-        video_gimbal = new CameraWrapper(0, "armor");
+        video_gimbal = new CameraWrapper(0/*, "armor"*/);
         is_camera_0_connect = video_gimbal->init();
     }
     if (!is_camera_1_connect) {
         delete video_chassis;
-        video_chassis = new CameraWrapper(1, "energy");
+        video_chassis = new CameraWrapper(1/*, "energy"*/);
         is_camera_1_connect = video_chassis->init();
     }
     return is_camera_0_connect && is_camera_1_connect;
@@ -90,7 +90,7 @@ bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
 bool checkReconnect(bool is_camera_connect) {
     if (!is_camera_connect) {
         delete video_gimbal;
-        video_gimbal = new CameraWrapper(0, "armor");
+        video_gimbal = new CameraWrapper(0/*, "armor"*/);
         is_camera_connect = video_gimbal->init();
     }
     return is_camera_connect;

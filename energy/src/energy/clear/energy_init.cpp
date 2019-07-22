@@ -21,7 +21,6 @@ void Energy::initEnergy() {
     energy_rotation_init = true;
     manual_mark = false;
     auto_mark = false;
-    shoot = false;
     start_guess = false;
     change_target = false;
 
@@ -41,14 +40,15 @@ void Energy::initEnergy() {
     last_target_polar_angle = -1000;
     guess_polar_angle = -1000;
     last_base_angle = -1000;
-    predict_rad = 20;
+    predict_rad = 25;
     attack_distance = ATTACK_DISTANCE;
     center_delta_yaw = 1000;
     center_delta_pitch = 1000;
     yaw_rotation = 0;
     pitch_rotation = 0;
-    origin_yaw = 0;
-    origin_pitch = 0;
+    shoot = 0;
+    sum_yaw = 0;
+    sum_pitch = 0;
 
     circle_center_point = Point(0, 0);
     target_point = Point(0, 0);
@@ -69,7 +69,7 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
+    gimbal_energy_part_param_.GRAY_THRESH = 140;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
 //    gimbal_energy_part_param_.GRAY_THRESH = 225;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;
@@ -81,7 +81,7 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 80;
     gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 100;
     gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 20;
-    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 50;
+    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 52;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 4;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN = 1;
     gimbal_energy_part_param_.FAN_CONTOUR_AREA_RATIO_MIN = 0.65;
@@ -107,20 +107,20 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX = 25;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN = 0.7;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN = 0.5;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN = 10;
 
-    gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MAX = 17000;
-    gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MIN = 0;
+    gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MAX = 3000;
+    gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MIN = 1000;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MIN = 60;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX = 100;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MIN = 20;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX = 52;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX = 3;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN = 1;
-    gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX = 0.62;
+    gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX = 0.65;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN = 0.34;
-    gimbal_energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MAX = 0.58;
+    gimbal_energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MAX = 0.65;
     gimbal_energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MIN = 0.34;
 //    gimbal_energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MAX = 0.2;
 //    gimbal_energy_part_param_.FLOW_STRIP_FAN_NON_ZERO_RATE_MIN = 0.08;
@@ -130,19 +130,19 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 38;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 60;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 8;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 28;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 32;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 12;
 //    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 4;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 2.3;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 1.8;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.5;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 117;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 100;
 
     gimbal_energy_part_param_.TWIN_ANGEL_MAX = 10;
     gimbal_energy_part_param_.TARGET_INTERSETION_CONTOUR_AREA_MIN = 40;
 
 
-    chassis_energy_part_param_.GRAY_THRESH = 120;//home_small
-    chassis_energy_part_param_.GRAY_THRESH = 230;//home_big
+
+    chassis_energy_part_param_.GRAY_THRESH = 120;//home
 //    chassis_energy_part_param_.GRAY_THRESH = 200;//official
 //    chassis_energy_part_param_.GRAY_THRESH = 225;
     chassis_energy_part_param_.SPLIT_GRAY_THRESH = 230;
@@ -189,7 +189,7 @@ void Energy::initEnergyPartParam() {
     chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MIN = 90;
     chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_LENGTH_MAX = 140;
     chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MIN = 35;
-    chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX = 60;
+    chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_WIDTH_MAX = 65;
     chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MAX = 3;
     chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN = 1;
     chassis_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX = 0.55;
@@ -231,11 +231,11 @@ void Energy::initRotation() {
         else if (target_polar_angle > last_target_polar_angle) anticlockwise_rotation_init_cnt++;
     }
     //由于刚开始圆心判断不准，角度变化可能计算有误，因此需要在角度正向或逆向变化足够大时才可确定是否为顺逆时针
-    if (clockwise_rotation_init_cnt == 30) {
+    if (clockwise_rotation_init_cnt == 15) {
         energy_rotation_direction = CLOCKWISE;//顺时针变化30次，确定为顺时针
         cout << "rotation: " << energy_rotation_direction << endl;
         energy_rotation_init = false;
-    } else if (anticlockwise_rotation_init_cnt == 30) {
+    } else if (anticlockwise_rotation_init_cnt == 15) {
         energy_rotation_direction = ANTICLOCKWISE;//逆时针变化30次，确定为顺时针
         cout << "rotation: " << energy_rotation_direction << endl;
         energy_rotation_init = false;

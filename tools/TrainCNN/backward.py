@@ -54,16 +54,14 @@ def save_para(folder, paras):
         save_bias(fp, paras[7])
 
 
-STEPS = 10000
-BATCH = 30
-LEARNING_RATE_BASE  = 0.005
+STEPS = 100000
+BATCH = 50
+LEARNING_RATE_BASE  = 0.001
 LEARNING_RATE_DECAY = 0.99
 MOVING_AVERAGE_DECAY = 0.99
 
 
 def train(dataset, show_bar=False):
-    test_images, test_labels = dataset.all_test_sets()
-
     x = tf.placeholder(tf.float32, [None, generate.SRC_ROWS, generate.SRC_COLS, generate.SRC_CHANNELS])
     y_= tf.placeholder(tf.float32, [None, forward.OUTPUT_NODES])
     keep_rate = tf.placeholder(tf.float32)
@@ -103,11 +101,12 @@ def train(dataset, show_bar=False):
 
             _, loss_value, step = sess.run(
                 [train_op, loss, global_step],
-                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.5}
+                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.3}
             )
 
             if i % 100 == 0:
-                if i % 1000 == 0:
+                if i % 500 == 0:
+                    test_images, test_labels = dataset.sample_test_sets(10000)
                     acc = sess.run(accuracy, feed_dict={x: test_images, y_: test_labels, keep_rate:1.0})
                 bar.set_postfix({"loss": loss_value, "acc": acc})
 
@@ -116,6 +115,9 @@ def train(dataset, show_bar=False):
         vars_val = sess.run(vars)
         save_para("/home/xinyang/Workspace/RM_auto-aim/tools/para", vars_val)
         print("save done!")
+
+        # pred = sess.run(y, feed_dict={x: test_images, keep_rate:1.0})
+
 #        nodes_val = sess.run(nodes, feed_dict={x:test_images})
 #        return vars_val, nodes_val
         DevList = mvsdk.CameraEnumerateDevice()
