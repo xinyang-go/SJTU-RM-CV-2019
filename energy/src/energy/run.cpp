@@ -31,7 +31,7 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (!findCenterR(gimbal_src))return;
         if (show_energy)showCenterR("R", gimbal_src);
 
-//        if (!getOrigin())return;
+        if (!getOrigin())return;
         startChassis();
         initEnergy();
         destroyAllWindows();
@@ -46,35 +46,22 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (findArmors(chassis_src) < 1)return;
         if (show_energy)showArmors("armor", chassis_src);
         if (!findFlowStripFan(chassis_src))return;
+        showFlowStripFan("flow strip fan", chassis_src);
         if (!findTargetInFlowStripFan()) return;
         if (!findCenterROI(chassis_src))return;
         if (show_energy)showFlowStripFan("strip", chassis_src);
         if (!findCenterR(chassis_src))return;
         if (show_energy)showCenterR("R", chassis_src);
         getTargetPolarAngle();
-
         changeTarget();
-//        judgeMode();
-//        if (energy_mode_init)return;
         if (is_big && energy_rotation_init) {
             initRotation();
             return;
         }
-//        if (is_predicting) {
-//            getPredictPoint(target_point);
-//            gimbalRotation();
-//            judgeShootInWorld();
-//            sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-//        } else if (is_guessing && stayGuessing()) {
-//            findFans(chassis_src);
-//            if (show_energy)showFans("fans", chassis_src);
-//            if (save_mark)writeDownMark();
-//            if (!guessTarget()) return;
-//            if (show_energy)showGuessTarget("guess", chassis_src);
-//            getPredictPoint(guess_point);
-//            gimbalRotation();
-//            sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-//        }
+        getPredictPoint(target_point);
+        gimbalRotation();
+        judgeShootInWorld();
+        sendTarget(serial, yaw_rotation, pitch_rotation, change_target);
     }
 }
 
@@ -101,35 +88,15 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showCenterR("R", gimbal_src);
     changeTarget();
     getTargetPolarAngle();
-//    cout<<circle_center_point<<endl;
-//    cout << target_point << '\t' << target_polar_angle << endl;
-//    cout << circle_center_point<< endl;
-
-//    judgeMode();
-//    if (energy_mode_init)return;
 //    if (!getOrigin())return;
     if (energy_rotation_init) {
         initRotation();
         return;
     }
-
-
-    if (is_predicting) {
-        getPredictPoint(target_point);
-        getAimPoint(predict_point);
-//        cout << yaw_rotation << '\t' << pitch_rotation << endl;
-        judgeShootInGimbal();
-        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-    } else if (is_guessing && stayGuessing()) {
-        findFans(gimbal_src);
-        if (show_energy)showFans("fans", gimbal_src);
-        if (save_mark)writeDownMark();
-        guessTarget();
-        if (show_energy)showGuessTarget("guess", gimbal_src);
-        getPredictPoint(guess_point);
-        getAimPoint(predict_point);
-        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-    }
+    getPredictPoint(target_point);
+    getAimPoint(predict_point);
+    judgeShootInGimbal();
+    sendTarget(serial, yaw_rotation, pitch_rotation, change_target);
 }
 
 
@@ -146,48 +113,32 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     if (show_energy)showArmors("armor", gimbal_src);
     if (!findFlowStripFan(gimbal_src))return;
     if (!findTargetInFlowStripFan()) return;
-//
+
 //    if (!findCenterROI(gimbal_src))return;
 //    if (show_energy)showFlowStripFan("strip", gimbal_src);
 //    if (!findCenterR(gimbal_src))return;
 //    if (show_energy)showCenterR("R", gimbal_src);
 
     changeTarget();
-//    cout << "target point: " << target_point << endl;
-
-    if (is_predicting) {
-        getAimPoint(target_point);
-        judgeShootInGimbal();
-        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-    } else if (is_guessing && stayGuessing()) {
-        findFans(gimbal_src);
-        if (show_energy)showFans("fans", gimbal_src);
-        if (save_mark)writeDownMark();
-        guessTarget();
-        if (show_energy)showGuessTarget("guess", gimbal_src);
-        getAimPoint(guess_point);
-        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-    }
-
+    getAimPoint(target_point);
+    judgeShootInGimbal();
+    sendTarget(serial, yaw_rotation, pitch_rotation, change_target);
 }
 
+
+//if (is_predicting) {
 //getPredictPoint(target_point);
-//gimbalRotation();
-//static bool k = false;
-//cout<<"delta yaw: "<<abs(yaw_rotation - mcuData.curr_yaw)<<endl;
-//cout<<"delta pitch: "<<abs(pitch_rotation - mcuData.curr_pitch)<<endl;
-//cout << "origin_yaw: " << origin_yaw << '\t' << "origin_pitch: " << origin_pitch << endl;
-//cout << "predict point: " << predict_point << endl;
-//
-//if (abs(yaw_rotation - mcuData.curr_yaw) < 0.8 && abs(pitch_rotation - mcuData.curr_pitch) < 0.6) {
-//shoot = 4;
-//if (!k) {
+//getAimPoint(predict_point);
+//cout << yaw_rotation << '\t' << pitch_rotation << endl;
+//judgeShootInGimbal();
 //sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-//cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
-//k = false;
-//}
-//waitKey(400);
-//} else {
-//shoot = 2;
-//sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
+//} else if (is_guessing && stayGuessing()) {
+//findFans(gimbal_src);
+//if (show_energy)showFans("fans", gimbal_src);
+//if (save_mark)writeDownMark();
+//guessTarget();
+//if (show_energy)showGuessTarget("guess", gimbal_src);
+//getPredictPoint(guess_point);
+//getAimPoint(predict_point);
+//sendTarget(serial, yaw_rotation, pitch_rotation, 5);
 //}

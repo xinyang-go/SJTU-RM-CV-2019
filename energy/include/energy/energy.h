@@ -35,7 +35,8 @@ public:
     void setEnergyInit();//设置能量机关初始化
     void setBigEnergyInit();//设置大能量机关初始化
     void setSmallEnergyInit();//设置小能量机关初始化
-    void sendTarget(Serial &serial, float x, float y, float z);
+    void sendTarget(Serial& serial, float x, float y, float z);//发送数据
+    void sendTarget(Serial& serial, float x, float y, float z, uint16_t u);//发送数据
 
 
 private:

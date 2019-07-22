@@ -75,13 +75,15 @@ cv::VideoWriter initVideoWriter(const std::string &filename_prefix) {
 
 bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
     if (!is_camera_0_connect) {
+        int curr_gain = ((CameraWrapper* )video_gimbal)->gain;
         delete video_gimbal;
-        video_gimbal = new CameraWrapper(0/*, "armor"*/);
+        video_gimbal = new CameraWrapper(curr_gain, 0/*, "armor"*/);
         is_camera_0_connect = video_gimbal->init();
     }
     if (!is_camera_1_connect) {
+        int curr_gain = ((CameraWrapper* )video_gimbal)->gain;
         delete video_chassis;
-        video_chassis = new CameraWrapper(1/*, "energy"*/);
+        video_chassis = new CameraWrapper(curr_gain, 0/*, "energy"*/);
         is_camera_1_connect = video_chassis->init();
     }
     return is_camera_0_connect && is_camera_1_connect;
@@ -89,8 +91,9 @@ bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect) {
 
 bool checkReconnect(bool is_camera_connect) {
     if (!is_camera_connect) {
+        int curr_gain = ((CameraWrapper* )video_gimbal)->gain;
         delete video_gimbal;
-        video_gimbal = new CameraWrapper(0/*, "armor"*/);
+        video_gimbal = new CameraWrapper(curr_gain, 0/*, "armor"*/);
         is_camera_connect = video_gimbal->init();
     }
     return is_camera_connect;

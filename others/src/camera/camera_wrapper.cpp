@@ -13,14 +13,15 @@ using std::cout;
 using std::endl;
 using namespace cv;
 
-CameraWrapper::CameraWrapper(int camera_mode, const std::string &n) :
+CameraWrapper::CameraWrapper(int gain, int camera_mode, const std::string &n) :
         name(n),
         mode(camera_mode),
         camera_cnts(2),
         camera_status(-1),
         iplImage(nullptr),
         rgb_buffer(nullptr),
-        channel(3) {
+        channel(3),
+        gain(gain){
 }
 
 
@@ -78,7 +79,7 @@ bool CameraWrapper::init() {
     CameraSetAeState(h_camera, false);
     CameraSetExposureTime(h_camera, CAMERA_EXPOSURE * 1000);
 #ifndef WITH_TIME_BASED_CAMERA_GAIN
-    CameraSetAnalogGain(h_camera, ARMOR_CAMERA_GAIN);
+    CameraSetAnalogGain(h_camera, gain);
 #else
 
 #include <sys/time.h>
@@ -133,6 +134,7 @@ bool CameraWrapper::init() {
 }
 
 bool CameraWrapper::changeBrightness(int brightness) {
+    CameraUnInit(h_camera);
     CameraSetAnalogGain(h_camera, brightness);
 }
 
@@ -191,4 +193,3 @@ CameraWrapper::~CameraWrapper() {
     if (rgb_buffer != nullptr)
         free(rgb_buffer);
 }
-

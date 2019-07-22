@@ -36,7 +36,7 @@ void Energy::judgeShootInGimbal(){
         is_guessing = true;
         start_guess = true;
         gettimeofday(&time_start_guess, NULL);
-        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
+//        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
         shoot = 2;
 
