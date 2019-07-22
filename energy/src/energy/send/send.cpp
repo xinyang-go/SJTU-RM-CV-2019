@@ -13,8 +13,21 @@ using namespace std;
 // 此函数用于发送数据给主控板
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::sendTarget(Serial& serial, float x, float y, float z){
-    static short x_tmp, y_tmp, z_tmp;
+    short x_tmp, y_tmp, z_tmp;
     uint8_t buff[10];
+
+#ifdef WITH_COUNT_FPS
+    static auto last_time = time(nullptr);
+    static int fps = 0;
+    time_t t = time(nullptr);
+    if (last_time != t) {
+        last_time = t;
+        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+        fps = 0;
+    }
+    fps += 1;
+#endif
+
     x_tmp = static_cast<short>(x * (32768 - 1) / 100);
     y_tmp = static_cast<short>(y * (32768 - 1) / 100);
     z_tmp = static_cast<short>(z * (32768 - 1) / 100);

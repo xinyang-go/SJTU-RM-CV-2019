@@ -7,10 +7,11 @@
 
 static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t shoot_delay) {
     static short x_tmp, y_tmp, z_tmp;
-    static time_t last_time = time(nullptr);
-    static int fps;
     uint8_t buff[10];
 
+#ifdef WITH_COUNT_FPS
+    static time_t last_time = time(nullptr);
+    static int fps;
     time_t t = time(nullptr);
     if (last_time != t) {
         last_time = t;
@@ -18,6 +19,7 @@ static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t sh
         fps = 0;
     }
     fps += 1;
+#endif
 
     x_tmp = static_cast<short>(x * (32768 - 1) / 100);
     y_tmp = static_cast<short>(y * (32768 - 1) / 100);

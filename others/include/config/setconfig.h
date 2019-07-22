@@ -46,5 +46,6 @@
 //#define GIMBAL_FLIP_MODE    (-1)
 //#define CHASSIS_FLIP_MODE   (-1)
 //#define WITH_TIME_BASED_CAMERA_GAIN
+#define WITH_COUNT_FPS
 
 #endif /* SETCONFIG_H */
