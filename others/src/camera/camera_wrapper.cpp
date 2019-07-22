@@ -90,14 +90,19 @@ bool CameraWrapper::init() {
     float hour = (tv.tv_sec % (3600 * 24)) / 3600.0;
     if (6 <= hour && hour < 10) {
         gain = 20;
+        LOGM("Set gain to morning 20");
     } else if (10 <= hour && hour < 16) {
         gain = 10;
+        LOGM("Set gain to day 10");
     } else if (16 <= hour && hour < 17) {
         gain = 20;
+        LOGM("Set gain to early evening 20");
     } else if (17 <= hour && hour < 18) {
         gain = 40;
+        LOGM("Set gain to evening 40");
     } else {
         gain = 50;
+        LOGM("Set gain to early night 50");
     }
     CameraSetAnalogGain(h_camera, gain);
 #endif
