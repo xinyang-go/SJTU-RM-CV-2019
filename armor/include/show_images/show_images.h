@@ -12,7 +12,7 @@
 void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBoxes &armor_boxes);
 void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &armor_box);
 void showLightBlobs(std::string windows_name, const cv::Mat &src, const LightBlobs &light_blobs);
-void showArmorBoxesClass(std::string window_names, const cv::Mat &src, const ArmorBoxes boxes[15]);
+void showArmorBoxesClass(std::string window_names, const cv::Mat &src, const ArmorBoxes &boxes);
 void showTrackSearchingPos(std::string window_names, const cv::Mat &src, const cv::Rect2d pos);
 
 #endif /* _SHOW_IMAGES_H_ */

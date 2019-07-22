@@ -48,33 +48,32 @@ void showArmorBoxes(std::string windows_name, const cv::Mat &src, const ArmorBox
 /**************************
  * 显示多个装甲板区域及其类别 *
  **************************/
-void showArmorBoxesClass(std::string window_names, const cv::Mat &src, const ArmorBoxes boxes[15]) {
+void showArmorBoxesClass(std::string window_names, const cv::Mat &src, const ArmorBoxes &boxes) {
     static Mat image2show;
     if (src.type() == CV_8UC1) { // 黑白图像
         cvtColor(src, image2show, COLOR_GRAY2RGB);
     } else if (src.type() == CV_8UC3) { //RGB 彩色
         image2show = src.clone();
     }
-    for (int i = 1; i < 15; i++) {
-        if (!boxes[i].empty()) {
-            for (auto box : boxes[i]) {
-                rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-                drawLightBlobs(image2show, box.light_blobs);
-                if (i == -1)
-                    putText(image2show, id2name[i], Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
-                            Scalar(0, 255, 0));
-                else if (1 <= i && i < 8)
-                    putText(image2show, id2name[i], Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
-                            Scalar(255, 0, 0));
-                else if (8 <= i && i < 15)
-                    putText(image2show, id2name[i], Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
-                            Scalar(0, 0, 255));
-                else if (i != 0)
-                    LOGE_INFO("Invalid box id:%d!", i);
-            }
+    for (const auto &box : boxes) {
+        if(box.id != 0) {
+            rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
+            drawLightBlobs(image2show, box.light_blobs);
+            if (box.id == -1)
+                putText(image2show, id2name[box.id], Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
+                        Scalar(0, 255, 0));
+            else if (1 <= box.id && box.id < 8)
+                putText(image2show, id2name[box.id], Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
+                        Scalar(255, 0, 0));
+            else if (8 <= box.id && box.id < 15)
+                putText(image2show, id2name[box.id], Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
+                        Scalar(0, 0, 255));
+            else if (box.id != 0)
+                LOGE_INFO("Invalid box id:%d!", box.id);
         }
     }
     imshow(window_names, image2show);
+
 }
 
 /**************************
@@ -93,7 +92,7 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &
     drawLightBlobs(image2show, box.light_blobs);
 //    static FILE *fp = fopen(PROJECT_DIR"/ratio.txt", "w");
 //    if(box.light_blobs.size() == 2)
-//        fprintf(fp, "%lf %lf %lf\n", box.light_blobs[0].length, box.light_blobs[1].length, box.blobsDistance())
+//        fprintf(fp, "%lf %lf %lf\n", box.light_blobs[0].length, box.light_blobs[1].length, box.getBlobsDistance())
 //    cout << box.lengthDistanceRatio() << endl;
 
     if(box.getOrientation() == ArmorBox::FRONT){
@@ -103,7 +102,7 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &
     };
 
     char dist[5];
-    sprintf(dist, "%.1f", box.getDistance());
+    sprintf(dist, "%.1f", box.getBoxDistance());
     if (box.id == -1)
         putText(image2show, id2name[box.id]+" "+dist, Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,
                 Scalar(0, 255, 0));

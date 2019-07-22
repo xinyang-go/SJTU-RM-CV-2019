@@ -20,6 +20,9 @@
 #define BOX_RED     ENEMY_RED
 #define BOX_BLUE    ENEMY_BLUE
 
+#define IMAGE_CENTER_X      (320)
+#define IMAGE_CENTER_Y      (240-20)
+
 #define DISTANCE_HEIGHT_5MM (107.0)     // 单位: m*pixel
 #define DISTANCE_HEIGHT     DISTANCE_HEIGHT_5MM
 
@@ -40,6 +43,9 @@
 
 extern std::map<int, string> id2name;   //装甲板id到名称的map
 extern std::map<string, int> name2id;   //装甲板名称到id的map
+extern std::map<string, int> prior_blue;
+extern std::map<string, int> prior_red;
+
 
 /******************* 灯条类定义 ***********************/
 class LightBlob {
@@ -72,11 +78,13 @@ public:
 
     explicit ArmorBox(const cv::Rect &pos=cv::Rect2d(), const LightBlobs &blobs=LightBlobs(), uint8_t color=0, int i=0);
 
-    double blobsDistance() const;
-    double lengthRatio() const;
+    double getBlobsDistance() const;
     double lengthDistanceRatio() const;
-    double getDistance() const;
+    double getBoxDistance() const;
     BoxOrientation getOrientation() const;
+//    double
+
+    bool operator<(const ArmorBox &box) const;
 };
 
 typedef std::vector<ArmorBox> ArmorBoxes;

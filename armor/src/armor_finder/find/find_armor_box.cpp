@@ -8,15 +8,7 @@
 #include <opencv2/highgui.hpp>
 #include <log.h>
 
-static string prior_blue[] = {
-        "B8", "B1", "B3", "B4", "B5", "B7", "B2",
-        "R8", "R1", "R3", "R4", "R5", "R7", "R2",
-};
 
-static string prior_red[] = {
-        "R8", "R1", "R3", "R4", "R5", "R7", "R2",
-        "B8", "B1", "B3", "B4", "B5", "B7", "B2",
-};
 
 static bool angelJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
     float angle_i = light_blob_i.rect.size.width > light_blob_i.rect.size.height ? light_blob_i.rect.angle :
@@ -76,7 +68,7 @@ static bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_
            light_blob_j.blob_color == enemy_color &&
            lengthRatioJudge(light_blob_i, light_blob_j) &&
            lengthJudge(light_blob_i, light_blob_j) &&
-//           heightJudge(light_blob_i, light_blob_j) &&
+           //           heightJudge(light_blob_i, light_blob_j) &&
            angelJudge(light_blob_i, light_blob_j) &&
            boxAngleJudge(light_blob_i, light_blob_j) &&
            CuoWeiDuJudge(light_blob_i, light_blob_j);
@@ -94,7 +86,6 @@ bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBox
     for (int i = 0; i < light_blobs.size() - 1; ++i) {
         for (int j = i + 1; j < light_blobs.size(); ++j) {
             if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j), color)) {
-//                cout << "match fail" << endl;
                 continue;
             }
             cv::Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
@@ -106,7 +97,6 @@ bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBox
             max_y = fmax(rect_left.y + rect_left.height, rect_right.y + rect_right.height) +
                     0.5 * (rect_left.height + rect_right.height) / 2.0;
             if (min_x < 0 || max_x > src.cols || min_y < 0 || max_y > src.rows) {
-//                cout << "out of range" << endl;
                 continue;
             }
             LightBlobs pair_blobs = {light_blobs.at(i), light_blobs.at(j)};
@@ -117,27 +107,20 @@ bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBox
             );
         }
     }
-    if (armor_boxes.empty()) {
-        return false;
-    }
-    sort(armor_boxes.begin(), armor_boxes.end(), [](ArmorBox box1, ArmorBox box2) -> bool {
-        return centerDistance(box1.rect) < centerDistance(box2.rect);
-    });
-    return true;
+    return !armor_boxes.empty();
 }
 
-bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box){
+bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
     LightBlobs light_blobs; // 存储所有可能的灯条
     ArmorBoxes armor_boxes; // 装甲板候选区
-    ArmorBoxes boxes_number[15]; // 装甲板候选区放置在对应id位置
 
-    box.rect = cv::Rect2d(0,0,0,0);
-    box.id   = -1;
+    box.rect = cv::Rect2d(0, 0, 0, 0);
+    box.id = -1;
 
     if (!findLightBlobs(src, light_blobs)) {
         return false;
     }
-    if (show_light_blobs && src.size()==cv::Size(640, 480)) {
+    if (show_light_blobs && src.size() == cv::Size(640, 480)) {
         showLightBlobs("light_blobs", src, light_blobs);
         cv::waitKey(1);
     }
@@ -146,7 +129,7 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box){
 //        cout << "Box fail!" << endl;
         return false;
     }
-    if (show_armor_boxes && src.size()==cv::Size(640, 480)) {
+    if (show_armor_boxes && src.size() == cv::Size(640, 480)) {
         showArmorBoxes("boxes", src, armor_boxes);
         cv::waitKey(1);
     }
@@ -157,40 +140,24 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box){
             cv::resize(roi, roi, cv::Size(48, 36));
             int c = classifier(roi);
             armor_box.id = c;
-            boxes_number[c].emplace_back(armor_box);
         }
-        if (enemy_color == ENEMY_BLUE) {
-            for (auto &name : prior_blue) {
-                if (!boxes_number[name2id[name]].empty()) {
-                    box = boxes_number[name2id[name]][0];
-                    break;
-                }
-            }
-        } else if (enemy_color == ENEMY_RED) {
-            for (auto &name : prior_red) {
-                if (!boxes_number[name2id[name]].empty()) {
-                    box = boxes_number[name2id[name]][0];
-                    break;
-                }
-            }
-        } else {
-            LOGE_INFO("enemy_color ERROR!");
+        sort(armor_boxes.begin(), armor_boxes.end());
+        if(armor_boxes[0].id != 0){
+            box = armor_boxes[0];
         }
         if (save_labelled_boxes) {
-            for (int i = 0; i < sizeof(boxes_number) / sizeof(boxes_number[0]); i++) {
-                for (auto &armor_box : boxes_number[i]) {
-                    char filename[100];
-                    sprintf(filename, PROJECT_DIR"/armor_box_photo/%s_%d.jpg", id2name[i].data(),
-                            time(nullptr) + clock());
-                    cv::imwrite(filename, src(armor_box.rect));
-                }
+            for (const auto &one_box : armor_boxes) {
+                char filename[100];
+                sprintf(filename, PROJECT_DIR"/armor_box_photo/%s_%d.jpg", id2name[one_box.id].data(),
+                        time(nullptr) + clock());
+                cv::imwrite(filename, src(armor_box.rect));
             }
         }
         if (box.rect == cv::Rect2d(0, 0, 0, 0)) {
             return false;
         }
-        if (show_armor_boxes && src.size()==cv::Size(640, 480)) {
-            showArmorBoxesClass("class", src, boxes_number);
+        if (show_armor_boxes && src.size() == cv::Size(640, 480)) {
+            showArmorBoxesClass("class", src, armor_boxes);
         }
     } else {
         box = armor_boxes[0];
