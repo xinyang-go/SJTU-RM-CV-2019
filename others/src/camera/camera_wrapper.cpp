@@ -102,7 +102,7 @@ bool CameraWrapper::init() {
     CameraSetAnalogGain(h_camera, gain);
 #endif
     if (mode == 0) {
-        CameraSetGain(h_camera, CAMERA_BLUE_GAIN, CAMERA_GREEN_GAIN, CAMERA_RED_GAIN);
+        CameraSetGain(h_camera, CAMERA_RED_GAIN, CAMERA_GREEN_GAIN, CAMERA_BLUE_GAIN);
         CameraSetLutMode(h_camera, LUTMODE_PRESET);
     }
 #endif
