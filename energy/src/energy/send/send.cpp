@@ -19,20 +19,20 @@ void Energy::sendEnergy() {
             sum_pitch += pitch_rotation;
             yaw_rotation = AIM_KP * yaw_rotation + AIM_KI * sum_yaw;
             pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
-        } else if (is_chassis){
+        } else if (is_chassis) {
             sum_yaw += yaw_rotation - mcuData.curr_yaw;
             sum_pitch += pitch_rotation - mcuData.curr_pitch;
-            yaw_rotation = AIM_KP * yaw_rotation + AIM_KI * sum_yaw;
-            pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
+            yaw_rotation = AIM_KP * (yaw_rotation - mcuData.curr_yaw) + AIM_KI * sum_yaw;
+            pitch_rotation = AIM_KP * (pitch_rotation - mcuData.curr_pitch) + AIM_KI * sum_pitch;
         }
     }
 
     if (change_target) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 5);
-    } else if (is_predicting) {
-        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
-    } else {
+    } else if (is_guessing) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 6);
+    } else {
+        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
     }
 
 }
@@ -51,7 +51,7 @@ void Energy::sendTarget(Serial &serial, float x, float y, float z) {
     time_t t = time(nullptr);
     if (last_time != t) {
         last_time = t;
-        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+//        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
         fps = 0;
     }
     fps += 1;

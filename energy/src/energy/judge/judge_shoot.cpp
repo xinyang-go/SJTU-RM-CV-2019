@@ -16,10 +16,10 @@ using namespace cv;
 void Energy::judgeShootInWorld() {
     if (abs(yaw_rotation - mcuData.curr_yaw) < 0.5 && abs(pitch_rotation - mcuData.curr_pitch) < 0.5) {
         shoot = 4;
-        is_predicting = false;
-        is_guessing = true;
-        start_guess = true;
-        gettimeofday(&time_start_guess, NULL);
+//        is_predicting = false;
+//        is_guessing = true;
+//        start_guess = true;
+//        gettimeofday(&time_start_guess, NULL);
         LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
         shoot = 2;
@@ -30,15 +30,15 @@ void Energy::judgeShootInWorld() {
 // 此函数用于判断云台坐标系下是否可以发弹
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::judgeShootInGimbal() {
-    if (abs(yaw_rotation) < 0.5 && fabs(pitch_rotation) < 0.5) {
-        shoot = 3;
-        is_predicting = false;
-        is_guessing = true;
-        start_guess = true;
-        gettimeofday(&time_start_guess, NULL);
+    if (abs(yaw_rotation) < 0.5 && abs(pitch_rotation) < 0.5) {
+        shoot = 4;
+//        is_predicting = false;
+//        is_guessing = true;
+//        start_guess = true;
+//        gettimeofday(&time_start_guess, NULL);
 //        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
-        shoot = 1;
+        shoot = 2;
 
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
 }

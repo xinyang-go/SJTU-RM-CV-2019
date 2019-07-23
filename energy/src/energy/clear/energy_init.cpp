@@ -141,6 +141,9 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.TWIN_ANGEL_MAX = 10;
     gimbal_energy_part_param_.TARGET_INTERSETION_CONTOUR_AREA_MIN = 40;
 
+    gimbal_energy_part_param_.TARGET_CHANGE_DISTANCE_MAX = 20;
+    gimbal_energy_part_param_.TWIN_POINT_MAX = 20;
+
 
 
     chassis_energy_part_param_.GRAY_THRESH = 120;//home
