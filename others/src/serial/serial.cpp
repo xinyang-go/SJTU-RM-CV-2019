@@ -191,7 +191,7 @@ Serial::Serial(int nSpeed, char nEvent, int nBits, int nStop) :
         nSpeed(nSpeed), nEvent(nEvent), nBits(nBits), nStop(nStop) {
     if (wait_uart) {
         LOGM("Wait for serial be ready!");
-        while (InitPort(nSpeed, nEvent, nBits, nStop) == false);
+        while (!InitPort(nSpeed, nEvent, nBits, nStop));
         LOGM("Port set successfully!");
     } else {
         if (InitPort(nSpeed, nEvent, nBits, nStop)) {
@@ -234,7 +234,7 @@ bool Serial::WriteData(const unsigned char *pData, unsigned int length) {
         return false;
     }
     while ((curr = write(fd, pData + cnt, length - cnt)) > 0 && (cnt += curr) < length);
-    if (cnt < 0) {
+    if (curr < 0) {
         LOGE("Serial offline!");
         close(fd);
         if (wait_uart) {
@@ -248,7 +248,7 @@ bool Serial::WriteData(const unsigned char *pData, unsigned int length) {
 bool Serial::ReadData(unsigned char *buffer, unsigned int length) {
     int cnt = 0, curr = 0;
     while ((curr = read(fd, buffer + cnt, length - cnt)) > 0 && (cnt += curr) < length);
-    if (cnt < 0) {
+    if (curr < 0) {
         LOGE("Serial offline!");
         close(fd);
         if (wait_uart) {

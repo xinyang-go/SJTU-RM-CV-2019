@@ -61,3 +61,4 @@ void Energy::circleLeastFit()
 //    cout << "The cycle center is: " << cycle_center << endl;
 //    cout << "The radius is: " << radius << endl;
 }
+

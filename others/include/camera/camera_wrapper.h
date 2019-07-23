@@ -38,9 +38,10 @@ private:
     IplImage* iplImage;
     int channel;
 
-
 public:
-    CameraWrapper(int camera_mode=1, const std::string &n="NULL");
+    int gain;
+
+    CameraWrapper(int gain, int camera_mode=1, const std::string &n="NULL");
     ~CameraWrapper() final;
 
     bool init() final;
@@ -48,6 +49,7 @@ public:
     bool readRaw(cv::Mat& src);
     bool readProcessed(cv::Mat& src);
     bool changeBrightness(int brightness);
+//    bool once
 };
 
 

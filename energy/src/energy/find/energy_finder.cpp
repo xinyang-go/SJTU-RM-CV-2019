@@ -69,6 +69,7 @@ int Energy::findArmors(const cv::Mat src) {
 
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+    imshow("armor struct", src_bin);
 //    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
 //    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
@@ -132,7 +133,7 @@ bool Energy::findCenterR(const cv::Mat src) {
         circle_center_point = centerR.center;
         circle_center_point.y += target_length / 7.5;//实际最小二乘得到的中心在R的下方
 
-//        RotatedRect cur_rect = minAreaRect(center_R_contour);
+        RotatedRect cur_rect = minAreaRect(center_R_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
@@ -147,10 +148,11 @@ bool Energy::findCenterR(const cv::Mat src) {
 //            cout << "R intersection: " << contourArea(intersection) << endl;
 //            return true;
 //        }
-
+//        cout << cur_rect.center << endl;
         return true;
     }
     cout << "find center R false!" << endl;
+//    cv::waitKey(0);
     return false;
 
 }
@@ -159,7 +161,7 @@ bool Energy::findCenterR(const cv::Mat src) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于判断找到的矩形候选区是否为含流动条的扇叶
 // ---------------------------------------------------------------------------------------------------------------------
-bool Energy:: findFlowStripFan(const cv::Mat src) {
+bool Energy::findFlowStripFan(const cv::Mat src) {
     if (src.empty())return false;
     static Mat src_bin;
     static Mat src_copy;
@@ -170,7 +172,7 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
     FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//    imshow("flow strip fan struct", src_bin);
+    imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
@@ -193,11 +195,12 @@ bool Energy:: findFlowStripFan(const cv::Mat src) {
 //            cout << "non zero: " << non_zero_rate << endl;
 //            cout<<cur_contour_area / cur_size.area()<<endl;
 //        }
-
+//        cout << cur_rect.center << endl;
         return true;
     }
 //    showFlowStripFan("strip fan", src_bin);
     cout << "flow strip fan false!" << endl;
+//    waitKey(0);
     return false;
 }
 
@@ -227,15 +230,16 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length / width > 4 && width > 7 && width<30) {
+//        if (length / width > 2.5 && width > 7 && width<40) {
 //            cout << cur_rect.center << endl;
 //            flow_strip = cv::minAreaRect(flow_strip_contour);
 //            cout << "flow strip area: " << length << '\t' << width << endl;
 //        }
+//        cout << cur_rect.center << endl;
         return true;
     }
-//    waitKey();
     cout << "flow strip false!" << endl;
+//    waitKey(0);
     return false;
 
 }
@@ -252,7 +256,7 @@ bool Energy::findCenterROI(const cv::Mat src) {
     vector<Point2f> mask_rect;
     target_armor.points(vertices);   //计算矩形的4个顶点
     for (int i = 0; i < 4; i++)
-        line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 15);
+        line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
 //    imshow("fill", src_mask);
     if (!findFlowStrip(src_mask))return false;
     float length = target_armor.size.height > target_armor.size.width ?

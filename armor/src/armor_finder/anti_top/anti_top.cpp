@@ -11,8 +11,7 @@ static double getTimeIntervalms(const timeval& now, const timeval &last){
 
 void ArmorFinder::antiTop() {
     static double top_periodms = 0;
-    static double last1_top_periodms = 0;
-    static double last2_top_periodms = 0;
+    static double last_top_periodms = 0;
     uint16_t shoot_delay = 0;
     timeval curr_time;
 //    if(anti_top_state == ANTI_TOP){
@@ -40,11 +39,10 @@ void ArmorFinder::antiTop() {
         last_front_time = curr_time;
         if(150<interval && interval<700){
             if(anti_top_state == ANTI_TOP){
-                last2_top_periodms = last1_top_periodms;
-                last1_top_periodms = top_periodms;
+                last_top_periodms = top_periodms;
                 top_periodms = interval;
                 LOGM(STR_CTR(WORD_LIGHT_GREEN, "top period: %.1lf ms"), top_periodms);
-                shoot_delay = (last1_top_periodms+last1_top_periodms+top_periodms)/3.0-105;
+                shoot_delay = (last_top_periodms+top_periodms)/2.0-110;
                 last_orient = orientation;
             }else if(anti_top_state == NORMAL){
 //                LOGM("interval:%.1lf", interval);
