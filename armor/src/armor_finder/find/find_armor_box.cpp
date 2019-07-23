@@ -150,7 +150,7 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
                 char filename[100];
                 sprintf(filename, PROJECT_DIR"/armor_box_photo/%s_%d.jpg", id2name[one_box.id].data(),
                         time(nullptr) + clock());
-                cv::imwrite(filename, src(armor_box.rect & cv::Rect2d(0, 0, src.rows, src.cols)));
+                cv::imwrite(filename, src(armor_box.rect & cv::Rect2d(0, 0, src.cols, src.rows)));
             }
         }
         if (box.rect == cv::Rect2d(0, 0, 0, 0)) {
