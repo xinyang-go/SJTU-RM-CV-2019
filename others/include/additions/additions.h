@@ -15,6 +15,8 @@ struct mcu_data{
     uint8_t mark;
     uint8_t use_classifier;
     uint8_t enemy_color;
+    int delta_x;
+    int delta_y;
 };
 
 extern mcu_data mcuData;

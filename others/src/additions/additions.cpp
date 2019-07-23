@@ -39,6 +39,7 @@ void uartReceive(Serial *pSerial) {
             memcpy(&mcuData, buffer, sizeof(mcuData));
 //            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
 //            LOGM("Get yaw: %f, pitch: %f!", mcuData.curr_yaw, mcuData.curr_pitch);
+//            LOGM("Get delta x: %d, delta y: %d!", mcuData.delta_x, mcuData.delta_y);
 //            static int t = time(nullptr);
 //            static int cnt = 0;
 //            if(time(nullptr) > t){

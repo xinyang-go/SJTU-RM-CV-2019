@@ -35,6 +35,7 @@ public:
     void setEnergyInit();//设置能量机关初始化
     void setBigEnergyInit();//设置大能量机关初始化
     void setSmallEnergyInit();//设置小能量机关初始化
+    void sendEnergy();//发送能量机关数据
     void sendTarget(Serial& serial, float x, float y, float z);//发送数据
     void sendTarget(Serial& serial, float x, float y, float z, uint16_t u);//发送数据
 
@@ -64,6 +65,7 @@ private:
     double radius;//大风车半径
 
     int send_cnt;//向主控板发送的数据总次数
+    int camera_cnt;//摄像头数量
     int last_fans_cnt;//上一帧的扇叶个数
     int guess_devide;//刚进入猜测状态时，猜测目标点在极坐标中的分区
     int energy_rotation_direction;//风车旋转方向
@@ -153,8 +155,9 @@ private:
     void writeDownMark();//记录操作手标定的云台初始角度
 
     bool guessTarget();//获得猜测击打点位
-    void changeTarget();//判断目标是否改变
     bool getOrigin();//获得云台对心所需角度
+    void changeTarget();//判断目标是否改变
+    void multipleMode(cv::Mat gimbal_src);//多模式切换
     void getTargetPolarAngle();//获得目标装甲板极坐标角度
     void getPredictPoint(cv::Point target_point);//获取预测点位
     void getAimPoint(cv::Point target_point);//通过自瞄逻辑计算点位

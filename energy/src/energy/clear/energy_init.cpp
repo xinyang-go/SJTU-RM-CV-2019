@@ -29,6 +29,7 @@ void Energy::initEnergy() {
     radius = 0;
 
     send_cnt = 0;
+    camera_cnt = 1;
     last_fans_cnt = 0;
     guess_devide = 0;
     energy_rotation_direction = ANTICLOCKWISE;
@@ -101,13 +102,13 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_MAX = 100000;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_MIN = 0;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN = 7;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX = 25;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN = 7;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX = 25;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN = 5;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX = 45;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN = 5;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX = 45;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN = 0.5;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_RATIO_MIN = 0.3;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN = 10;
 
     gimbal_energy_part_param_.FLOW_STRIP_FAN_CONTOUR_AREA_MAX = 3000;

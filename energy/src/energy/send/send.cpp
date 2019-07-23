@@ -4,15 +4,46 @@
 #include "energy/energy.h"
 #include <iostream>
 #include "log.h"
+#include "config/setconfig.h"
 
 using namespace std;
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于发送能量机关数据
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::sendEnergy() {
+    if (is_big) {
+        if (camera_cnt == 1) {
+            sum_yaw += yaw_rotation;
+            sum_pitch += pitch_rotation;
+            yaw_rotation = AIM_KP * yaw_rotation + AIM_KI * sum_yaw;
+            pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
+        } else if (is_chassis){
+            sum_yaw += yaw_rotation - mcuData.curr_yaw;
+            sum_pitch += pitch_rotation - mcuData.curr_pitch;
+            yaw_rotation = AIM_KP * yaw_rotation + AIM_KI * sum_yaw;
+            pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
+        }
+    }
+
+    if (change_target) {
+        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
+    } else if (is_predicting) {
+        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
+    } else {
+        sendTarget(serial, yaw_rotation, pitch_rotation, 6);
+    }
+
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于发送数据给主控板
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::sendTarget(Serial& serial, float x, float y, float z){
+void Energy::sendTarget(Serial &serial, float x, float y, float z) {
     short x_tmp, y_tmp, z_tmp;
-    uint8_t buff[10];
+    uint8_t buff[8];
 
 #ifdef WITH_COUNT_FPS
     static auto last_time = time(nullptr);
@@ -36,19 +67,17 @@ void Energy::sendTarget(Serial& serial, float x, float y, float z){
     buff[4] = static_cast<char>((y_tmp >> 0) & 0xFF);
     buff[5] = static_cast<char>((z_tmp >> 8) & 0xFF);
     buff[6] = static_cast<char>((z_tmp >> 0) & 0xFF);
-    buff[9] = 'e';
+    buff[7] = 'e';
     serial.WriteData(buff, sizeof(buff));
-    send_cnt+=1;
+    send_cnt += 1;
 //    LOGM(STR_CTR(WORD_LIGHT_PURPLE, "send"));
 }
-
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于发送数据给主控板
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::sendTarget(Serial& serial, float x, float y, float z, uint16_t u){
+void Energy::sendTarget(Serial &serial, float x, float y, float z, uint16_t u) {
     short x_tmp, y_tmp, z_tmp;
     uint8_t buff[10];
 
@@ -78,6 +107,6 @@ void Energy::sendTarget(Serial& serial, float x, float y, float z, uint16_t u){
     buff[8] = static_cast<char>((u >> 0) & 0xFF);;
     buff[9] = 'e';
     serial.WriteData(buff, sizeof(buff));
-    send_cnt+=1;
+    send_cnt += 1;
 //    LOGM(STR_CTR(WORD_LIGHT_PURPLE, "send"));
 }
