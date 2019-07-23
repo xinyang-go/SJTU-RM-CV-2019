@@ -303,5 +303,9 @@ int Classifier::operator()(const cv::Mat &image) {
 //    cout << result << "==============" <<endl;
     MatrixXd::Index minRow, minCol;
     result.maxCoeff(&minRow, &minCol);
-    return minRow;
+    if(result(minRow, minCol) > 0.9){
+        return minRow;
+    }else{
+        return 0;
+    }
 }

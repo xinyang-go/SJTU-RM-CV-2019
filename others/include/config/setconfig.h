@@ -12,17 +12,18 @@
     #define CAMERA_EXPOSURE     (10)
 #endif
 
-#ifndef CAMERA_BLUE_GAIN
-    #define CAMERA_BLUE_GAIN        (100)
+#ifndef CAMERA_RED_GAIN
+    #define CAMERA_RED_GAIN     (100)
 #endif
 
 #ifndef CAMERA_GREEN_GAIN
-    #define CAMERA_GREEN_GAIN       (100)
+    #define CAMERA_GREEN_GAIN   (100)
 #endif
 
-#ifndef CAMERA_RED_GAIN
-    #define CAMERA_RED_GAIN         (100)
+#ifndef CAMERA_BLUE_GAIN
+    #define CAMERA_BLUE_GAIN    (100)
 #endif
+
 
 #ifndef ARMOR_CAMERA_GAIN
     #define ARMOR_CAMERA_GAIN   (30)
