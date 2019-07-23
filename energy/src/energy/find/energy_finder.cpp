@@ -21,7 +21,7 @@ int Energy::findFans(const cv::Mat src) {
     }
     std::vector<vector<Point> > fan_contours;
     FanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-//	imshow("fan struct",src_bin);
+    if (show_process)imshow("fan struct", src_bin);
     findContours(src_bin, fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
     for (auto &fan_contour : fan_contours) {
@@ -69,7 +69,7 @@ int Energy::findArmors(const cv::Mat src) {
 
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-    imshow("armor struct", src_bin);
+    if (show_process)imshow("armor struct", src_bin);
 //    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
 //    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
@@ -121,7 +121,7 @@ bool Energy::findCenterR(const cv::Mat src) {
     }
     std::vector<vector<Point> > center_R_contours;
     CenterRStruct(src_bin);
-//    imshow("R struct",src_bin);
+    if (show_process)imshow("R struct", src_bin);
     findContours(src_bin, center_R_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     for (auto &center_R_contour : center_R_contours) {
         if (!isValidCenterRContour(center_R_contour)) {
@@ -172,15 +172,16 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     }
     std::vector<vector<Point> > flow_strip_fan_contours;
     FlowStripFanStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("flow strip fan struct", src_bin);
+    if (show_process)imshow("flow strip fan struct", src_bin);
 
     findContours(src_bin, flow_strip_fan_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    std::vector<cv::RotatedRect> candidate_flow_strip_fans;
 
     for (auto &flow_strip_fan_contour : flow_strip_fan_contours) {
         if (!isValidFlowStripFanContour(src_bin, flow_strip_fan_contour)) {
             continue;
         }
-        flow_strip_fan = cv::minAreaRect(flow_strip_fan_contour);
+        candidate_flow_strip_fans.emplace_back(cv::minAreaRect(flow_strip_fan_contour));
 
 //        RotatedRect cur_rect = minAreaRect(flow_strip_fan_contour);
 //        Size2f cur_size = cur_rect.size;
@@ -196,12 +197,51 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 //            cout<<cur_contour_area / cur_size.area()<<endl;
 //        }
 //        cout << cur_rect.center << endl;
-        return true;
     }
-//    showFlowStripFan("strip fan", src_bin);
-    cout << "flow strip fan false!" << endl;
+    if (candidate_flow_strip_fans.size() == 1) {
+        flow_strip_fan = candidate_flow_strip_fans.at(0);
+        return true;
+    } else if (candidate_flow_strip_fans.size() >= 2) {
+        //用锤子筛选仍然有多个候选区，进一步用锤头做筛选
+        std::vector<cv::RotatedRect> candidate_target_fans;
+        for (auto candidate_flow_strip_fan: candidate_flow_strip_fans) {
+            flow_strip_fan = candidate_flow_strip_fan;
+            if (!findTargetInFlowStripFan()) {
+                continue;
+            }
+            candidate_target_fans.emplace_back(candidate_flow_strip_fan);
+        }
+        if (candidate_target_fans.size() == 1) {
+            flow_strip_fan = candidate_target_fans.at(0);
+            return true;
+        } else if(candidate_target_fans.empty()){
+            cout<<"No candidate target fan contains a target armor!"<<endl;
+            return false;
+        } else {                //用锤子+锤头筛选仍然有多个候选区，进一步用锤柄做筛选
+            for (auto candidate_target_fan: candidate_target_fans) {
+                flow_strip_fan = candidate_target_fan;
+                findTargetInFlowStripFan();
+                cv::Mat src_mask = src.clone();
+                target_armor.size.height *= 1.3;
+                target_armor.size.width *= 1.3;
+                Point2f vertices[4];
+                vector<Point2f> mask_rect;
+                target_armor.points(vertices);
+                for (int i = 0; i < 4; i++)
+                    line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
+                if (findFlowStrip(src_mask)) {
+                    flow_strip_fan = candidate_target_fan;
+                    return true;
+                }
+            }
+            cout<<"No candidate target fan contains a flow strip!"<<endl;
+            return false;
+        }
+    } else {
+        cout << "flow strip fan false!" << endl;
 //    waitKey(0);
-    return false;
+        return false;
+    }
 }
 
 
@@ -216,7 +256,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
         cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
     }
     FlowStripStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
-    imshow("flow strip struct", src_bin);
+    if (show_process)imshow("flow strip struct", src_bin);
 
     std::vector<vector<Point> > flow_strip_contours;
     findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);

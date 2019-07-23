@@ -68,7 +68,7 @@ bool Energy::findTargetInFlowStripFan() {
             return true;
         }
     }
-//    cout<<"find target false"<<endl;
+    cout<<"find target false"<<endl;
 //    cout<<armors.size()<<'\t'<<armors.at(0).size<<endl;
     return false;
 }
