@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
             if (mcuData.state == BIG_ENERGY_STATE) {//大能量机关模式
                 if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
                     destroyAllWindows();
-                    if(from_camera){
+                    if (from_camera) {
                         delete video_gimbal;
                         video_gimbal = new CameraWrapper(ENERGY_CAMERA_GAIN, 0/*, "armor"*/);
                         if (video_gimbal->init()) {
@@ -120,13 +120,13 @@ int main(int argc, char *argv[]) {
                 if (!from_camera) extract(gimbal_src, chassis_src);
                 if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                 if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-//                energy.runBig(gimbal_src, chassis_src);
-                    energy.runBig(gimbal_src);
+                energy.runBig(gimbal_src, chassis_src);
+//                energy.runBig(gimbal_src);
                 last_state = mcuData.state;//更新上一帧状态
             } else if (mcuData.state == SMALL_ENERGY_STATE) {
                 if (mcuData.state != SMALL_ENERGY_STATE) {
                     destroyAllWindows();
-                    if(from_camera){
+                    if (from_camera) {
                         delete video_gimbal;
                         video_gimbal = new CameraWrapper(ENERGY_CAMERA_GAIN, 0/*, "armor"*/);
                         if (video_gimbal->init()) {
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
             } else {                                         // 自瞄模式
                 if (last_state != ARMOR_STATE) {
                     destroyAllWindows();
-                    if(from_camera){
+                    if (from_camera) {
                         delete video_gimbal;
                         video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 0/*, "armor"*/);
                         if (video_gimbal->init()) {

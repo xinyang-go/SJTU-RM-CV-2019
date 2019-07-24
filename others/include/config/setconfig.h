@@ -29,7 +29,7 @@
     #define ARMOR_CAMERA_GAIN   (30)
 #endif
 #ifndef ENERGY_CAMERA_GAIN
-    #define ENERGY_CAMERA_GAIN  (20)
+    #define ENERGY_CAMERA_GAIN  (30)
 #endif
 #ifndef AIM_KP
     #define AIM_KP (6)
