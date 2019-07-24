@@ -15,6 +15,9 @@ using namespace cv;
 void Energy::clearAll(){
     fans.clear();
     armors.clear();
+    flow_strip_fans.clear();
+    target_armors.clear();
+    flow_strips.clear();
 }
 
 

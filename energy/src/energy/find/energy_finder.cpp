@@ -181,14 +181,13 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
         if (!isValidFlowStripFanContour(src_bin, flow_strip_fan_contour)) {
             continue;
         }
-        candidate_flow_strip_fans.emplace_back(cv::minAreaRect(flow_strip_fan_contour));
+        flow_strip_fans.emplace_back(cv::minAreaRect(flow_strip_fan_contour));
 
 //        RotatedRect cur_rect = minAreaRect(flow_strip_fan_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
 //        double cur_contour_area = contourArea(flow_strip_fan_contour);
-//        double non_zero_rate = nonZeroRateOfRotateRect(src_bin, cur_rect);
 //        if (length > 40 && width > 30 && length < 110 && width < 100) {
 //            cout << cur_rect.center<<endl;
 //            flow_strip_fan = cv::minAreaRect(flow_strip_fan_contour);
@@ -196,51 +195,13 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 //            cout << "non zero: " << non_zero_rate << endl;
 //            cout<<cur_contour_area / cur_size.area()<<endl;
 //        }
-//        cout << cur_rect.center << endl;
     }
-    if (candidate_flow_strip_fans.size() == 1) {
-        flow_strip_fan = candidate_flow_strip_fans.at(0);
-        return true;
-    } else if (candidate_flow_strip_fans.size() >= 2) {
-        //用锤子筛选仍然有多个候选区，进一步用锤头做筛选
-        std::vector<cv::RotatedRect> candidate_target_fans;
-        for (auto candidate_flow_strip_fan: candidate_flow_strip_fans) {
-            flow_strip_fan = candidate_flow_strip_fan;
-            if (!findTargetInFlowStripFan()) {
-                continue;
-            }
-            candidate_target_fans.emplace_back(candidate_flow_strip_fan);
-        }
-        if (candidate_target_fans.size() == 1) {
-            flow_strip_fan = candidate_target_fans.at(0);
-            return true;
-        } else if(candidate_target_fans.empty()){
-            cout<<"No candidate target fan contains a target armor!"<<endl;
-            return false;
-        } else {                //用锤子+锤头筛选仍然有多个候选区，进一步用锤柄做筛选
-            for (auto candidate_target_fan: candidate_target_fans) {
-                flow_strip_fan = candidate_target_fan;
-                findTargetInFlowStripFan();
-                cv::Mat src_mask = src.clone();
-                target_armor.size.height *= 1.3;
-                target_armor.size.width *= 1.3;
-                Point2f vertices[4];
-                vector<Point2f> mask_rect;
-                target_armor.points(vertices);
-                for (int i = 0; i < 4; i++)
-                    line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
-                if (findFlowStrip(src_mask)) {
-                    flow_strip_fan = candidate_target_fan;
-                    return true;
-                }
-            }
-            cout<<"No candidate target fan contains a flow strip!"<<endl;
-            return false;
-        }
-    } else {
+//    cout << "flow_strip_fans_cnt: " << flow_strip_fans.size() << endl;
+    if (flow_strip_fans.empty()) {
         cout << "flow strip fan false!" << endl;
-//    waitKey(0);
         return false;
+    } else {
+        return true;
     }
 }
 
@@ -252,20 +213,45 @@ bool Energy::findFlowStrip(const cv::Mat src) {
     if (src.empty())return false;
     cv::Mat src_bin;
     src_bin = src.clone();
-    if (src.type() == CV_8UC3) {
-        cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
+
+    if (src_bin.type() == CV_8UC1) // 黑白图像
+    {
+        cvtColor(src_bin, src_bin, COLOR_GRAY2RGB);
+
     }
+    std::vector<cv::RotatedRect> candidate_target_armors = target_armors;
+    for (auto &candidate_target_armor: candidate_target_armors) {
+        Point2f vertices[4];
+        candidate_target_armor.size.height *= 1.3;
+        candidate_target_armor.size.width *= 1.3;
+        candidate_target_armor.points(vertices);   //计算矩形的4个顶点
+        for (int i = 0; i < 4; i++) {
+            line(src_bin, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
+        }
+    }
+
+    cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
+
     FlowStripStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
     if (show_process)imshow("flow strip struct", src_bin);
 
     std::vector<vector<Point> > flow_strip_contours;
     findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
-    for (auto &flow_strip_contour : flow_strip_contours) {
-        if (!isValidFlowStripContour(flow_strip_contour)) {
-            continue;
-        }
-        flow_strip = cv::minAreaRect(flow_strip_contour);
+    for (auto candidate_flow_strip_fan: flow_strip_fans) {
+        for (auto &flow_strip_contour : flow_strip_contours) {
+            if (!isValidFlowStripContour(flow_strip_contour)) {
+                continue;
+            }
+            std::vector<cv::Point2f> intersection;
+            RotatedRect cur_rect = minAreaRect(flow_strip_contour);
+            if (rotatedRectangleIntersection(cur_rect, candidate_flow_strip_fan, intersection) == 0) {
+                continue;
+            } else if (contourArea(intersection) > energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
+                flow_strips.emplace_back(cv::minAreaRect(flow_strip_contour));
+//                cout << "intersection: " << contourArea(intersection) << '\t' << cur_rect.center << endl;
+            }
+
 //        RotatedRect cur_rect = minAreaRect(flow_strip_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
@@ -276,12 +262,39 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //            cout << "flow strip area: " << length << '\t' << width << endl;
 //        }
 //        cout << cur_rect.center << endl;
-        return true;
+        }
     }
-    cout << "flow strip false!" << endl;
-//    waitKey(0);
-    return false;
-
+//    cout << "flow strip cnt: " << flow_strips.size() << endl;
+    if (flow_strips.empty()) {
+        cout << "flow strip false!" << endl;
+//        waitKey(0);
+        return false;
+    } else if (flow_strips.size() > 1) {
+        cout << "Too many flow strips!" << endl;
+//        waitKey(0);
+        return false;
+    } else {
+        flow_strip = flow_strips.at(0);
+        for (auto &candidate_flow_strip_fan: flow_strip_fans) {
+            std::vector<cv::Point2f> intersection;
+            if (rotatedRectangleIntersection(flow_strip, candidate_flow_strip_fan, intersection) == 0) {
+                continue;
+            } else if (contourArea(intersection) > energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
+                flow_strip_fan = candidate_flow_strip_fan;
+            }
+        }
+        int i = 0;
+        for (i = 0; i < target_armors.size(); ++i) {
+            std::vector<cv::Point2f> intersection;
+            if (rotatedRectangleIntersection(target_armors.at(i), flow_strip_fan, intersection) == 0)
+                continue;//返回0表示没有重合面积
+            double cur_contour_area = contourArea(intersection);
+            if (cur_contour_area > energy_part_param_.TARGET_INTERSETION_CONTOUR_AREA_MIN) {
+                target_armor = target_armors.at(i);
+                target_point = target_armor.center;
+            }
+        }
+    }
 }
 
 
@@ -289,23 +302,13 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 // 此函数用于框取中心R的寻找范围
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findCenterROI(const cv::Mat src) {
-    cv::Mat src_mask = src.clone();
-    target_armor.size.height *= 1.3;
-    target_armor.size.width *= 1.3;
-    Point2f vertices[4];
-    vector<Point2f> mask_rect;
-    target_armor.points(vertices);   //计算矩形的4个顶点
-    for (int i = 0; i < 4; i++)
-        line(src_mask, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
-//    imshow("fill", src_mask);
-    if (!findFlowStrip(src_mask))return false;
     float length = target_armor.size.height > target_armor.size.width ?
                    target_armor.size.height : target_armor.size.width;
 
     Point2f p2p(flow_strip.center.x - target_point.x,
                 flow_strip.center.y - target_point.y);
     p2p = p2p / pointDistance(flow_strip.center, target_point);//单位化
-    center_ROI = cv::RotatedRect(cv::Point2f(flow_strip.center + p2p * length * 1.25),
+    center_ROI = cv::RotatedRect(cv::Point2f(flow_strip.center + p2p * length * 1.7),
                                  Size2f(length * 1.4, length * 1.4), -90);
     return true;
 

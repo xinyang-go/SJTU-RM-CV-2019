@@ -72,6 +72,7 @@ private:
     int clockwise_rotation_init_cnt;//装甲板顺时针旋转次数
     int anticlockwise_rotation_init_cnt;//装甲板逆时针旋转次数
     int last_mode;//上一帧的能量机关状态
+    int manual_delta_x, manual_delta_y;//手动微调量
 
     float target_polar_angle;//待击打装甲板的极坐标角度
     float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度
@@ -103,6 +104,9 @@ private:
 
     std::vector<cv::RotatedRect> fans;//图像中所有扇叶
     std::vector<cv::RotatedRect> armors;//图像中所有可能装甲板（可能存在误识别)
+    std::vector<cv::RotatedRect> flow_strip_fans;//可能的流动扇叶
+    std::vector<cv::RotatedRect> target_armors;//可能的目标装甲板
+    std::vector<cv::RotatedRect> flow_strips;//可能的流动条
     std::vector<cv::Point> all_target_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
 
     std::queue<float> recent_target_armor_centers;//记录最近一段时间的装甲板中心，用于判断大符还是小符
@@ -152,12 +156,13 @@ private:
     double pointDistance(cv::Point point_1, cv::Point point_2);//计算两点距离
     double nonZeroRateOfRotateRect(cv::Mat &bin, const cv::RotatedRect &rotatedRect);//计算旋转矩形内亮点占比
 
-    void writeDownMark();//记录操作手标定的云台初始角度
+    void writeDownSlightChange(cv::Mat &src);//记录操作手的手动微调
+    void writeDownMark(cv::Mat &src);//记录操作手标定的云台对心初始角度
 
     bool guessTarget();//获得猜测击打点位
     bool getOrigin();//获得云台对心所需角度
     void changeTarget();//判断目标是否改变
-    void multipleMode(cv::Mat gimbal_src);//多模式切换
+    void multipleMode(cv::Mat &src);//多模式切换
     void getTargetPolarAngle();//获得目标装甲板极坐标角度
     void getPredictPoint(cv::Point target_point);//获取预测点位
     void getAimPoint(cv::Point target_point);//通过自瞄逻辑计算点位

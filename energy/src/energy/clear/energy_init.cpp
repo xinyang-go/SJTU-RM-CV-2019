@@ -36,6 +36,8 @@ void Energy::initEnergy() {
     clockwise_rotation_init_cnt = 0;
     anticlockwise_rotation_init_cnt = 0;
     last_mode = -1;//既不是大符也不是小符
+    manual_delta_x = 0;
+    manual_delta_y = 0;
 
     target_polar_angle = -1000;
     last_target_polar_angle = -1000;
@@ -59,6 +61,9 @@ void Energy::initEnergy() {
 
     fans.clear();
     armors.clear();
+    flow_strip_fans.clear();
+    target_armors.clear();
+    flow_strips.clear();
     all_target_armor_centers.clear();
     while(!recent_target_armor_centers.empty())recent_target_armor_centers.pop();
 
