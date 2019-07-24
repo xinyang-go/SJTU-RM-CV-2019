@@ -25,6 +25,7 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (show_energy)showArmors("armor", gimbal_src);
         if (!findFlowStripFan(gimbal_src))return;
         if (!findTargetInFlowStripFan()) return;
+        if (!findFlowStrip(gimbal_src))return;
         if (!findCenterROI(gimbal_src))return;
         if (show_energy)showFlowStripFan("strip", gimbal_src);
         if (!findCenterR(gimbal_src))return;
@@ -46,6 +47,7 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
         if (show_energy)showArmors("armor", chassis_src);
         if (!findFlowStripFan(chassis_src))return;
         if (!findTargetInFlowStripFan()) return;
+        if (!findFlowStrip(gimbal_src))return;
         if (!findCenterROI(chassis_src))return;
         if (show_energy)showFlowStripFan("strip", chassis_src);
         if (!findCenterR(chassis_src))return;
@@ -56,6 +58,7 @@ void Energy::runBig(cv::Mat &gimbal_src, cv::Mat &chassis_src) {
             initRotation();
             return;
         }
+        if (save_mark)writeDownMark(chassis_src);
         getPredictPoint(target_point);
         gimbalRotation();
         judgeShootInWorld();
@@ -77,6 +80,7 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showArmors("armor", gimbal_src);
     if (!findFlowStripFan(gimbal_src))return;
     if (!findTargetInFlowStripFan()) return;
+    if (!findFlowStrip(gimbal_src))return;
     if (!findCenterROI(gimbal_src))return;
     if (show_energy)showFlowStripFan("strip", gimbal_src);
     if (!findCenterR(gimbal_src))return;
@@ -87,6 +91,7 @@ void Energy::runBig(cv::Mat &gimbal_src) {
         initRotation();
         return;
     }
+    if (save_mark)writeDownSlightChange(gimbal_src);
     getPredictPoint(target_point);
     getAimPoint(predict_point);
     judgeShootInGimbal();
@@ -107,8 +112,10 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     if (show_energy)showArmors("armor", gimbal_src);
     if (!findFlowStripFan(gimbal_src))return;
     if (!findTargetInFlowStripFan()) return;
+    if (!findFlowStrip(gimbal_src))return;
 
     changeTarget();
+    if (save_mark)writeDownSlightChange(gimbal_src);
     getPredictPoint(target_point);
     getAimPoint(predict_point);
     judgeShootInGimbal();

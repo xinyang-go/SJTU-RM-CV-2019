@@ -233,12 +233,5 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
 //        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;//轮廓对矩形的面积占有率不合适
     }
-    std::vector<cv::Point2f> intersection;
-    if (rotatedRectangleIntersection(cur_rect, flow_strip_fan, intersection) == 0) {
-        return false;
-    } else if (contourArea(intersection) < energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
-//        cout << "intersection: " << contourArea(intersection) << '\t' << cur_rect.center << endl;
-        return false;
-    }
     return true;
 }
