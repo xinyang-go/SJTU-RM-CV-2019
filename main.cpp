@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
                 flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
 #endif
                 if (!from_camera) extract(gimbal_src);
-//                    if (save_video) saveVideos(gimbal_src);
+                if (save_video) saveVideos(gimbal_src);
                 if (show_origin) showOrigin(gimbal_src);
                 CNT_TIME("Armor Time", {
                     armorFinder.run(gimbal_src);
