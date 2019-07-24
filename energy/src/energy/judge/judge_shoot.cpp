@@ -40,5 +40,5 @@ void Energy::judgeShootInGimbal() {
     } else
         shoot = 2;
 
-    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
+//    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
 }

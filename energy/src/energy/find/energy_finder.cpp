@@ -1,7 +1,10 @@
 ﻿//
 // Created by xixiliadorabarry on 1/24/19.
 //
+#define LOG_LEVEL LOG_NONE
+
 #include "energy/energy.h"
+#include "log.h"
 
 using namespace cv;
 using std::cout;
@@ -151,8 +154,8 @@ bool Energy::findCenterR(const cv::Mat src) {
 //        cout << cur_rect.center << endl;
         return true;
     }
-    cout << "find center R false!" << endl;
-//    cv::waitKey(0);
+    LOGM(STR_CTR(WORD_RED_CODE, "find center R false!"));
+    //    cv::waitKey(0);
     return false;
 
 }
@@ -198,7 +201,7 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     }
 //    cout << "flow_strip_fans_cnt: " << flow_strip_fans.size() << endl;
     if (flow_strip_fans.empty()) {
-        cout << "flow strip fan false!" << endl;
+        LOGM(STR_CTR(WORD_RED_CODE, "flow strip fan false!"));
         return false;
     } else {
         return true;
@@ -266,11 +269,11 @@ bool Energy::findFlowStrip(const cv::Mat src) {
     }
 //    cout << "flow strip cnt: " << flow_strips.size() << endl;
     if (flow_strips.empty()) {
-        cout << "flow strip false!" << endl;
+        LOGM(STR_CTR(WORD_RED_CODE, "flow strip false!"));
 //        waitKey(0);
         return false;
     } else if (flow_strips.size() > 1) {
-        cout << "Too many flow strips!" << endl;
+        LOGM(STR_CTR(WORD_RED_CODE, "Too many flow strips!"));
 //        waitKey(0);
         return false;
     } else {

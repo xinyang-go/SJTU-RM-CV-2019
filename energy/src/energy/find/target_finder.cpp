@@ -1,7 +1,10 @@
 ﻿//
 // Created by xixiliadorabarry on 1/24/19.
 //
+#define LOG_LEVEL LOG_NONE
+
 #include "energy/energy.h"
+#include "log.h"
 
 using namespace cv;
 using std::cout;
@@ -67,7 +70,7 @@ bool Energy::findTargetInFlowStripFan() {
     }
 //    cout << "target armor cnt: " << target_armors.size() << endl;
     if (target_armors.empty()) {
-        cout << "find target armor false" << endl;
+        LOGM(STR_CTR(WORD_RED_CODE, "find target armor false"));
         return false;
     } else {
         return true;
