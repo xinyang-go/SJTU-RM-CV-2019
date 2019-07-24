@@ -28,11 +28,11 @@ void Energy::sendEnergy() {
     }
 
     if (change_target) {
-        sendTarget(serial, yaw_rotation, pitch_rotation, 5);
+        sendTarget(serial, yaw_rotation, pitch_rotation, 5, 0);
     } else if (is_guessing) {
-        sendTarget(serial, yaw_rotation, pitch_rotation, 6);
+        sendTarget(serial, yaw_rotation, pitch_rotation, 6, 0);
     } else {
-        sendTarget(serial, yaw_rotation, pitch_rotation, shoot);
+        sendTarget(serial, yaw_rotation, pitch_rotation, shoot, 0);
     }
 
 }
@@ -77,7 +77,7 @@ void Energy::sendTarget(Serial &serial, float x, float y, float z) {
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于发送数据给主控板
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::sendTarget(Serial &serial, float x, float y, float z, uint16_t u) {
+void Energy::sendTarget(Serial &serial, float x, float y, uint16_t z, uint16_t u) {
     short x_tmp, y_tmp, z_tmp;
     uint8_t buff[10];
 
@@ -87,7 +87,7 @@ void Energy::sendTarget(Serial &serial, float x, float y, float z, uint16_t u) {
     time_t t = time(nullptr);
     if (last_time != t) {
         last_time = t;
-        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << "," << u << ")" << endl;
         fps = 0;
     }
     fps += 1;
