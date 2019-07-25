@@ -21,5 +21,6 @@ void Energy::getAimPoint(cv::Point target_point) {
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
 //    cout << "mcuData.delta_x: " << mcuData.delta_x << '\t' << "mcuData.delta_y: " << mcuData.delta_y << endl;
+//    cout << "manual delta: " << manual_delta_x << '\t' << manual_delta_y << endl;
 
 }

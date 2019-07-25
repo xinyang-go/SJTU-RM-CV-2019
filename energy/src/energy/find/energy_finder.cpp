@@ -2,6 +2,7 @@
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include "energy/energy.h"
+#include "log.h"
 
 using namespace cv;
 using std::cout;
@@ -151,8 +152,8 @@ bool Energy::findCenterR(const cv::Mat src) {
 //        cout << cur_rect.center << endl;
         return true;
     }
-    cout << "find center R false!" << endl;
-//    cv::waitKey(0);
+    if (show_info)cout << "find center R false!" << endl;
+    //    cv::waitKey(0);
     return false;
 
 }
@@ -198,7 +199,7 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     }
 //    cout << "flow_strip_fans_cnt: " << flow_strip_fans.size() << endl;
     if (flow_strip_fans.empty()) {
-        cout << "flow strip fan false!" << endl;
+        if (show_info)cout << "flow strip fan false!" << endl;
         return false;
     } else {
         return true;
@@ -266,11 +267,11 @@ bool Energy::findFlowStrip(const cv::Mat src) {
     }
 //    cout << "flow strip cnt: " << flow_strips.size() << endl;
     if (flow_strips.empty()) {
-        cout << "flow strip false!" << endl;
+        if (show_info)cout << "flow strip false!" << endl;
 //        waitKey(0);
         return false;
     } else if (flow_strips.size() > 1) {
-        cout << "Too many flow strips!" << endl;
+        if (show_info)cout << "Too many flow strips!" << endl;
 //        waitKey(0);
         return false;
     } else {

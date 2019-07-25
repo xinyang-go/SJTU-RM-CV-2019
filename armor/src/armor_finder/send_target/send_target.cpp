@@ -16,7 +16,7 @@ static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t sh
     time_t t = time(nullptr);
     if (last_time != t) {
         last_time = t;
-        cout << "fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+        cout << "Armor: fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
         fps = 0;
     }
     fps += 1;
