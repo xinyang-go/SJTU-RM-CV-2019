@@ -30,7 +30,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
+        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
 //            CNT_TIME("Total", {
             if (mcuData.state == BIG_ENERGY_STATE) {//大能量机关模式
                 if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
+                    LOGM(STR_CTR(WORD_BLUE, "Start Big Energy!"));
                     destroyAllWindows();
                     if (from_camera) {
                         delete video_gimbal;
@@ -109,6 +110,7 @@ int main(int argc, char *argv[]) {
                     checkReconnect(video_chassis->read(chassis_src));
                     energy.setBigEnergyInit();
                 }
+                last_state = mcuData.state;//更新上一帧状态
                 ok = checkReconnect(video_gimbal->read(gimbal_src));
                 video_chassis->read(chassis_src);
 #ifdef GIMBAL_FLIP_MODE
@@ -122,9 +124,9 @@ int main(int argc, char *argv[]) {
                 if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
                 energy.runBig(gimbal_src, chassis_src);
 //                energy.runBig(gimbal_src);
-                last_state = mcuData.state;//更新上一帧状态
             } else if (mcuData.state == SMALL_ENERGY_STATE) {
-                if (mcuData.state != SMALL_ENERGY_STATE) {
+                if (last_state != SMALL_ENERGY_STATE) {
+                    LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));
                     destroyAllWindows();
                     if (from_camera) {
                         delete video_gimbal;
@@ -137,6 +139,7 @@ int main(int argc, char *argv[]) {
                     }
                     energy.setSmallEnergyInit();
                 }
+                last_state = mcuData.state;//更新上一帧状态
                 ok = checkReconnect(video_gimbal->read(gimbal_src));
 #ifdef GIMBAL_FLIP_MODE
                 flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
@@ -145,9 +148,9 @@ int main(int argc, char *argv[]) {
                 if (save_video) saveVideos(gimbal_src);//保存视频
                 if (show_origin) showOrigin(gimbal_src);//显示原始图像
                 energy.runSmall(gimbal_src);
-                last_state = mcuData.state;//更新上一帧状态
             } else {                                         // 自瞄模式
                 if (last_state != ARMOR_STATE) {
+                    LOGM(STR_CTR(WORD_RED, "Start Armor!"));
                     destroyAllWindows();
                     if (from_camera) {
                         delete video_gimbal;
