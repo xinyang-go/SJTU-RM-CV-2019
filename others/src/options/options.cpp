@@ -17,6 +17,7 @@ bool save_labelled_boxes = false;
 bool show_process = false;
 bool show_energy = false;
 bool save_mark = false;
+bool show_info = false;
 
 void process_options(int argc, char *argv[]) {
     if (argc >= 2) {
@@ -54,6 +55,8 @@ void process_options(int argc, char *argv[]) {
                 LOGM("Enable show processed image");
                 show_energy = true;
                 LOGM("Enable show energy part");
+                show_info = true;
+                LOGM("Show information!");
             } else if (strcmp(argv[i], "--run-with-camera") == 0) {
                 run_with_camera = true;
                 LOGM("Run with camera!");
@@ -70,14 +73,18 @@ void process_options(int argc, char *argv[]) {
                 show_process = true;
                 LOGM("Enable show processed image!");
             } else if (strcmp(argv[i], "--show-energy") == 0) {
-                show_energy= true;
+                show_energy = true;
                 LOGM("Enable show energy part!");
             } else if (strcmp(argv[i], "--save-mark") == 0) {
                 save_mark = true;
                 LOGM("Write down mark");
+            } else if (strcmp(argv[i], "--show-info") == 0) {
+                show_info = true;
+                LOGM("Show information!");
             } else {
                 LOGW("Unknown option: %s. Use --help to see options.", argv[i]);
             }
         }
     }
 }
+

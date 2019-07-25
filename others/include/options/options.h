@@ -18,6 +18,7 @@ extern bool save_labelled_boxes;
 extern bool show_process;
 extern bool show_energy;
 extern bool save_mark;
+extern bool show_info;
 
 void process_options(int argc, char *argv[]);
 
