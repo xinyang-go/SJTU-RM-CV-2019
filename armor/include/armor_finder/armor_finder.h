@@ -23,7 +23,7 @@
 #define IMAGE_CENTER_X      (320)
 #define IMAGE_CENTER_Y      (240-20)
 
-#define DISTANCE_HEIGHT_5MM (107.0)     // 单位: m*pixel
+#define DISTANCE_HEIGHT_5MM (10700.0)     // 单位: cm*pixel
 #define DISTANCE_HEIGHT     DISTANCE_HEIGHT_5MM
 
 #define         B1 1
