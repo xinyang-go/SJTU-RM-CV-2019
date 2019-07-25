@@ -55,8 +55,6 @@ void process_options(int argc, char *argv[]) {
                 LOGM("Enable show processed image");
                 show_energy = true;
                 LOGM("Enable show energy part");
-                show_info = true;
-                LOGM("Show information!");
             } else if (strcmp(argv[i], "--run-with-camera") == 0) {
                 run_with_camera = true;
                 LOGM("Run with camera!");

@@ -75,7 +75,7 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-    gimbal_energy_part_param_.GRAY_THRESH = 140;//home
+    gimbal_energy_part_param_.GRAY_THRESH = 100;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
 //    gimbal_energy_part_param_.GRAY_THRESH = 225;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;
