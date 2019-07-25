@@ -29,16 +29,16 @@ def max_pool_2x2(x):
 CONV1_KERNAL_SIZE = 5
 
 # 第一层卷积输出通道数
-CONV1_OUTPUT_CHANNELS = 6
+CONV1_OUTPUT_CHANNELS = 8
 
 # 第二层卷积核大小
 CONV2_KERNAL_SIZE = 3
 
 # 第二层卷积输出通道数
-CONV2_OUTPUT_CHANNELS = 12
+CONV2_OUTPUT_CHANNELS = 16
 
 # 第一层全连接宽度
-FC1_OUTPUT_NODES = 30
+FC1_OUTPUT_NODES = 100
 
 # 第二层全连接宽度（输出标签类型数）
 FC2_OUTPUT_NODES = 15
