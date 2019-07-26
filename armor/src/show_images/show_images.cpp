@@ -99,9 +99,9 @@ void showArmorBox(std::string windows_name, const cv::Mat &src, const ArmorBox &
         rectangle(image2show, box.rect, Scalar(0, 255, 0), 3);
     }else{
         rectangle(image2show, box.rect, Scalar(0, 255, 0), 1);
-    };
+    }
 
-    char dist[5];
+    char dist[10];
     sprintf(dist, "%.1f", box.getBoxDistance());
     if (box.id == -1)
         putText(image2show, id2name[box.id]+" "+dist, Point(box.rect.x + 2, box.rect.y + 2), cv::FONT_HERSHEY_TRIPLEX, 1,

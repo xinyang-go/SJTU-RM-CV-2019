@@ -30,7 +30,7 @@ extern ArmorFinder armorFinder;
 extern Energy energy;
 
 void uartReceive(Serial *pSerial) {
-    char buffer[30];
+    char buffer[40];
     LOGM(STR_CTR(WORD_LIGHT_WHITE, "data receive start!"));
     while (true) {
         memset(buffer, 0, sizeof(buffer));
