@@ -38,6 +38,7 @@ void Energy::initEnergy() {
     last_mode = -1;//既不是大符也不是小符
     manual_delta_x = 0;
     manual_delta_y = 0;
+    extra_delta_y = 0;
 
     target_polar_angle = -1000;
     last_target_polar_angle = -1000;
@@ -75,7 +76,7 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-    gimbal_energy_part_param_.GRAY_THRESH = 100;//home
+    gimbal_energy_part_param_.GRAY_THRESH = 90;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
 //    gimbal_energy_part_param_.GRAY_THRESH = 225;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;

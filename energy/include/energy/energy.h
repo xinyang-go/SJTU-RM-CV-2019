@@ -73,6 +73,7 @@ private:
     int anticlockwise_rotation_init_cnt;//装甲板逆时针旋转次数
     int last_mode;//上一帧的能量机关状态
     int manual_delta_x, manual_delta_y;//手动微调量
+    int extra_delta_y;//在风车运动到最高点附近的额外补偿量
 
     float target_polar_angle;//待击打装甲板的极坐标角度
     float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度

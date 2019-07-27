@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 0/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_GAIN, 0/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/gimbal255.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/gimbal255.avi");
+            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");

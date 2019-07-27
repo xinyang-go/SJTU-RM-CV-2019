@@ -14,9 +14,14 @@ extern mcu_data mcuData;
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数通过自瞄逻辑击打目标点，用于大符的自动对心和小符直接打击
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::getAimPoint(cv::Point target_point) {
-    double dx = -(target_point.x - 320 - COMPENSATE_YAW - mcuData.delta_x - manual_delta_x);
-    double dy = -(target_point.y - 240 - COMPENSATE_PITCH - mcuData.delta_y - manual_delta_y);
+void Energy::getAimPoint(cv::Point target_point_) {
+    float target_polar_angle_ = static_cast<float>(180 / PI * atan2(-1 * (target_point_.y - circle_center_point.y),
+                                                                    (target_point_.x - circle_center_point.x)));
+    if (target_polar_angle_ > 50 && target_polar_angle_ < 130)extra_delta_y = -16;
+    else extra_delta_y = 0;
+
+    double dx = -(target_point_.x - 320 - COMPENSATE_YAW - mcuData.delta_x - manual_delta_x);
+    double dy = -(target_point_.y - 240 - COMPENSATE_PITCH - mcuData.delta_y - manual_delta_y - extra_delta_y);
     yaw_rotation = atan(dx / FOCUS_PIXAL) * 180 / PI;
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
