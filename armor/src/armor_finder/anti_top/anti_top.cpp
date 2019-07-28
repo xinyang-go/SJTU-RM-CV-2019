@@ -6,9 +6,17 @@
 #include <additions/additions.h>
 #include <log.h>
 
+static double boxDistance(const cv::Rect2d &a, const cv::Rect2d &b){
+    cv::Point2d centerA(a.x+a.width/2, a.y+a.height/2);
+    cv::Point2d centerB(b.x+b.width/2, b.y+b.height/2);
+    auto dist = centerA-centerB;
+    return sqrt(dist.x*dist.x + dist.y*dist.y);
+}
+
 void ArmorFinder::antiTop() {
     static double top_periodms = 0;
     static double last_top_periodms = 0;
+    static cv::Rect2d last_pos;
     uint16_t shoot_delay = 0;
     timeval curr_time;
 //    if(anti_top_state == ANTI_TOP){
@@ -31,8 +39,8 @@ void ArmorFinder::antiTop() {
         return;
     }
 
-
-    if(orientation!=last_orient && orientation==ArmorBox::FRONT){
+    auto dist = boxDistance(last_pos, armor_box.rect);
+    if(orientation!=last_orient && orientation==ArmorBox::FRONT && dist>=6){
         last_front_time = curr_time;
         if(150<interval && interval<700){
             if(anti_top_state == ANTI_TOP){

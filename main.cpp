@@ -20,7 +20,7 @@
 #include <additions/additions.h>
 #include <config/setconfig.h>
 
-//#define DO_NOT_CNT_TIME
+#define DO_NOT_CNT_TIME
 
 #include <log.h>
 

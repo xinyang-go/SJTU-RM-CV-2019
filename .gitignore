@@ -7,6 +7,7 @@ tools/TrainCNN/.idea
 tools/TrainCNN/model
 tools/TrainCNN/__pycache__
 others/include/config/config.h
+others/MV-UB31-Group0.config
 .DS_Store
-gimble_video
+gimbal_video
 chassis_video
