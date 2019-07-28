@@ -51,10 +51,11 @@ extern std::map<string, int> prior_red;
 class LightBlob {
 public:
     cv::RotatedRect rect;   //灯条位置
+    double areaRatio;
     double length;          //灯条长度
     uint8_t blob_color;      //灯条颜色
 
-    LightBlob(cv::RotatedRect &r, uint8_t color) : rect(r), blob_color(color) {
+    LightBlob(cv::RotatedRect &r, double ratio, uint8_t color) : rect(r), areaRatio(ratio), blob_color(color) {
         length = max(rect.size.height, rect.size.width);
     };
     LightBlob() = default;

@@ -18,8 +18,8 @@ class Classifier {
 private:
     bool state;
 
-    vector<vector<MatrixXd>> conv1_w, conv2_w;
-    vector<double> conv1_b, conv2_b;
+    vector<vector<MatrixXd>> conv1_w, conv2_w, conv3_w;
+    vector<double> conv1_b, conv2_b, conv3_b;
     MatrixXd fc1_w, fc2_w;
     VectorXd fc1_b, fc2_b;
 
@@ -30,8 +30,10 @@ private:
 
     MatrixXd softmax(const MatrixXd &input);
     MatrixXd relu(const MatrixXd &input);
+    MatrixXd leaky_relu(const MatrixXd &input, float alpha);
     vector<vector<MatrixXd>> apply_bias(const vector<vector<MatrixXd>> &input, const vector<double> &bias);
     vector<vector<MatrixXd>> relu(const vector<vector<MatrixXd>> &input);
+    vector<vector<MatrixXd>> leaky_relu(const vector<vector<MatrixXd>> &input, float alpha);
     vector<vector<MatrixXd>> max_pool(const vector<vector<MatrixXd>> &input, int size);
     vector<vector<MatrixXd>> mean_pool(const vector<vector<MatrixXd>> &input, int size);
     vector<vector<MatrixXd>> pand(const vector<vector<MatrixXd>> &input, int val);

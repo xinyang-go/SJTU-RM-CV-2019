@@ -162,12 +162,30 @@ MatrixXd Classifier::relu(const MatrixXd &input){
     });
 }
 
+MatrixXd Classifier::leaky_relu(const MatrixXd &input, float alpha){
+    return input.unaryExpr([&](double val){
+        return (val>0)?(val):(alpha*val);
+    });
+}
+
 vector<vector<MatrixXd>> Classifier::relu(const vector<vector<MatrixXd>> &input){
     vector<vector<MatrixXd>> result;
     for(int samples=0; samples<input.size(); samples++){
         vector<MatrixXd> sub;
         for(int channels=0; channels<input[0].size(); channels++){
             sub.emplace_back(relu(input[samples][channels]));
+        }
+        result.emplace_back(sub);
+    }
+    return result;
+}
+
+vector<vector<MatrixXd>> Classifier::leaky_relu(const vector<vector<MatrixXd>> &input, float alpha){
+    vector<vector<MatrixXd>> result;
+    for(int samples=0; samples<input.size(); samples++){
+        vector<MatrixXd> sub;
+        for(int channels=0; channels<input[0].size(); channels++){
+            sub.emplace_back(leaky_relu(input[samples][channels], alpha));
         }
         result.emplace_back(sub);
     }
@@ -254,6 +272,8 @@ Classifier::Classifier(const string &folder) : state(true){
     conv1_b = load_conv_b(folder+"conv1_b");
     conv2_w = load_conv_w(folder+"conv2_w");
     conv2_b = load_conv_b(folder+"conv2_b");
+    conv3_w = load_conv_w(folder+"conv3_w");
+    conv3_b = load_conv_b(folder+"conv3_b");
     fc1_w = load_fc_w(folder+"fc1_w");
     fc1_b = load_fc_b(folder+"fc1_b");
     fc2_w = load_fc_w(folder+"fc2_w");
@@ -273,7 +293,8 @@ MatrixXd Classifier::calculate(const vector<vector<MatrixXd>> &input) {
     vector<vector<MatrixXd>> pool1_result = mean_pool(conv1_result, 2);
     vector<vector<MatrixXd>> conv2_result = relu(apply_bias(conv2(conv2_w, pool1_result), conv2_b));
     vector<vector<MatrixXd>> pool2_result = mean_pool(conv2_result, 2);
-    MatrixXd flattened = flatten(pool2_result);
+    vector<vector<MatrixXd>> conv3_result = relu(apply_bias(conv2(conv3_w, pool2_result), conv3_b));
+    MatrixXd flattened = flatten(conv3_result);
     MatrixXd y1 = fc1_w * flattened;
     y1.colwise() += fc1_b;
     MatrixXd fc1 = relu(y1);
@@ -303,7 +324,7 @@ int Classifier::operator()(const cv::Mat &image) {
 //    cout << result << "==============" <<endl;
     MatrixXd::Index minRow, minCol;
     result.maxCoeff(&minRow, &minCol);
-    if(result(minRow, minCol) > 0.9){
+    if(result(minRow, minCol) > 0.90){
         return minRow;
     }else{
         return 0;

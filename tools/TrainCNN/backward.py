@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 print("Preparing...")
 import tensorflow as tf
+import os
 from tqdm import tqdm
 import generate
 import forward
@@ -35,28 +36,22 @@ def save_bias(fp, val):
         print(val[i], file=fp)
 
 
-def save_para(folder, paras):
-    with open(folder + "/conv1_w", "w") as fp:
-        save_kernal(fp, paras[0])
-    with open(folder + "/conv1_b", "w") as fp:
-        save_bias(fp, paras[1])
-    with open(folder + "/conv2_w", "w") as fp:
-        save_kernal(fp, paras[2])
-    with open(folder + "/conv2_b", "w") as fp:
-        save_bias(fp, paras[3])
-    with open(folder + "/fc1_w", "w") as fp:
-        save_weight_mat(fp, paras[4])
-    with open(folder + "/fc1_b", "w") as fp:
-        save_bias(fp, paras[5])
-    with open(folder + "/fc2_w", "w") as fp:
-        save_weight_mat(fp, paras[6])
-    with open(folder + "/fc2_b", "w") as fp:
-        save_bias(fp, paras[7])
+def save_para(folder, paras, names, info):
+    os.system("mkdir %s/%s" % (folder, info))
+    for para, name in zip(paras, names):
+        fp = open("%s/%s/%s" % (folder, info, name), "w")
+        if name[-1:] == "b":
+            save_bias(fp, para)
+        elif name[:2] == "fc":
+            save_weight_mat(fp, para)
+        elif name[:4] == "conv":
+            save_kernal(fp, para)
+        fp.close()
 
 
-STEPS = 60000
-BATCH = 50
-LEARNING_RATE_BASE  = 0.001
+STEPS = 50000
+BATCH = 30
+LEARNING_RATE_BASE  = 0.0005
 LEARNING_RATE_DECAY = 0.99
 MOVING_AVERAGE_DECAY = 0.99
 
@@ -65,7 +60,7 @@ def train(dataset, show_bar=False):
     x = tf.placeholder(tf.float32, [None, generate.SRC_ROWS, generate.SRC_COLS, generate.SRC_CHANNELS])
     y_= tf.placeholder(tf.float32, [None, forward.OUTPUT_NODES])
     keep_rate = tf.placeholder(tf.float32)
-    nodes, vars = forward.forward(x, 0.01)
+    nodes, vars, vars_name = forward.forward(x, 0.01)
     y = nodes[-1]
 
     ce  = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
@@ -101,35 +96,38 @@ def train(dataset, show_bar=False):
 
             _, loss_value, step = sess.run(
                 [train_op, loss, global_step],
-                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.2}
+                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.4}
             )
 
-            if (i-1) % 100 == 0:
-                if (i-1) % 500 == 0:
-                    test_images, test_labels = dataset.sample_test_sets(5000)
-                    test_acc, output = sess.run([accuracy, y], feed_dict={x: test_images, y_: test_labels, keep_rate:1.0})
-                    output = np.argmax(output, axis=1)
-                    real = np.argmax(test_labels, axis=1)
-                    print("=============test-set===============")
-                    for n in range(forward.OUTPUT_NODES):
-                        print("label: %d, precise: %f, recall: %f" %
-                            (n, np.mean(real[output==n]==n), np.mean(output[real==n]==n)))
+            if step % 500 == 0:
+                test_images, test_labels = dataset.sample_test_sets(6000)
+                test_acc, output = sess.run([accuracy, y], feed_dict={x: test_images, y_: test_labels, keep_rate:1.0})
+                output = np.argmax(output, axis=1)
+                real = np.argmax(test_labels, axis=1)
+                print("=============test-set===============")
+                for n in range(forward.OUTPUT_NODES):
+                    print("label: %d, precise: %f, recall: %f" %
+                        (n, np.mean(real[output==n]==n), np.mean(output[real==n]==n)))
 
-                    train_images, train_labels = dataset.sample_train_sets(5000)
-                    train_acc, output = sess.run([accuracy, y], feed_dict={x: train_images, y_: train_labels, keep_rate:1.0})
-                    output = np.argmax(output, axis=1)
-                    real = np.argmax(train_labels, axis=1)
-                    print("=============train-set===============")
-                    for n in range(forward.OUTPUT_NODES):
-                        print("label: %d, precise: %f, recall: %f" %
-                              (n, np.mean(real[output==n]==n), np.mean(output[real==n]==n)))
-                    print("\n")
-
+                train_images, train_labels = dataset.sample_train_sets(6000)
+                train_acc, output = sess.run([accuracy, y], feed_dict={x: train_images, y_: train_labels, keep_rate:1.0})
+                output = np.argmax(output, axis=1)
+                real = np.argmax(train_labels, axis=1)
+                print("=============train-set===============")
+                for n in range(forward.OUTPUT_NODES):
+                    print("label: %d, precise: %f, recall: %f" %
+                          (n, np.mean(real[output==n]==n), np.mean(output[real==n]==n)))
+                print("\n")
+                if train_acc >= 0.99 and test_acc >= 0.99:
+                    vars_val = sess.run(vars)
+                    save_para(
+                        "model",
+                        vars_val,
+                        vars_name,
+                        "steps:%d-train_acc:%f-test_acc:%f" % (step, train_acc, test_acc)
+                    )
                 bar.set_postfix({"loss": loss_value, "train_acc": train_acc, "test_acc": test_acc})
-
-        vars_val = sess.run(vars)
-        save_para("/home/xinyang/Workspace/RM_auto-aim/tools/para", vars_val)
-        print("save done!")
+        # print("save done!")
 
         # pred = sess.run(y, feed_dict={x: test_images, keep_rate:1.0})
 

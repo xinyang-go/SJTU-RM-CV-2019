@@ -20,7 +20,7 @@
 #include <additions/additions.h>
 #include <config/setconfig.h>
 
-#define DO_NOT_CNT_TIME
+//#define DO_NOT_CNT_TIME
 
 #include <log.h>
 
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
     while (true) {
         // 打开视频源
         if (from_camera) {
-            video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 0/*, "armor"*/);
-            video_chassis = new CameraWrapper(ENERGY_CAMERA_GAIN, 0/*, "energy"*/);
+            video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
+            video_chassis = new CameraWrapper(ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
             video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
             video_chassis = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
@@ -93,14 +93,14 @@ int main(int argc, char *argv[]) {
         bool ok = true;
         cout << "start running" << endl;
         do {
-//            CNT_TIME("Total", {
+            CNT_TIME("Total", {
             if (mcuData.state == BIG_ENERGY_STATE) {//大能量机关模式
                 if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
                     LOGM(STR_CTR(WORD_BLUE, "Start Big Energy!"));
                     destroyAllWindows();
                     if (from_camera) {
                         delete video_gimbal;
-                        video_gimbal = new CameraWrapper(ENERGY_CAMERA_GAIN, 0/*, "armor"*/);
+                        video_gimbal = new CameraWrapper(ENERGY_CAMERA_GAIN, 2/*, "armor"*/);
                         if (video_gimbal->init()) {
                             LOGM("video_gimbal source initialization successfully.");
                         } else {
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
                     destroyAllWindows();
                     if (from_camera) {
                         delete video_gimbal;
-                        video_gimbal = new CameraWrapper(ENERGY_CAMERA_GAIN, 0/*, "armor"*/);
+                        video_gimbal = new CameraWrapper(ENERGY_CAMERA_GAIN, 2/*, "armor"*/);
                         if (video_gimbal->init()) {
                             LOGM("video_gimbal source initialization successfully.");
                         } else {
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
                     destroyAllWindows();
                     if (from_camera) {
                         delete video_gimbal;
-                        video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 0/*, "armor"*/);
+                        video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
                         if (video_gimbal->init()) {
                             LOGM("video_gimbal source initialization successfully.");
                         } else {
@@ -163,19 +163,23 @@ int main(int argc, char *argv[]) {
                     }
                 }
                 last_state = mcuData.state;
-                ok = checkReconnect(video_gimbal->read(gimbal_src));
+                CNT_TIME(STR_CTR(WORD_GREEN, "read img"), {
+                    if(!checkReconnect(video_gimbal->read(gimbal_src))) continue;
+                });
 #ifdef GIMBAL_FLIP_MODE
                 flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
 #endif
-                if (!from_camera) extract(gimbal_src);
-                if (save_video) saveVideos(gimbal_src);
-                if (show_origin) showOrigin(gimbal_src);
-                CNT_TIME("Armor Time", {
+//                CNT_TIME("something whatever", {
+                    if (!from_camera) extract(gimbal_src);
+                    if (save_video) saveVideos(gimbal_src);
+                    if (show_origin) showOrigin(gimbal_src);
+//                });
+                CNT_TIME(STR_CTR(WORD_CYAN, "Armor Time"), {
                     armorFinder.run(gimbal_src);
                 });
             }
 //                cv::waitKey(0);
-//            });
+            });
         } while (ok);
         delete video_gimbal;
         video_gimbal = nullptr;

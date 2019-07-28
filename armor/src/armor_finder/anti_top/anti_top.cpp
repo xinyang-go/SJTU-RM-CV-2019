@@ -3,11 +3,8 @@
 //
 
 #include <armor_finder/armor_finder.h>
+#include <additions/additions.h>
 #include <log.h>
-
-static double getTimeIntervalms(const timeval& now, const timeval &last){
-    return (now.tv_sec-last.tv_sec)*1000.0 + (now.tv_usec-last.tv_usec)/1000.0;
-}
 
 void ArmorFinder::antiTop() {
     static double top_periodms = 0;

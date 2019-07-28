@@ -6,6 +6,7 @@
 #include <show_images/show_images.h>
 #include <options/options.h>
 #include <opencv2/highgui.hpp>
+#define DO_NOT_CNT_TIME
 #include <log.h>
 
 
@@ -27,7 +28,7 @@ static bool lengthJudge(const LightBlob &light_blob_i, const LightBlob &light_bl
     double side_length;
     cv::Point2f centers = light_blob_i.rect.center - light_blob_j.rect.center;
     side_length = sqrt(centers.ddot(centers));
-    return (side_length / light_blob_i.length < 8 && side_length / light_blob_i.length > 0.5);
+    return (side_length / light_blob_i.length < 10 && side_length / light_blob_i.length > 0.5);
 }
 
 static bool lengthRatioJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
@@ -99,6 +100,7 @@ bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBox
             if (min_x < 0 || max_x > src.cols || min_y < 0 || max_y > src.rows) {
                 continue;
             }
+            if((max_x-min_x)/(max_y-min_y) < 0.8) continue;
             LightBlobs pair_blobs = {light_blobs.at(i), light_blobs.at(j)};
             armor_boxes.emplace_back(
                     cv::Rect2d(min_x, min_y, max_x - min_x, max_y - min_y),
@@ -116,31 +118,35 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
 
     box.rect = cv::Rect2d(0, 0, 0, 0);
     box.id = -1;
-
-    if (!findLightBlobs(src, light_blobs)) {
-        return false;
-    }
+    CNT_TIME("blob", {
+        if (!findLightBlobs(src, light_blobs)) {
+            return false;
+        }
+    });
     if (show_light_blobs && src.size() == cv::Size(640, 480)) {
         showLightBlobs("light_blobs", src, light_blobs);
         cv::waitKey(1);
     }
-
-    if (!matchArmorBoxes(src, light_blobs, armor_boxes, enemy_color)) {
-//        cout << "Box fail!" << endl;
-        return false;
-    }
+    CNT_TIME("boxes",{
+        if (!matchArmorBoxes(src, light_blobs, armor_boxes, enemy_color)) {
+    //        cout << "Box fail!" << endl;
+            return false;
+        }
+    });
     if (show_armor_boxes && src.size() == cv::Size(640, 480)) {
         showArmorBoxes("boxes", src, armor_boxes);
         cv::waitKey(1);
     }
 
     if (classifier && use_classifier) {
-        for (auto &armor_box : armor_boxes) {
-            cv::Mat roi = src(armor_box.rect).clone();
-            cv::resize(roi, roi, cv::Size(48, 36));
-            int c = classifier(roi);
-            armor_box.id = c;
-        }
+        CNT_TIME("classify: %d", {
+            for (auto &armor_box : armor_boxes) {
+                cv::Mat roi = src(armor_box.rect).clone();
+                cv::resize(roi, roi, cv::Size(48, 36));
+                int c = classifier(roi);
+                armor_box.id = c;
+            }
+        }, armor_boxes.size());
         sort(armor_boxes.begin(), armor_boxes.end());
         if(armor_boxes[0].id != 0){
             box = armor_boxes[0];

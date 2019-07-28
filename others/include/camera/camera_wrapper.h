@@ -9,11 +9,12 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <thread>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <opencv2/imgproc/imgproc.hpp>
-
 #include "camera/wrapper_head.h"
+
 #ifdef Windows
     #include "camera/CameraApi.h"
 #elif defined(Linux) || defined(Darwin)
@@ -21,9 +22,12 @@
 #endif
 
 class CameraWrapper: public WrapperHead {
+    friend void cameraCallback(CameraHandle hCamera, BYTE *pFrameBuffer, tSdkFrameHead* pFrameHead,PVOID pContext);
 private:
     const std::string name;
     int mode;
+
+    bool init_done;
 
     unsigned char* rgb_buffer;
     int camera_cnts;
@@ -38,6 +42,11 @@ private:
     IplImage* iplImage;
     int channel;
 
+    cv::Mat src_queue[2];
+    volatile int qhead;
+    volatile int qtail;
+
+    std::thread *readThread;
 public:
     int gain;
 
@@ -48,6 +57,8 @@ public:
     bool read(cv::Mat& src) final;
     bool readRaw(cv::Mat& src);
     bool readProcessed(cv::Mat& src);
+    bool readCallback(cv::Mat& src);
+    bool readWithThread(cv::Mat &src);
     bool changeBrightness(int brightness);
 //    bool once
 };

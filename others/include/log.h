@@ -146,7 +146,7 @@
 			gettimeofday(&ts, NULL); \
 			codes; \
 			gettimeofday(&te, NULL); \
-			LOGM(tag": %.1lfms", (te.tv_sec-ts.tv_sec)*1000.0+(te.tv_usec-ts.tv_usec)/1000.0); \
+			LOGM(tag": %.1lfms", ##__VA_ARGS__, (te.tv_sec-ts.tv_sec)*1000.0+(te.tv_usec-ts.tv_usec)/1000.0); \
 		}while (0)
     #else
         #warning "Unsupport plantform for CNT_TIME"

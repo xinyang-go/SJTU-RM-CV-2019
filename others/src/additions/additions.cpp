@@ -169,3 +169,7 @@ void extract(cv::Mat &gimbal_src) {//图像预处理，将视频切成640×480�
         gimbal_src = gimbal_src(Rect(0, (width - 480) / 2, 640, 480));
     }
 }
+
+double getTimeIntervalms(const timeval& now, const timeval &last){
+    return (now.tv_sec-last.tv_sec)*1000.0 + (now.tv_usec-last.tv_usec)/1000.0;
+}

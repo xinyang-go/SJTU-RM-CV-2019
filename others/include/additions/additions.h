@@ -6,6 +6,7 @@
 #define _ADDITIONS_H_
 
 #include <stdint.h>
+#include <sys/time.h>
 #include <serial/serial.h>
 
 struct mcu_data{
@@ -30,5 +31,6 @@ void showOrigin(const cv::Mat &gimbal_src, const cv::Mat &chassis_src);
 void showOrigin(const cv::Mat &gimbal_src);
 void extract(cv::Mat &gimbal_src, cv::Mat &chassis_src);
 void extract(cv::Mat &gimbal_src);
+double getTimeIntervalms(const timeval& now, const timeval &last);
 
 #endif /* _ADDITIONS_H_ */

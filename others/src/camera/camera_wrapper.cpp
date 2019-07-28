@@ -4,6 +4,7 @@
 
 #include <camera/camera_wrapper.h>
 #include <log.h>
+#include <additions/additions.h>
 #include <options/options.h>
 #include <config/setconfig.h>
 
@@ -15,15 +16,33 @@ using namespace cv;
 
 CameraWrapper::CameraWrapper(int gain, int camera_mode, const std::string &n) :
         name(n),
+        init_done(false),
         mode(camera_mode),
         camera_cnts(2),
         camera_status(-1),
         iplImage(nullptr),
         rgb_buffer(nullptr),
         channel(3),
-        gain(gain){
+        gain(gain),
+        qhead(0),
+        qtail(0),
+        readThread(nullptr){
 }
 
+void cameraCallback(CameraHandle hCamera, BYTE *pFrameBuffer, tSdkFrameHead* pFrameHead,PVOID pContext){
+    CameraWrapper *c = (CameraWrapper*)pContext;
+    CameraImageProcess(hCamera, pFrameBuffer, c->rgb_buffer, pFrameHead);
+    auto iplImage = cvCreateImageHeader(cvSize(pFrameHead->iWidth, pFrameHead->iHeight), IPL_DEPTH_8U, c->channel);
+    cvSetData(iplImage, c->rgb_buffer, pFrameHead->iWidth * c->channel);  //此处只是设置指针，无图像块数据拷贝，不需担心转换效率
+    c->src_queue[c->qhead] = cv::cvarrToMat(iplImage).clone();
+    if((c->qhead+1)%2 == c->qtail){
+        c->qhead = (c->qhead+1)%2;
+        c->qtail = (c->qtail+1)%2;
+    } else {
+        c->qhead = (c->qhead+1)%2;
+    }
+//    LOGM("Get image, [%d %d]", c->qhead, c->qtail);
+}
 
 bool CameraWrapper::init() {
     CameraSdkInit(1);
@@ -76,6 +95,8 @@ bool CameraWrapper::init() {
     }
     LOGM("successfully loaded %s!", filepath);
 #elif defined(Linux)
+    CameraReadParameterFromFile(h_camera, PROJECT_DIR"/others/MV-UB31-Group0.config");
+    CameraLoadParameter(h_camera, PARAMETER_TEAM_A);
     CameraSetAeState(h_camera, false);
     CameraSetExposureTime(h_camera, CAMERA_EXPOSURE * 1000);
 #ifndef WITH_TIME_BASED_CAMERA_GAIN
@@ -106,14 +127,13 @@ bool CameraWrapper::init() {
     }
     CameraSetAnalogGain(h_camera, gain);
 #endif
-    if (mode == 0) {
-        CameraSetGain(h_camera, CAMERA_RED_GAIN, CAMERA_GREEN_GAIN, CAMERA_BLUE_GAIN);
-        CameraSetLutMode(h_camera, LUTMODE_PRESET);
-    }
+
 #endif
     double t;
+    int g;
     CameraGetExposureTime(h_camera, &t);
-    LOGM("Exposure time: %lfms", t / 1000.0);
+    CameraGetAnalogGain(h_camera, &g);
+    LOGM("Exposure time: %lfms, gain:%d", t / 1000.0, g);
     /*让SDK进入工作模式，开始接收来自相机发送的图像
     数据。如果当前相机是触发模式，则需要接收到
     触发帧以后才会更新图像。    */
@@ -135,6 +155,10 @@ bool CameraWrapper::init() {
         CameraSetIspOutFormat(h_camera, CAMERA_MEDIA_TYPE_BGR8);
         LOGM("camera %s color ", camera_name);
     }
+    if(mode == 2){
+        CameraSetCallbackFunction(h_camera, cameraCallback, this, nullptr);
+    }
+    init_done = true;
     return true;
 }
 
@@ -144,12 +168,18 @@ bool CameraWrapper::changeBrightness(int brightness) {
 }
 
 bool CameraWrapper::read(cv::Mat &src) {
-    if (mode == 0)return readProcessed(src);
-    if (mode == 1)return readRaw(src);
+    if(init_done) {
+        if (mode == 0)return readProcessed(src);
+        if (mode == 1)return readRaw(src);
+        if (mode == 2)return readCallback(src);
+        if (mode == 3)return readWithThread(src);
+    } else {
+        return false;
+    }
 }
 
 bool CameraWrapper::readRaw(cv::Mat &src) {
-    if (CameraGetImageBuffer(h_camera, &frame_info, &pby_buffer, 1000) == CAMERA_STATUS_SUCCESS) {
+    if (CameraGetImageBuffer(h_camera, &frame_info, &pby_buffer, 500) == CAMERA_STATUS_SUCCESS) {
         if (iplImage) {
             cvReleaseImageHeader(&iplImage);
         }
@@ -173,7 +203,7 @@ bool CameraWrapper::readRaw(cv::Mat &src) {
 
 bool CameraWrapper::readProcessed(cv::Mat &src) {
 //	cerr << "Get-1" << endl;
-    if (CameraGetImageBuffer(h_camera, &frame_info, &pby_buffer, 1000) == CAMERA_STATUS_SUCCESS) {
+    if (CameraGetImageBuffer(h_camera, &frame_info, &pby_buffer, 500) == CAMERA_STATUS_SUCCESS) {
         CameraImageProcess(h_camera, pby_buffer, rgb_buffer,
                            &frame_info);  // this function is super slow, better not to use it.
         if (iplImage) {
@@ -192,9 +222,56 @@ bool CameraWrapper::readProcessed(cv::Mat &src) {
     }
 }
 
+bool CameraWrapper::readCallback(cv::Mat &src) {
+    timeval ts, te;
+    gettimeofday(&ts, NULL);
+    while(qtail==qhead){
+        gettimeofday(&te, NULL);
+        if(getTimeIntervalms(te, ts) > 500){
+            return false;
+        }
+    }
+
+    src = src_queue[qtail];
+//    cout << src.size << endl;
+    qtail = (qtail+1)%2;
+    return true;
+}
+
+bool CameraWrapper::readWithThread(cv::Mat &src){
+    if(readThread != nullptr){
+        readThread->join();
+        src = src_queue[qtail];
+        qtail = (qtail+1)%2;
+        delete readThread;
+        readThread = new std::thread([&](){
+            readProcessed(src_queue[qhead]);
+            qhead = (qhead+1)%2;
+        });
+    }else{
+        readThread = new std::thread([&](){
+            readProcessed(src_queue[qhead]);
+            qhead = (qhead+1)%2;
+        });
+        readThread->join();
+        src = src_queue[qtail];
+        qtail = (qtail+1)%2;
+        delete readThread;
+        readThread = new std::thread([&](){
+            readProcessed(src_queue[qhead]);
+            qhead = (qhead+1)%2;
+        });
+    }
+    return true;
+}
+
 CameraWrapper::~CameraWrapper() {
     CameraUnInit(h_camera);
     //注意，先反初始化后再free
     if (rgb_buffer != nullptr)
         free(rgb_buffer);
+    if(readThread != nullptr){
+        readThread->detach();
+        delete readThread;
+    }
 }
