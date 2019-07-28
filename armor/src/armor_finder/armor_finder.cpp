@@ -58,8 +58,8 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
 }
 
 void ArmorFinder::run(cv::Mat &src) {
-    stateSearchingTarget(src);                    // for debug
-    goto end;
+//    stateSearchingTarget(src);                    // for debug
+//    goto end;
     switch (state) {
         case SEARCHING_STATE:
             if (stateSearchingTarget(src)) {
