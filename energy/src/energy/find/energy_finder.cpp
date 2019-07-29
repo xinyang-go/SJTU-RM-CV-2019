@@ -15,7 +15,7 @@ using std::vector;
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::findFans(const cv::Mat src) {
     if (src.empty()){
-        cout << "empty!" << endl;
+        if (show_info) cout << "empty!" << endl;
         return 0;
     }
     static Mat src_bin;
@@ -63,7 +63,7 @@ int Energy::findFans(const cv::Mat src) {
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::findArmors(const cv::Mat src) {
     if (src.empty()){
-        cout << "empty!" << endl;
+        if (show_info) cout << "empty!" << endl;
         return 0;
     }
     static Mat src_bin;
@@ -121,7 +121,7 @@ int Energy::findArmors(const cv::Mat src) {
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findCenterR(const cv::Mat src) {
     if (src.empty()){
-        cout << "empty!" << endl;
+        if (show_info) cout << "empty!" << endl;
         return false;
     }
     static Mat src_bin;
@@ -173,7 +173,7 @@ bool Energy::findCenterR(const cv::Mat src) {
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findFlowStripFan(const cv::Mat src) {
     if (src.empty()){
-        cout << "empty!" << endl;
+        if (show_info) cout << "empty!" << endl;
         return false;
     }
     static Mat src_bin;
@@ -223,7 +223,7 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findFlowStrip(const cv::Mat src) {
     if (src.empty()) {
-        cout << "empty!" << endl;
+        if (show_info) cout << "empty!" << endl;
         return false;
     }
     cv::Mat src_bin;
