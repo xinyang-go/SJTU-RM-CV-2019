@@ -23,10 +23,10 @@ static double mean(RoundQueue<double, length> &vec) {
 }
 
 ArmorFinder::BoxRatioChangeType ArmorFinder::getRatioChangeType(RoundQueue<double, 5> &vec) {
-    auto d = (vec[0] - vec[1] + vec[3] + vec[4]) / 3.0;
-    if (d > 0.1) {
+    auto d = (vec[0] - vec[1] + vec[3] + vec[4]);
+    if (d > 0.15) {
         return INCREASE;
-    } else if (d < -0.1) {
+    } else if (d < -0.15) {
         return DECREASE;
     } else {
         return NOCHANGE;
