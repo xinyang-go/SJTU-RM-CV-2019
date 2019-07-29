@@ -39,6 +39,8 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
             blob.rect.center.x += bigger_rect.x;
             blob.rect.center.y += bigger_rect.y;
         }
+        tracker = TrackerToUse::create();
+        tracker->init(src, armor_box.rect);
     }else{
         roi = src(pos).clone();
         if(classifier){
@@ -60,18 +62,5 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
         armor_box.rect = pos;
         armor_box.light_blobs.clear();
     }
-
-
-//    armor_box.x -= armor_box.width / 4.0;
-//    armor_box.y -= armor_box.height / 4.0;
-//    armor_box.height *= 1.5;
-//    armor_box.width *= 1.5;
-
-//    roi = src(armor_box);
-//    if(findSearchingTarget(roi)){
-//
-//    }
-
-//    sendBoxPosition();
     return true;
 }

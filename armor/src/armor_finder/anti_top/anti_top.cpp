@@ -6,66 +6,74 @@
 #include <additions/additions.h>
 #include <log.h>
 
-static double boxDistance(const cv::Rect2d &a, const cv::Rect2d &b){
-    cv::Point2d centerA(a.x+a.width/2, a.y+a.height/2);
-    cv::Point2d centerB(b.x+b.width/2, b.y+b.height/2);
-    auto dist = centerA-centerB;
-    return sqrt(dist.x*dist.x + dist.y*dist.y);
+static double boxDistance(const cv::Rect2d &a, const cv::Rect2d &b) {
+    cv::Point2d centerA(a.x + a.width / 2, a.y + a.height / 2);
+    cv::Point2d centerB(b.x + b.width / 2, b.y + b.height / 2);
+    auto dist = centerA - centerB;
+    return sqrt(dist.x * dist.x + dist.y * dist.y);
+}
+
+template <int length>
+static double mean(RoundQueue<double, length> &vec) {
+    double sum = 0;
+    for (int i = 0; i < vec.size(); i++) {
+        sum += vec[i];
+    }
+    return sum / length;
+}
+
+ArmorFinder::BoxRatioChangeType ArmorFinder::getRatioChangeType(RoundQueue<double, 5> &vec) {
+    auto d = (vec[0] - vec[1] + vec[3] + vec[4]) / 3.0;
+    if (d > 0.1) {
+        return INCREASE;
+    } else if (d < -0.1) {
+        return DECREASE;
+    } else {
+        return NOCHANGE;
+    }
 }
 
 void ArmorFinder::antiTop() {
-    static double top_periodms = 0;
-    static double last_top_periodms = 0;
-    static cv::Rect2d last_pos;
+    if (armor_box.rect == cv::Rect2d()) return;
     uint16_t shoot_delay = 0;
-    timeval curr_time;
-//    if(anti_top_state == ANTI_TOP){
-//        cout << "anti top" << endl;
-//    }else if(anti_top_state == NORMAL){
-//        cout << "Normal" << endl;
-//    }
-    gettimeofday(&curr_time, nullptr);
-    auto interval = getTimeIntervalms(curr_time, last_front_time);
-    if(interval > 700){
-        anti_top_state = NORMAL;
+    auto interval = getTimeIntervalms(frame_time, last_front_time);
+    box_ratioes.push(armor_box.rect.width / armor_box.rect.height);
+    auto change_type = getRatioChangeType(box_ratioes);
+    auto orientation = armor_box.getOrientation();
+    if (interval > 700) {
         anti_top_cnt = 0;
-    }
-    
-    ArmorBox::BoxOrientation orientation = armor_box.getOrientation();
-    if(orientation == ArmorBox::UNKNOWN){
-        if(anti_top_state == NORMAL){
-            sendBoxPosition(shoot_delay);
+        if (anti_top_state == ANTI_TOP) {
+            anti_top_state = NORMAL;
+            LOGM(STR_CTR(WORD_YELLOW, "switch to normal"));
         }
-        return;
     }
-
-    auto dist = boxDistance(last_pos, armor_box.rect);
-    if(orientation!=last_orient && orientation==ArmorBox::FRONT && dist>=6){
-        last_front_time = curr_time;
-        if(150<interval && interval<700){
-            if(anti_top_state == ANTI_TOP){
-                last_top_periodms = top_periodms;
-                top_periodms = interval;
-                LOGM(STR_CTR(WORD_LIGHT_GREEN, "top period: %.1lf ms"), top_periodms);
-                shoot_delay = (last_top_periodms+top_periodms)/2.0-110;
-                last_orient = orientation;
-            }else if(anti_top_state == NORMAL){
-//                LOGM("interval:%.1lf", interval);
-                if(++anti_top_cnt > 4){
+    if (change_type == INCREASE && last_ratio_type != change_type) {
+        last_front_time = frame_time;
+        if (150 < interval && interval < 700) {
+            if (anti_top_state == ANTI_TOP) {
+                top_periodms.push(interval);
+                LOGM(STR_CTR(WORD_LIGHT_GREEN, "top period: %.1lf ms"), interval);
+                timeval curr_time;
+                gettimeofday(&curr_time, nullptr);
+                auto calculate_time = getTimeIntervalms(curr_time, frame_time);
+                shoot_delay = mean(top_periodms) - calculate_time;
+            } else if (anti_top_state == NORMAL) {
+                if (++anti_top_cnt > 4) {
                     anti_top_state = ANTI_TOP;
+                    LOGM(STR_CTR(WORD_CYAN, "switch to anti-top"));
                 }
             }
         }
     }
-
-    if(anti_top_state == ANTI_TOP){
-        if(orientation == ArmorBox::FRONT){
+    if (change_type != NOCHANGE) {
+        last_ratio_type = change_type;
+    }
+    if (anti_top_state == ANTI_TOP) {
+        if (orientation == ArmorBox::FRONT) {
             sendBoxPosition(shoot_delay);
         }
-    }else if(anti_top_state == NORMAL){
+    } else if (anti_top_state == NORMAL) {
         sendBoxPosition(shoot_delay);
     }
-
-    last_orient = orientation;
 }
 

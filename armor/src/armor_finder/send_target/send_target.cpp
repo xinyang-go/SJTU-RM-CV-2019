@@ -52,6 +52,5 @@ bool ArmorFinder::sendBoxPosition(uint16_t shoot_delay) {
     double yaw = atan(dx / FOCUS_PIXAL) * 180 / PI;
     double pitch = atan(dy / FOCUS_PIXAL) * 180 / PI;
     double dist = DISTANCE_HEIGHT / rect.height;
-//    cout << yaw << endl;
     return sendTarget(serial, yaw, -pitch, dist, shoot_delay);
 }

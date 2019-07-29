@@ -58,12 +58,12 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
 }
 
 void ArmorFinder::run(cv::Mat &src) {
+    gettimeofday(&frame_time, nullptr);
 //    stateSearchingTarget(src);                    // for debug
 //    goto end;
     switch (state) {
         case SEARCHING_STATE:
             if (stateSearchingTarget(src)) {
-//                cout << armor_box.rect << endl;
                 if ((armor_box.rect & cv::Rect2d(0, 0, 640, 480)) == armor_box.rect) { // 判断装甲板区域是否脱离图像区域
                     if (!classifier || !use_classifier) {                    /* 如果分类器不可用或者不使用分类器 */
                         cv::Mat roi = src(armor_box.rect).clone(), roi_gray;  /* 就使用装甲区域亮点数判断是否跟丢 */

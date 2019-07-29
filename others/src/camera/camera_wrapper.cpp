@@ -1,7 +1,7 @@
 //
 // Created by zhikun on 18-11-7.
 //
-
+#include <iostream>
 #include <camera/camera_wrapper.h>
 #include <log.h>
 #include <additions/additions.h>
@@ -9,9 +9,6 @@
 #include <config/setconfig.h>
 
 using namespace std;
-
-using std::cout;
-using std::endl;
 using namespace cv;
 
 CameraWrapper::CameraWrapper(int gain, int camera_mode, const std::string &n) :
@@ -23,10 +20,7 @@ CameraWrapper::CameraWrapper(int gain, int camera_mode, const std::string &n) :
         iplImage(nullptr),
         rgb_buffer(nullptr),
         channel(3),
-        gain(gain),
-        qhead(0),
-        qtail(0),
-        readThread(nullptr){
+        gain(gain){
 }
 
 void cameraCallback(CameraHandle hCamera, BYTE *pFrameBuffer, tSdkFrameHead* pFrameHead,PVOID pContext){
@@ -34,14 +28,7 @@ void cameraCallback(CameraHandle hCamera, BYTE *pFrameBuffer, tSdkFrameHead* pFr
     CameraImageProcess(hCamera, pFrameBuffer, c->rgb_buffer, pFrameHead);
     auto iplImage = cvCreateImageHeader(cvSize(pFrameHead->iWidth, pFrameHead->iHeight), IPL_DEPTH_8U, c->channel);
     cvSetData(iplImage, c->rgb_buffer, pFrameHead->iWidth * c->channel);  //此处只是设置指针，无图像块数据拷贝，不需担心转换效率
-    c->src_queue[c->qhead] = cv::cvarrToMat(iplImage).clone();
-    if((c->qhead+1)%2 == c->qtail){
-        c->qhead = (c->qhead+1)%2;
-        c->qtail = (c->qtail+1)%2;
-    } else {
-        c->qhead = (c->qhead+1)%2;
-    }
-//    LOGM("Get image, [%d %d]", c->qhead, c->qtail);
+    c->src_queue.push(cv::cvarrToMat(iplImage).clone());
 }
 
 bool CameraWrapper::init() {
@@ -162,17 +149,11 @@ bool CameraWrapper::init() {
     return true;
 }
 
-bool CameraWrapper::changeBrightness(int brightness) {
-    CameraUnInit(h_camera);
-    CameraSetAnalogGain(h_camera, brightness);
-}
-
 bool CameraWrapper::read(cv::Mat &src) {
     if(init_done) {
         if (mode == 0)return readProcessed(src);
         if (mode == 1)return readRaw(src);
         if (mode == 2)return readCallback(src);
-        if (mode == 3)return readWithThread(src);
     } else {
         return false;
     }
@@ -225,44 +206,13 @@ bool CameraWrapper::readProcessed(cv::Mat &src) {
 bool CameraWrapper::readCallback(cv::Mat &src) {
     timeval ts, te;
     gettimeofday(&ts, NULL);
-    while(qtail==qhead){
+    while(src_queue.empty()){
         gettimeofday(&te, NULL);
         if(getTimeIntervalms(te, ts) > 500){
             return false;
         }
     }
-
-    src = src_queue[qtail];
-//    cout << src.size << endl;
-    qtail = (qtail+1)%2;
-    return true;
-}
-
-bool CameraWrapper::readWithThread(cv::Mat &src){
-    if(readThread != nullptr){
-        readThread->join();
-        src = src_queue[qtail];
-        qtail = (qtail+1)%2;
-        delete readThread;
-        readThread = new std::thread([&](){
-            readProcessed(src_queue[qhead]);
-            qhead = (qhead+1)%2;
-        });
-    }else{
-        readThread = new std::thread([&](){
-            readProcessed(src_queue[qhead]);
-            qhead = (qhead+1)%2;
-        });
-        readThread->join();
-        src = src_queue[qtail];
-        qtail = (qtail+1)%2;
-        delete readThread;
-        readThread = new std::thread([&](){
-            readProcessed(src_queue[qhead]);
-            qhead = (qhead+1)%2;
-        });
-    }
-    return true;
+    return src_queue.pop(src);
 }
 
 CameraWrapper::~CameraWrapper() {
@@ -270,8 +220,4 @@ CameraWrapper::~CameraWrapper() {
     //注意，先反初始化后再free
     if (rgb_buffer != nullptr)
         free(rgb_buffer);
-    if(readThread != nullptr){
-        readThread->detach();
-        delete readThread;
-    }
 }

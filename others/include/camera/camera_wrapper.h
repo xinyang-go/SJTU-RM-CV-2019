@@ -7,18 +7,14 @@
 #ifndef VIDEO_TEST1_CAMERA_WRAPPER_H
 #define VIDEO_TEST1_CAMERA_WRAPPER_H
 
-#include <stdio.h>
-#include <iostream>
-#include <thread>
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include <opencv2/imgproc/imgproc.hpp>
-#include "camera/wrapper_head.h"
+#include <additions/additions.h>
+#include <opencv2/core/core.hpp>
+#include <camera/wrapper_head.h>
 
 #ifdef Windows
     #include "camera/CameraApi.h"
 #elif defined(Linux) || defined(Darwin)
-    #include "camera/camera_api.h"
+    #include <camera/camera_api.h>
 #endif
 
 class CameraWrapper: public WrapperHead {
@@ -42,11 +38,7 @@ private:
     IplImage* iplImage;
     int channel;
 
-    cv::Mat src_queue[2];
-    volatile int qhead;
-    volatile int qtail;
-
-    std::thread *readThread;
+    RoundQueue<cv::Mat, 2> src_queue;
 public:
     int gain;
 
@@ -58,9 +50,6 @@ public:
     bool readRaw(cv::Mat& src);
     bool readProcessed(cv::Mat& src);
     bool readCallback(cv::Mat& src);
-    bool readWithThread(cv::Mat &src);
-    bool changeBrightness(int brightness);
-//    bool once
 };
 
 

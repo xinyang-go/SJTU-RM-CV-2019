@@ -107,6 +107,11 @@ private:
         NORMAL, ANTI_TOP
     } AntiTopState;
 
+    typedef enum{
+        INCREASE, DECREASE, NOCHANGE
+    } BoxRatioChangeType;
+
+    timeval frame_time;                                 // 当前帧对应时间;
     const uint8_t &enemy_color;                         // 敌方颜色，引用外部变量，自动变化
     State state;                                        // 自瞄状态对象实例
     ArmorBox armor_box;                                 // 当前目标装甲板
@@ -116,8 +121,10 @@ private:
     int tracking_cnt;                                   // 记录追踪帧数，用于定时退出追踪
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
     const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
-    ArmorBox::BoxOrientation last_orient;               // 上一帧目标装甲板方向，用于反陀螺
-    timeval last_front_time;                           // 上一次发生装甲板方向切换的时间
+    RoundQueue<double, 4> top_periodms;
+    RoundQueue<double, 5> box_ratioes;
+    timeval last_front_time;                            // 上一次发生装甲板方向切换的时间
+    BoxRatioChangeType last_ratio_type;
     int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
     AntiTopState anti_top_state;                        // 当前是否识别到陀螺
 
@@ -129,6 +136,7 @@ private:
     bool stateStandBy();                                // stand by state主函数（已弃用）
 
     void antiTop();                                    // 反小陀螺
+    BoxRatioChangeType getRatioChangeType(RoundQueue<double, 5> &vec);
 
 public:
     void run(cv::Mat &src);                             // 自瞄主函数
