@@ -43,6 +43,12 @@
 #ifndef COMPENSATE_PITCH
     #define COMPENSATE_PITCH (74)
 #endif
+#ifndef EXTRA_DELTA_X
+    #define EXTRA_DELTA_X (10)
+#endif
+#ifndef EXTRA_DELTA_Y
+    #define EXTRA_DELTA_Y (10)
+#endif
 
 //#define GIMBAL_FLIP_MODE    (-1)
 //#define CHASSIS_FLIP_MODE   (-1)

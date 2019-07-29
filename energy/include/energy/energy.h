@@ -163,6 +163,7 @@ private:
     bool guessTarget();//获得猜测击打点位
     bool getOrigin();//获得云台对心所需角度
     void changeTarget();//判断目标是否改变
+    void getCenter();//对心
     void multipleMode(cv::Mat &src);//多模式切换
     void getTargetPolarAngle();//获得目标装甲板极坐标角度
     void getPredictPoint(cv::Point target_point);//获取预测点位

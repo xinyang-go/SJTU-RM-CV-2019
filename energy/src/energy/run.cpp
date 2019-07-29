@@ -3,6 +3,7 @@
 //
 #include "energy/energy.h"
 #include "log.h"
+#include "config/setconfig.h"
 #include "options/options.h"
 #include <sys/time.h>
 
@@ -85,6 +86,11 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showFlowStripFan("strip", gimbal_src);
     if (!findCenterR(gimbal_src))return;
     if (show_energy)showCenterR("R", gimbal_src);
+
+//    getCenter();
+//    sendEnergy();
+//    return;
+
     changeTarget();
     getTargetPolarAngle();
     if (energy_rotation_init) {
@@ -113,6 +119,10 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     if (!findFlowStripFan(gimbal_src))return;
     if (!findTargetInFlowStripFan()) return;
     if (!findFlowStrip(gimbal_src))return;
+
+//    getCenter();
+//    sendEnergy();
+//    return;
 
     changeTarget();
     if (save_mark)writeDownSlightChange(gimbal_src);
