@@ -17,31 +17,15 @@ extern mcu_data mcuData;
 void Energy::getAimPoint(cv::Point target_point_) {
     float target_polar_angle_ = static_cast<float>(180 / PI * atan2(-1 * (target_point_.y - circle_center_point.y),
                                                                     (target_point_.x - circle_center_point.x)));
-//    if (target_polar_angle_ > 40 && target_polar_angle_ < 140){
-//        extra_delta_x = 0;
-//        extra_delta_y = -10;
-//    }
-//    else if (target_polar_angle_ > 30 && target_polar_angle_ <= 40){
-//        extra_delta_x = 8;
-//        extra_delta_y = -8;
-//    }
-//    else if (target_polar_angle_ >= 140 && target_polar_angle_ < 150){
-//        extra_delta_x = -8;
-//        extra_delta_y = -8;
-//    }
-//    else {
-//        extra_delta_x = 0;
-//        extra_delta_y = 0;
-//    }
 
     if (target_polar_angle_ > 0 && target_polar_angle_ <= 90) {
-//        extra_delta_x = EXTRA_DELTA_X * (90 - target_polar_angle_) / 90;
+        extra_delta_x = EXTRA_DELTA_X * (90 - target_polar_angle_) / 90;
         extra_delta_y = - EXTRA_DELTA_Y * target_polar_angle_  / 90;
     } else if (target_polar_angle_ > 90 && target_polar_angle_ < 180) {
-//        extra_delta_x = - EXTRA_DELTA_X * (target_polar_angle_ - 90) / 90;
+        extra_delta_x = - EXTRA_DELTA_X * (target_polar_angle_ - 90) / 90;
         extra_delta_y = - EXTRA_DELTA_Y * (180 - target_polar_angle_) / 90;
     } else {
-//        extra_delta_x = 0;
+        extra_delta_x = 0;
         extra_delta_y = 0;
     }
 

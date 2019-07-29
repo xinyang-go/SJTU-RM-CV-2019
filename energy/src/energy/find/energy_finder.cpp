@@ -134,7 +134,7 @@ bool Energy::findCenterR(const cv::Mat src) {
         circle_center_point = centerR.center;
         circle_center_point.y += target_length / 7.5;//实际最小二乘得到的中心在R的下方
 
-        RotatedRect cur_rect = minAreaRect(center_R_contour);
+//        RotatedRect cur_rect = minAreaRect(center_R_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
