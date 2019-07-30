@@ -45,7 +45,7 @@ void Energy::initEnergy() {
     last_target_polar_angle = -1000;
     guess_polar_angle = -1000;
     last_base_angle = -1000;
-    predict_rad = 27;
+    predict_rad = 25;
     attack_distance = ATTACK_DISTANCE;
     center_delta_yaw = 1000;
     center_delta_pitch = 1000;

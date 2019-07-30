@@ -165,7 +165,6 @@ void Energy::showFlowStripFan(std::string windows_name, const cv::Mat src) {
     center_ROI.points(ROI_vertices);   //计算矩形的4个顶点
     for (int i = 0; i < 4; i++)
         line(image2show, ROI_vertices[i], ROI_vertices[(i + 1) % 4], Scalar(0, 0, 255), 2);
-    cout<<"show strip!"<<endl;
     imshow(windows_name, image2show);
 }
 
