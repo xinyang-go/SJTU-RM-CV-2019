@@ -85,6 +85,7 @@ private:
     float yaw_rotation, pitch_rotation;//云台yaw轴和pitch轴应该转到的角度
     float origin_yaw, origin_pitch;//初始的云台角度设定值
     float shoot;//若为2，则要求主控板发弹
+    float last_yaw, last_pitch;//PID中微分项
     float sum_yaw, sum_pitch;//yaw和pitch的累计误差，即PID中积分项
 
     systime time_start_guess;

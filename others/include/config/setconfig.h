@@ -31,11 +31,23 @@
 #ifndef ENERGY_CAMERA_GAIN
     #define ENERGY_CAMERA_GAIN  (30)
 #endif
-#ifndef AIM_KP
-    #define AIM_KP (6)
+#ifndef YAW_AIM_KD
+    #define YAW_AIM_KD (0)
 #endif
-#ifndef AIM_KI
-    #define AIM_KI (0.1)
+#ifndef YAW_AIM_KP
+    #define YAW_AIM_KP (6)
+#endif
+#ifndef YAW_AIM_KI
+    #define YAW_AIM_KI (0.1)
+#endif
+#ifndef PITCH_AIM_KD
+    #define PITCH_AIM_KD (0)
+#endif
+#ifndef PITCH_AIM_KP
+    #define PITCH_AIM_KP (6)
+#endif
+#ifndef PITCH_AIM_KI
+    #define PITCH_AIM_KI (0.1)
 #endif
 #ifndef COMPENSATE_YAW
     #define COMPENSATE_YAW (5)

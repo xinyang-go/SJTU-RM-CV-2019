@@ -8,6 +8,7 @@
 
 using namespace std;
 
+#define MINMAX(value, min, max) value = ((value) < (min)) ? (min) : ((value) > (max) ? (max) : (value))
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于发送能量机关数据
@@ -17,13 +18,20 @@ void Energy::sendEnergy() {
         if (camera_cnt == 1) {
             sum_yaw += yaw_rotation;
             sum_pitch += pitch_rotation;
-            yaw_rotation = AIM_KP * yaw_rotation + AIM_KI * sum_yaw;
-            pitch_rotation = AIM_KP * pitch_rotation + AIM_KI * sum_pitch;
+            MINMAX(sum_yaw, -100, 100);
+            MINMAX(sum_pitch, -100, 100);
+//            float KP = 4.5;
+//            if(abs(yaw_rotation)<0.3)KP=0.1;
+//            else if(abs(yaw_rotation)<0.5)KP=0.1;
+//            else KP = 0.1; " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
+            yaw_rotation = YAW_AIM_KP * yaw_rotation + YAW_AIM_KI * sum_yaw + YAW_AIM_KD * (yaw_rotation - last_yaw);
+            pitch_rotation = PITCH_AIM_KP * pitch_rotation + PITCH_AIM_KI * sum_pitch +
+                             PITCH_AIM_KD * (pitch_rotation - last_pitch);
         } else if (is_chassis) {
             sum_yaw += yaw_rotation - mcuData.curr_yaw;
             sum_pitch += pitch_rotation - mcuData.curr_pitch;
-            yaw_rotation = AIM_KP * (yaw_rotation - mcuData.curr_yaw) + AIM_KI * sum_yaw;
-            pitch_rotation = AIM_KP * (pitch_rotation - mcuData.curr_pitch) + AIM_KI * sum_pitch;
+            yaw_rotation = YAW_AIM_KP * (yaw_rotation - mcuData.curr_yaw) + YAW_AIM_KI * sum_yaw;
+            pitch_rotation = PITCH_AIM_KP * (pitch_rotation - mcuData.curr_pitch) + PITCH_AIM_KI * sum_pitch;
         }
     }
 
@@ -51,7 +59,7 @@ void Energy::sendTarget(Serial &serial, float x, float y, float z) {
     time_t t = time(nullptr);
     if (last_time != t) {
         last_time = t;
-        cout << "Energy: fps:" << fps << ", (" << x << "," << y << "," << z  << ")" << endl;
+        cout << "Energy: fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
         fps = 0;
     }
     fps += 1;

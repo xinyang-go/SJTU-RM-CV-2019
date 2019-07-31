@@ -52,6 +52,8 @@ void Energy::initEnergy() {
     yaw_rotation = 0;
     pitch_rotation = 0;
     shoot = 0;
+    last_yaw = 0;
+    last_pitch = 0;
     sum_yaw = 0;
     sum_pitch = 0;
 
