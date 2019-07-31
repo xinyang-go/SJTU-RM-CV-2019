@@ -3,7 +3,7 @@
 //
 #include <systime.h>
 
-#if defined(Linux)
+#if defined(Linux) || defined(Darwin)
 
 void getsystime(systime &t){
     timeval tv;

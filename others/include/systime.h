@@ -12,7 +12,7 @@ typedef struct{
 
 void getsystime(systime &t);
 
-#if defined(Linux)
+#if defined(Linux) || defined(Darwin)
     #include <sys/time.h>
 #elif defined(Windows)
     #include <Windows.h>
