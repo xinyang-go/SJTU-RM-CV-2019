@@ -4,8 +4,7 @@
 #include "energy/energy.h"
 #include "log.h"
 #include "config/setconfig.h"
-#include "options/options.h"
-#include <sys/time.h>
+#include "options.h"
 
 using namespace std;
 using namespace cv;

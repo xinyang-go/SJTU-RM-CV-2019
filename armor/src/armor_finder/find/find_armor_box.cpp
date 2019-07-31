@@ -4,7 +4,7 @@
 
 #include <armor_finder/armor_finder.h>
 #include <show_images/show_images.h>
-#include <options/options.h>
+#include <options.h>
 #include <opencv2/highgui.hpp>
 #define DO_NOT_CNT_TIME
 #include <log.h>

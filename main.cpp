@@ -10,14 +10,14 @@
 #include <iostream>
 #include <thread>
 #include <opencv2/core/core.hpp>
-#include <serial/serial.h>
+#include <serial.h>
 #include <camera/camera_wrapper.h>
 #include <camera/video_wrapper.h>
 #include <camera/wrapper_head.h>
 #include <energy/energy.h>
 #include <armor_finder/armor_finder.h>
-#include <options/options.h>
-#include <additions/additions.h>
+#include <options.h>
+#include <additions.h>
 #include <config/setconfig.h>
 
 #define DO_NOT_CNT_TIME

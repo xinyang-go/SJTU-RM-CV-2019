@@ -3,7 +3,7 @@
 //
 
 #include <armor_finder/armor_finder.h>
-#include <additions/additions.h>
+#include <additions.h>
 #include <log.h>
 
 static double boxDistance(const cv::Rect2d &a, const cv::Rect2d &b) {
@@ -53,8 +53,8 @@ void ArmorFinder::antiTop() {
             if (anti_top_state == ANTI_TOP) {
                 top_periodms.push(interval);
                 LOGM(STR_CTR(WORD_LIGHT_GREEN, "top period: %.1lf ms"), interval);
-                timeval curr_time;
-                gettimeofday(&curr_time, nullptr);
+                systime curr_time;
+                getsystime(curr_time);
                 auto calculate_time = getTimeIntervalms(curr_time, frame_time);
                 shoot_delay = mean(top_periodms) - calculate_time;
             } else if (anti_top_state == NORMAL) {

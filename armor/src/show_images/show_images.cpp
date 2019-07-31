@@ -1,6 +1,6 @@
 #include <show_images/show_images.h>
 #include <opencv2/highgui.hpp>
-#include <options/options.h>
+#include <options.h>
 #include <log.h>
 
 using namespace cv;

@@ -13,12 +13,12 @@
 #include <constants.h>
 #include <stdio.h>
 #include <time.h>
-#include <sys/timeb.h>
+#include <systime.h>
 #include "energy/constant.h"
 #include "energy/param_struct_define.h"
-#include "serial/serial.h"
-#include "additions/additions.h"
-#include "options/options.h"
+#include "serial.h"
+#include "additions.h"
+#include "options.h"
 
 using std::vector;
 
@@ -87,7 +87,7 @@ private:
     float shoot;//若为2，则要求主控板发弹
     float sum_yaw, sum_pitch;//yaw和pitch的累计误差，即PID中积分项
 
-    timeval time_start_guess;
+    systime time_start_guess;
 
     cv::RotatedRect centerR;//风车中心字母R的可能候选区
     cv::RotatedRect flow_strip;//图像中所有流动条（理论上只有一个）

@@ -2,7 +2,7 @@
 // Created by xinyang on 19-3-27.
 //
 #include <log.h>
-#include <options/options.h>
+#include <options.h>
 #include <armor_finder/armor_finder.h>
 #include <show_images/show_images.h>
 

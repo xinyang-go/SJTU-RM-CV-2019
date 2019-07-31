@@ -17,11 +17,10 @@
 
 #define LOG_LEVEL LOG_NONE
 #include <log.h>
-#include <options/options.h>
+#include <options.h>
 #include <show_images/show_images.h>
 #include <opencv2/highgui.hpp>
 #include <armor_finder/armor_finder.h>
-#include <sys/time.h>
 
 std::map<int, string> id2name = {                               //装甲板id到名称的map
         {-1, "OO"},{ 0, "NO"},
@@ -58,7 +57,7 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
 }
 
 void ArmorFinder::run(cv::Mat &src) {
-    gettimeofday(&frame_time, nullptr);
+    getsystime(frame_time);
 //    stateSearchingTarget(src);                    // for debug
 //    goto end;
     switch (state) {

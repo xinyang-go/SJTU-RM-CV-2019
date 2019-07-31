@@ -19,7 +19,7 @@ void Energy::judgeShootInWorld() {
 //        is_predicting = false;
 //        is_guessing = true;
 //        start_guess = true;
-//        gettimeofday(&time_start_guess, NULL);
+//        getsystime(time_start_guess);
         LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
         shoot = 2;
@@ -35,7 +35,7 @@ void Energy::judgeShootInGimbal() {
 //        is_predicting = false;
 //        is_guessing = true;
 //        start_guess = true;
-//        gettimeofday(&time_start_guess, NULL);
+//        getsystime(time_start_guess);
 //        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
         shoot = 2;

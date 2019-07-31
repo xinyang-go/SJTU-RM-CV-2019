@@ -4,7 +4,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#include "additions/additions.h"
+#include "additions.h"
 const int BIG = 1;
 const int SMALL = 0;
 const int SRC_WIDTH = 320;

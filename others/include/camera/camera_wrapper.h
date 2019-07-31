@@ -7,7 +7,7 @@
 #ifndef VIDEO_TEST1_CAMERA_WRAPPER_H
 #define VIDEO_TEST1_CAMERA_WRAPPER_H
 
-#include <additions/additions.h>
+#include <additions.h>
 #include <opencv2/core/core.hpp>
 #include <camera/wrapper_head.h>
 

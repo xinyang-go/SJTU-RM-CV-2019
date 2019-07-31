@@ -9,7 +9,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/videoio/videoio_c.h>
-#include <additions/additions.h>
+#include <additions.h>
 #include <camera/camera_wrapper.h>
 #include <energy/energy.h>
 #include <armor_finder/armor_finder.h>
@@ -170,6 +170,6 @@ void extract(cv::Mat &gimbal_src) {//图像预处理，将视频切成640×480�
     }
 }
 
-double getTimeIntervalms(const timeval& now, const timeval &last){
-    return (now.tv_sec-last.tv_sec)*1000.0 + (now.tv_usec-last.tv_usec)/1000.0;
+float getTimeIntervalms(const systime &now, const systime &last){
+    return (now.second-last.second)*1000.0 + (now.millisecond-last.millisecond);
 }

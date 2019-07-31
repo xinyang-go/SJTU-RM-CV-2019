@@ -1,5 +1,5 @@
-#include <serial/serial.h>
-#include <options/options.h>
+#include <serial.h>
+#include <options.h>
 #include <iostream>
 
 //#define LOG_LEVEL LOG_NONE

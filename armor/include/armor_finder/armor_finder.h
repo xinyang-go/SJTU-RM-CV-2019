@@ -6,13 +6,13 @@
 #define _ARMOR_FINDER_H_
 
 #include <map>
-#include <sys/time.h>
+#include <systime.h>
 #include <constants.h>
 #include <opencv2/core.hpp>
 #include <opencv2/tracking.hpp>
-#include <serial/serial.h>
+#include <serial.h>
 #include <armor_finder/classifier/classifier.h>
-#include <additions/additions.h>
+#include <additions.h>
 
 #define BLOB_RED    ENEMY_RED
 #define BLOB_BLUE   ENEMY_BLUE
@@ -111,7 +111,7 @@ private:
         INCREASE, DECREASE, NOCHANGE
     } BoxRatioChangeType;
 
-    timeval frame_time;                                 // 当前帧对应时间;
+    systime frame_time;                                 // 当前帧对应时间;
     const uint8_t &enemy_color;                         // 敌方颜色，引用外部变量，自动变化
     State state;                                        // 自瞄状态对象实例
     ArmorBox armor_box;                                 // 当前目标装甲板
@@ -123,7 +123,7 @@ private:
     const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
     RoundQueue<double, 4> top_periodms;
     RoundQueue<double, 5> box_ratioes;
-    timeval last_front_time;                            // 上一次发生装甲板方向切换的时间
+    systime last_front_time;                            // 上一次发生装甲板方向切换的时间
     BoxRatioChangeType last_ratio_type;
     int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
     AntiTopState anti_top_state;                        // 当前是否识别到陀螺

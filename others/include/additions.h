@@ -6,8 +6,8 @@
 #define _ADDITIONS_H_
 
 #include <stdint.h>
-#include <sys/time.h>
-#include <serial/serial.h>
+#include <systime.h>
+#include <serial.h>
 #include <opencv2/core.hpp>
 
 struct mcu_data {
@@ -41,7 +41,7 @@ void extract(cv::Mat &gimbal_src, cv::Mat &chassis_src);
 
 void extract(cv::Mat &gimbal_src);
 
-double getTimeIntervalms(const timeval &now, const timeval &last);
+float getTimeIntervalms(const systime &now, const systime &last);
 
 template<class type, int length>
 class RoundQueue {

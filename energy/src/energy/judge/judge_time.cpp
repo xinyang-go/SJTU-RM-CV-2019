@@ -14,8 +14,7 @@ using namespace cv;
 // 此函数用于判断guess模式是否超时
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::isGuessingTimeout() {
-    timeval cur_time;
-    gettimeofday(&cur_time, NULL);
-    return (cur_time.tv_sec - time_start_guess.tv_sec) * 1000.0 +
-           (cur_time.tv_usec - time_start_guess.tv_usec) / 1000.0 > 1000;
+    systime cur_time;
+    getsystime(cur_time);
+    return getTimeIntervalms(cur_time, time_start_guess) > 1000;
 };

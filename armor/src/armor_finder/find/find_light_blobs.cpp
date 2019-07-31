@@ -3,7 +3,7 @@
 //
 
 #include <armor_finder/armor_finder.h>
-#include <options/options.h>
+#include <options.h>
 #include <opencv2/highgui.hpp>
 
 static double lw_rate(const cv::RotatedRect &rect) {

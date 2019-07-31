@@ -4,8 +4,8 @@
 #include <iostream>
 #include <camera/camera_wrapper.h>
 #include <log.h>
-#include <additions/additions.h>
-#include <options/options.h>
+#include <additions.h>
+#include <options.h>
 #include <config/setconfig.h>
 
 using namespace std;
@@ -86,35 +86,7 @@ bool CameraWrapper::init() {
     CameraLoadParameter(h_camera, PARAMETER_TEAM_A);
     CameraSetAeState(h_camera, false);
     CameraSetExposureTime(h_camera, CAMERA_EXPOSURE * 1000);
-#ifndef WITH_TIME_BASED_CAMERA_GAIN
     CameraSetAnalogGain(h_camera, gain);
-#else
-
-#include <sys/time.h>
-
-    timeval tv;
-    int gain;
-    gettimeofday(&tv, nullptr);
-    float hour = (tv.tv_sec % (3600 * 24)) / 3600.0;
-    if (6 <= hour && hour < 10) {
-        gain = 20;
-        LOGM("Set gain to morning 20");
-    } else if (10 <= hour && hour < 16) {
-        gain = 10;
-        LOGM("Set gain to day 10");
-    } else if (16 <= hour && hour < 17) {
-        gain = 20;
-        LOGM("Set gain to early evening 20");
-    } else if (17 <= hour && hour < 18) {
-        gain = 40;
-        LOGM("Set gain to evening 40");
-    } else {
-        gain = 50;
-        LOGM("Set gain to early night 50");
-    }
-    CameraSetAnalogGain(h_camera, gain);
-#endif
-
 #endif
     double t;
     int g;
@@ -204,10 +176,10 @@ bool CameraWrapper::readProcessed(cv::Mat &src) {
 }
 
 bool CameraWrapper::readCallback(cv::Mat &src) {
-    timeval ts, te;
-    gettimeofday(&ts, NULL);
+    systime ts, te;
+    getsystime(ts);
     while(src_queue.empty()){
-        gettimeofday(&te, NULL);
+        getsystime(te);
         if(getTimeIntervalms(te, ts) > 500){
             return false;
         }
