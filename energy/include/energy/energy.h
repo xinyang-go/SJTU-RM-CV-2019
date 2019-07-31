@@ -73,7 +73,7 @@ private:
     int anticlockwise_rotation_init_cnt;//装甲板逆时针旋转次数
     int last_mode;//上一帧的能量机关状态
     int manual_delta_x, manual_delta_y;//手动微调量
-    int extra_delta_y;//在风车运动到最高点附近的额外补偿量
+    int extra_delta_x, extra_delta_y;//在风车运动到最高点附近的额外补偿量
 
     float target_polar_angle;//待击打装甲板的极坐标角度
     float last_target_polar_angle;//上一帧待击打装甲板的极坐标角度
@@ -163,6 +163,7 @@ private:
     bool guessTarget();//获得猜测击打点位
     bool getOrigin();//获得云台对心所需角度
     void changeTarget();//判断目标是否改变
+    void getCenter();//对心
     void multipleMode(cv::Mat &src);//多模式切换
     void getTargetPolarAngle();//获得目标装甲板极坐标角度
     void getPredictPoint(cv::Point target_point);//获取预测点位

@@ -39,6 +39,7 @@ void Energy::initEnergy() {
     manual_delta_x = 0;
     manual_delta_y = 0;
     extra_delta_y = 0;
+    extra_delta_x = 0;
 
     target_polar_angle = -1000;
     last_target_polar_angle = -1000;
@@ -76,7 +77,7 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-    gimbal_energy_part_param_.GRAY_THRESH = 90;//home
+    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
 //    gimbal_energy_part_param_.GRAY_THRESH = 225;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;
@@ -108,9 +109,9 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_MAX = 100000;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_AREA_MIN = 0;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN = 5;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MIN = 8;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_LENGTH_MAX = 45;
-    gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN = 5;
+    gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MIN = 8;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_WIDTH_MAX = 45;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MAX = 3;
     gimbal_energy_part_param_.CENTER_R_CONTOUR_HW_RATIO_MIN = 1;

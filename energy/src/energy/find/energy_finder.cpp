@@ -14,7 +14,10 @@ using std::vector;
 // 此函数用于寻找图像内所有的大风车扇叶
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::findFans(const cv::Mat src) {
-    if (src.empty())return 0;
+    if (src.empty()){
+        if (show_info) cout << "empty!" << endl;
+        return 0;
+    }
     static Mat src_bin;
     src_bin = src.clone();
     if (src.type() == CV_8UC3) {
@@ -59,7 +62,10 @@ int Energy::findFans(const cv::Mat src) {
 // 此函数用于寻找图像内所有的大风车装甲板模块
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::findArmors(const cv::Mat src) {
-    if (src.empty())return 0;
+    if (src.empty()){
+        if (show_info) cout << "empty!" << endl;
+        return 0;
+    }
     static Mat src_bin;
     src_bin = src.clone();
     if (src.type() == CV_8UC3) {
@@ -114,7 +120,10 @@ int Energy::findArmors(const cv::Mat src) {
 // 此函数用于寻找图像内大风车中心字母“R”
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findCenterR(const cv::Mat src) {
-    if (src.empty())return false;
+    if (src.empty()){
+        if (show_info) cout << "empty!" << endl;
+        return false;
+    }
     static Mat src_bin;
     src_bin = src.clone();
     if (src.type() == CV_8UC3) {
@@ -134,7 +143,7 @@ bool Energy::findCenterR(const cv::Mat src) {
         circle_center_point = centerR.center;
         circle_center_point.y += target_length / 7.5;//实际最小二乘得到的中心在R的下方
 
-        RotatedRect cur_rect = minAreaRect(center_R_contour);
+//        RotatedRect cur_rect = minAreaRect(center_R_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
@@ -163,7 +172,10 @@ bool Energy::findCenterR(const cv::Mat src) {
 // 此函数用于判断找到的矩形候选区是否为含流动条的扇叶
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findFlowStripFan(const cv::Mat src) {
-    if (src.empty())return false;
+    if (src.empty()){
+        if (show_info) cout << "empty!" << endl;
+        return false;
+    }
     static Mat src_bin;
     static Mat src_copy;
     src_bin = src.clone();
@@ -201,9 +213,8 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
     if (flow_strip_fans.empty()) {
         if (show_info)cout << "flow strip fan false!" << endl;
         return false;
-    } else {
-        return true;
     }
+    return true;
 }
 
 
@@ -211,7 +222,10 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 // 此函数用于寻找流动条
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findFlowStrip(const cv::Mat src) {
-    if (src.empty())return false;
+    if (src.empty()) {
+        if (show_info) cout << "empty!" << endl;
+        return false;
+    }
     cv::Mat src_bin;
     src_bin = src.clone();
 
@@ -296,6 +310,7 @@ bool Energy::findFlowStrip(const cv::Mat src) {
             }
         }
     }
+    return true;
 }
 
 
