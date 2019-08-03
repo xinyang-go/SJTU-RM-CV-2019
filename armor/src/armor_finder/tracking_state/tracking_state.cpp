@@ -7,13 +7,13 @@
 #include <show_images/show_images.h>
 
 bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
-    auto pos = armor_box.rect;
+    auto pos = target_box.rect;
     if(!tracker->update(src, pos)){
-        armor_box = ArmorBox();
+        target_box = ArmorBox();
         return false;
     }
     if((pos & cv::Rect2d(0, 0, 640, 480)) != pos){
-        armor_box = ArmorBox();
+        target_box = ArmorBox();
         return false;
     }
 
@@ -32,21 +32,21 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
 
     ArmorBox box;
     if(findArmorBox(roi, box)) {
-        armor_box = box;
-        armor_box.rect.x += bigger_rect.x;
-        armor_box.rect.y += bigger_rect.y;
-        for(auto &blob : armor_box.light_blobs){
+        target_box = box;
+        target_box.rect.x += bigger_rect.x;
+        target_box.rect.y += bigger_rect.y;
+        for(auto &blob : target_box.light_blobs){
             blob.rect.center.x += bigger_rect.x;
             blob.rect.center.y += bigger_rect.y;
         }
         tracker = TrackerToUse::create();
-        tracker->init(src, armor_box.rect);
+        tracker->init(src, target_box.rect);
     }else{
         roi = src(pos).clone();
         if(classifier){
             cv::resize(roi, roi, cv::Size(48, 36));
             if(classifier(roi) == 0){
-                armor_box = ArmorBox();
+                target_box = ArmorBox();
                 return false;
             }
         }else{
@@ -55,12 +55,12 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
             cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
             contour_area = cv::countNonZero(roi_gray);
             if(abs(cv::countNonZero(roi_gray) - contour_area) > contour_area * 0.3){
-                armor_box = ArmorBox();
+                target_box = ArmorBox();
                 return false;
             }
         }
-        armor_box.rect = pos;
-        armor_box.light_blobs.clear();
+        target_box.rect = pos;
+        target_box.light_blobs.clear();
     }
     return true;
 }

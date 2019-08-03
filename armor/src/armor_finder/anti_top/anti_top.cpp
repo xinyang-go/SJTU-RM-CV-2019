@@ -13,7 +13,7 @@ static double boxDistance(const cv::Rect2d &a, const cv::Rect2d &b) {
     return sqrt(dist.x * dist.x + dist.y * dist.y);
 }
 
-template <int length>
+template<int length>
 static double mean(RoundQueue<double, length> &vec) {
     double sum = 0;
     for (int i = 0; i < vec.size(); i++) {
@@ -33,13 +33,14 @@ ArmorFinder::BoxRatioChangeType ArmorFinder::getRatioChangeType(RoundQueue<doubl
     }
 }
 
+/*
 void ArmorFinder::antiTop() {
-    if (armor_box.rect == cv::Rect2d()) return;
+    if (target_box.rect == cv::Rect2d()) return;
     uint16_t shoot_delay = 0;
     auto interval = getTimeIntervalms(frame_time, last_front_time);
-    box_ratioes.push(armor_box.rect.width / armor_box.rect.height);
+    box_ratioes.push(target_box.rect.width / target_box.rect.height);
     auto change_type = getRatioChangeType(box_ratioes);
-    auto orientation = armor_box.getOrientation();
+    auto orientation = target_box.getOrientation();
     if (interval > 700) {
         anti_top_cnt = 0;
         if (anti_top_state == ANTI_TOP) {
@@ -73,6 +74,40 @@ void ArmorFinder::antiTop() {
             sendBoxPosition(shoot_delay);
         }
     } else if (anti_top_state == NORMAL) {
+        sendBoxPosition(shoot_delay);
+    }
+}
+*/
+
+void ArmorFinder::antiTop() {
+    if (target_box.rect == cv::Rect2d()) return;
+    uint16_t shoot_delay = 0;
+    auto interval = getTimeIntervalms(frame_time, last_front_time);
+    if (anti_top_state == ANTI_TOP && interval > 700) {
+        anti_top_state = NORMAL;
+        LOGM(STR_CTR(WORD_YELLOW, "switch to normal"));
+    }
+    if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 3.0) {
+        if (150 < interval && interval < 700) {
+            if (anti_top_state == ANTI_TOP) {
+                top_periodms.push(interval);
+                LOGM(STR_CTR(WORD_LIGHT_GREEN, "top period: %.1lf ms"), interval);
+                systime curr_time;
+                getsystime(curr_time);
+                auto calculate_time = getTimeIntervalms(curr_time, frame_time);
+                shoot_delay = mean(top_periodms) - calculate_time;
+
+            } else {
+                if (++anti_top_cnt > 4) {
+                    anti_top_state == ANTI_TOP;
+                    LOGM(STR_CTR(WORD_CYAN, "switch to anti-top"));
+                }
+            }
+        }
+    }
+    if (anti_top_state == NORMAL) {
+        sendBoxPosition(0);
+    } else if (interval < top_periodms[-1] * 0.2){
         sendBoxPosition(shoot_delay);
     }
 }

@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-extern mcu_data mcuData;
+extern McuData mcu_data;
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数通过自瞄逻辑击打目标点，用于大符的自动对心和小符直接打击
@@ -29,12 +29,12 @@ void Energy::getAimPoint(cv::Point target_point_) {
         extra_delta_y = 0;
     }
 
-    double dx = -(target_point_.x - 320 - COMPENSATE_YAW - mcuData.delta_x - manual_delta_x - extra_delta_x);
-    double dy = -(target_point_.y - 240 - COMPENSATE_PITCH - mcuData.delta_y - manual_delta_y - extra_delta_y);
+    double dx = -(target_point_.x - 320 - COMPENSATE_YAW - mcu_data.delta_x - manual_delta_x - extra_delta_x);
+    double dy = -(target_point_.y - 240 - COMPENSATE_PITCH - mcu_data.delta_y - manual_delta_y - extra_delta_y);
     yaw_rotation = atan(dx / FOCUS_PIXAL) * 180 / PI;
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
-//    cout << "mcuData.delta_x: " << mcuData.delta_x << '\t' << "mcuData.delta_y: " << mcuData.delta_y << endl;
+//    cout << "mcu_data.delta_x: " << mcu_data.delta_x << '\t' << "mcu_data.delta_y: " << mcu_data.delta_y << endl;
 //    cout << "manual delta: " << manual_delta_x << '\t' << manual_delta_y << endl;
 
 }

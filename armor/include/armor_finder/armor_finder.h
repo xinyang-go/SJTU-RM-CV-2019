@@ -79,6 +79,7 @@ public:
 
     explicit ArmorBox(const cv::Rect &pos=cv::Rect2d(), const LightBlobs &blobs=LightBlobs(), uint8_t color=0, int i=0);
 
+    cv::Point2f getCenter() const;
     double getBlobsDistance() const;
     double lengthDistanceRatio() const;
     double getBoxDistance() const;
@@ -114,17 +115,18 @@ private:
     systime frame_time;                                 // 当前帧对应时间;
     const uint8_t &enemy_color;                         // 敌方颜色，引用外部变量，自动变化
     State state;                                        // 自瞄状态对象实例
-    ArmorBox armor_box;                                 // 当前目标装甲板
+    ArmorBox target_box, last_box;                      // 目标装甲板
+    int anti_switch_cnt;                                // 防止乱切目标计数器
     cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
     Classifier classifier;                              // CNN分类器对象实例，用于数字识别
     int  contour_area;                                  // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
     int tracking_cnt;                                   // 记录追踪帧数，用于定时退出追踪
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
     const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
-    RoundQueue<double, 4> top_periodms;
-    RoundQueue<double, 5> box_ratioes;
+    RoundQueue<double, 4> top_periodms;                 // 陀螺周期循环队列
+    RoundQueue<double, 5> box_ratioes;                  //
     systime last_front_time;                            // 上一次发生装甲板方向切换的时间
-    BoxRatioChangeType last_ratio_type;
+    BoxRatioChangeType last_ratio_type;                 //
     int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
     AntiTopState anti_top_state;                        // 当前是否识别到陀螺
 

@@ -27,7 +27,7 @@
 using namespace cv;
 using namespace std;
 
-mcu_data mcuData = {    // 单片机端回传结构体
+McuData mcu_data = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
         ARMOR_STATE,    // 当前状态，自瞄-大符-小符
@@ -44,9 +44,9 @@ WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 Serial serial(115200);                  // 串口对象
 uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化
 // 自瞄主程序对象
-ArmorFinder armorFinder(mcuData.enemy_color, serial, PROJECT_DIR"/tools/para/", mcuData.use_classifier);
+ArmorFinder armorFinder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/", mcu_data.use_classifier);
 // 能量机关主程序对象
-Energy energy(serial, mcuData.enemy_color);
+Energy energy(serial, mcu_data.enemy_color);
 
 int box_distance = 0;
 
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
         cout << "start running" << endl;
         do {
             CNT_TIME("Total", {
-            if (mcuData.state == BIG_ENERGY_STATE) {//大能量机关模式
+            if (mcu_data.state == BIG_ENERGY_STATE) {//大能量机关模式
                 if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
                     LOGM(STR_CTR(WORD_BLUE, "Start Big Energy!"));
                     destroyAllWindows();
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
                     checkReconnect(video_chassis->read(chassis_src));
                     energy.setBigEnergyInit();
                 }
-                last_state = mcuData.state;//更新上一帧状态
+                last_state = mcu_data.state;//更新上一帧状态
                 ok = checkReconnect(video_gimbal->read(gimbal_src));
                 video_chassis->read(chassis_src);
 #ifdef GIMBAL_FLIP_MODE
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
                 if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
                 energy.runBig(gimbal_src, chassis_src);
 //                energy.runBig(gimbal_src);
-            } else if (mcuData.state == SMALL_ENERGY_STATE) {
+            } else if (mcu_data.state == SMALL_ENERGY_STATE) {
                 if (last_state != SMALL_ENERGY_STATE) {
                     LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));
                     destroyAllWindows();
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
                     }
                     energy.setSmallEnergyInit();
                 }
-                last_state = mcuData.state;//更新上一帧状态
+                last_state = mcu_data.state;//更新上一帧状态
                 ok = checkReconnect(video_gimbal->read(gimbal_src));
 #ifdef GIMBAL_FLIP_MODE
                 flip(gimbal_src, gimbal_src, GIMBAL_FLIP_MODE);
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
-                last_state = mcuData.state;
+                last_state = mcu_data.state;
                 CNT_TIME(STR_CTR(WORD_GREEN, "read img"), {
                     if(!checkReconnect(video_gimbal->read(gimbal_src))) continue;
                 });

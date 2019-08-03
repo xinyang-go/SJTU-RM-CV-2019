@@ -42,11 +42,11 @@ static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t sh
 }
 
 bool ArmorFinder::sendBoxPosition(uint16_t shoot_delay) {
-    if (armor_box.rect == cv::Rect2d()) return false;
+    if (target_box.rect == cv::Rect2d()) return false;
     if (shoot_delay) {
         LOGM(STR_CTR(WORD_BLUE, "shoot after %dms"), shoot_delay);
     }
-    auto rect = armor_box.rect;
+    auto rect = target_box.rect;
     double dx = rect.x + rect.width / 2 - IMAGE_CENTER_X;
     double dy = rect.y + rect.height / 2 - IMAGE_CENTER_Y;
     double yaw = atan(dx / FOCUS_PIXAL) * 180 / PI;

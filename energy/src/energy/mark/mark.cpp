@@ -15,8 +15,8 @@ void Energy::writeDownSlightChange(cv::Mat &src) {
     if (findFans(src) >= 4) {
         FILE *fp_delta = fopen(PROJECT_DIR"/Mark/delta.txt", "w");
         if (fp_delta) {
-            fprintf(fp_delta, "delta_x: %d, delta_y: %d\n", mcuData.delta_x + manual_delta_x,
-                    mcuData.delta_y + manual_delta_y);
+            fprintf(fp_delta, "delta_x: %d, delta_y: %d\n", mcu_data.delta_x + manual_delta_x,
+                    mcu_data.delta_y + manual_delta_y);
             fclose(fp_delta);
         }
     }
