@@ -92,6 +92,7 @@ void Energy::runBig(cv::Mat &gimbal_src) {
 
     changeTarget();
     getTargetPolarAngle();
+
     if (energy_rotation_init) {
         initRotation();
         return;

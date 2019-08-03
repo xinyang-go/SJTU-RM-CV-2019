@@ -30,7 +30,7 @@ using namespace std;
 mcu_data mcuData = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_RED,      // 敌方颜色
@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
+            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/new/5.avi");
+            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/new/5.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -122,8 +122,8 @@ int main(int argc, char *argv[]) {
                 if (!from_camera) extract(gimbal_src, chassis_src);
                 if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                 if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-                energy.runBig(gimbal_src, chassis_src);
-//                energy.runBig(gimbal_src);
+//                energy.runBig(gimbal_src, chassis_src);
+                energy.runBig(gimbal_src);
             } else if (mcuData.state == SMALL_ENERGY_STATE) {
                 if (last_state != SMALL_ENERGY_STATE) {
                     LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));

@@ -216,7 +216,7 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
         length > energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX ||
         width > energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX) {
 //        cout<<"length width fail."<<endl;
-//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//        if(length>30)cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
         return false;
         //矩形边长不合适
     }
@@ -225,12 +225,12 @@ bool Energy::isValidFlowStripContour(const vector<cv::Point> &flow_strip_contour
     if (length_width_ratio > energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX ||
         length_width_ratio < energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN) {
 //        cout<<"hw fail."<<endl;
-//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//        if(length_width_ratio>3.5)cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
         return false;
         //长宽比不合适
     }
     if (cur_contour_area / cur_size.area() < energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN) {
-//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
+//        if(cur_contour_area / cur_size.area()>0.5)cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
         return false;//轮廓对矩形的面积占有率不合适
     }
     return true;

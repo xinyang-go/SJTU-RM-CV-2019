@@ -79,10 +79,10 @@ void Energy::initEnergy() {
 // 此函数对能量机关参数进行初始化
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
-    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
+//    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
-//    gimbal_energy_part_param_.GRAY_THRESH = 225;
-    gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 230;
+    gimbal_energy_part_param_.GRAY_THRESH = 180;
+    gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 180;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
 
@@ -137,13 +137,13 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MAX = 100000;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_MIN = 0;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 38;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 60;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 8;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 32;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 30;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 55;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 4;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 20;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 12;
 //    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 4;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 1.8;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 1.5;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.5;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 100;
 

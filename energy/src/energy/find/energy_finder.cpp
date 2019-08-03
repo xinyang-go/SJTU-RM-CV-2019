@@ -258,14 +258,27 @@ bool Energy::findFlowStrip(const cv::Mat src) {
             if (!isValidFlowStripContour(flow_strip_contour)) {
                 continue;
             }
+
             std::vector<cv::Point2f> intersection;
             RotatedRect cur_rect = minAreaRect(flow_strip_contour);
+
             if (rotatedRectangleIntersection(cur_rect, candidate_flow_strip_fan, intersection) == 0) {
                 continue;
             } else if (contourArea(intersection) > energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN) {
                 flow_strips.emplace_back(cv::minAreaRect(flow_strip_contour));
 //                cout << "intersection: " << contourArea(intersection) << '\t' << cur_rect.center << endl;
+            } else {
+                continue;
             }
+
+//            Size2f cur_size = cur_rect.size;
+//            float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
+//            float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+//            float length_width_ratio = length / width;//计算矩形长宽比
+//            double cur_contour_area = contourArea(flow_strip_contour);
+//            cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//            cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//            cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
 
 //        RotatedRect cur_rect = minAreaRect(flow_strip_contour);
 //        Size2f cur_size = cur_rect.size;

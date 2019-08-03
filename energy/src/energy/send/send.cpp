@@ -33,6 +33,14 @@ void Energy::sendEnergy() {
             yaw_rotation = YAW_AIM_KP * (yaw_rotation - mcuData.curr_yaw) + YAW_AIM_KI * sum_yaw;
             pitch_rotation = PITCH_AIM_KP * (pitch_rotation - mcuData.curr_pitch) + PITCH_AIM_KI * sum_pitch;
         }
+    } else if (is_small){
+        sum_yaw += yaw_rotation;
+        sum_pitch += pitch_rotation;
+        MINMAX(sum_yaw, -100, 100);
+        MINMAX(sum_pitch, -100, 100);
+        yaw_rotation = 2.5 * yaw_rotation + 0.08 * sum_yaw + 1.5 * (yaw_rotation - last_yaw);
+        pitch_rotation = 2.4 * pitch_rotation + 0.07 * sum_pitch +
+                         1.3 * (pitch_rotation - last_pitch);
     }
 
     if (change_target) {
