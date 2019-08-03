@@ -99,7 +99,7 @@ void ArmorFinder::antiTop() {
 
             } else {
                 if (++anti_top_cnt > 4) {
-                    anti_top_state == ANTI_TOP;
+                    anti_top_state = ANTI_TOP;
                     LOGM(STR_CTR(WORD_CYAN, "switch to anti-top"));
                 }
             }
