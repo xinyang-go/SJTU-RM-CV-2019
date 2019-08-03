@@ -100,8 +100,8 @@ bool Energy::isValidArmorContour(const vector<cv::Point> &armor_contour) {
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::isValidCenterRContour(const vector<cv::Point> &center_R_contour) {
     double cur_contour_area = contourArea(center_R_contour);
-    if (cur_contour_area > energy_part_param_.ARMOR_CONTOUR_AREA_MAX ||
-        cur_contour_area < energy_part_param_.ARMOR_CONTOUR_AREA_MIN) {
+    if (cur_contour_area > energy_part_param_.CENTER_R_CONTOUR_AREA_MAX ||
+        cur_contour_area < energy_part_param_.CENTER_R_CONTOUR_AREA_MIN) {
         //cout<<cur_contour_area<<" "<<energy_fan_param_.CONTOUR_AREA_MIN<<" "<<energy_fan_param_.CONTOUR_AREA_MAX<<endl;
         //cout<<"area fail."<<endl;
         return false;

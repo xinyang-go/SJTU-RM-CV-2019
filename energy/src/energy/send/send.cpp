@@ -19,28 +19,23 @@ void Energy::sendEnergy() {
             sum_yaw += yaw_rotation;
             sum_pitch += pitch_rotation;
             MINMAX(sum_yaw, -100, 100);
-            MINMAX(sum_pitch, -100, 100);
-//            float KP = 4.5;
-//            if(abs(yaw_rotation)<0.3)KP=0.1;
-//            else if(abs(yaw_rotation)<0.5)KP=0.1;
-//            else KP = 0.1; " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
-            yaw_rotation = YAW_AIM_KP * yaw_rotation + YAW_AIM_KI * sum_yaw + YAW_AIM_KD * (yaw_rotation - last_yaw);
-            pitch_rotation = PITCH_AIM_KP * pitch_rotation + PITCH_AIM_KI * sum_pitch +
-                             PITCH_AIM_KD * (pitch_rotation - last_pitch);
+            MINMAX(sum_pitch, -100, 100);\
+            yaw_rotation = BIG_YAW_AIM_KP * yaw_rotation + BIG_YAW_AIM_KI * sum_yaw + BIG_YAW_AIM_KD * (yaw_rotation - last_yaw);
+            pitch_rotation = BIG_PITCH_AIM_KP * pitch_rotation + BIG_PITCH_AIM_KI * sum_pitch +
+                    BIG_PITCH_AIM_KD * (pitch_rotation - last_pitch);
         } else if (is_chassis) {
             sum_yaw += yaw_rotation - mcuData.curr_yaw;
             sum_pitch += pitch_rotation - mcuData.curr_pitch;
-            yaw_rotation = YAW_AIM_KP * (yaw_rotation - mcuData.curr_yaw) + YAW_AIM_KI * sum_yaw;
-            pitch_rotation = PITCH_AIM_KP * (pitch_rotation - mcuData.curr_pitch) + PITCH_AIM_KI * sum_pitch;
+            yaw_rotation = BIG_YAW_AIM_KP * (yaw_rotation - mcuData.curr_yaw) + BIG_YAW_AIM_KI * sum_yaw;
+            pitch_rotation = BIG_PITCH_AIM_KP * (pitch_rotation - mcuData.curr_pitch) + BIG_PITCH_AIM_KI * sum_pitch;
         }
     } else if (is_small){
         sum_yaw += yaw_rotation;
         sum_pitch += pitch_rotation;
         MINMAX(sum_yaw, -100, 100);
         MINMAX(sum_pitch, -100, 100);
-        yaw_rotation = 2.5 * yaw_rotation + 0.08 * sum_yaw + 1.5 * (yaw_rotation - last_yaw);
-        pitch_rotation = 2.4 * pitch_rotation + 0.07 * sum_pitch +
-                         1.3 * (pitch_rotation - last_pitch);
+        yaw_rotation = SMALL_YAW_AIM_KP * yaw_rotation + SMALL_YAW_AIM_KD * (yaw_rotation - last_yaw);
+        pitch_rotation = SMALL_PITCH_AIM_KP * pitch_rotation + SMALL_PITCH_AIM_KD * (pitch_rotation - last_pitch);
     }
 
     if (change_target) {

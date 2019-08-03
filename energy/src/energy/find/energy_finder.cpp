@@ -14,7 +14,7 @@ using std::vector;
 // 此函数用于寻找图像内所有的大风车扇叶
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::findFans(const cv::Mat src) {
-    if (src.empty()){
+    if (src.empty()) {
         if (show_info) cout << "empty!" << endl;
         return 0;
     }
@@ -62,7 +62,7 @@ int Energy::findFans(const cv::Mat src) {
 // 此函数用于寻找图像内所有的大风车装甲板模块
 // ---------------------------------------------------------------------------------------------------------------------
 int Energy::findArmors(const cv::Mat src) {
-    if (src.empty()){
+    if (src.empty()) {
         if (show_info) cout << "empty!" << endl;
         return 0;
     }
@@ -77,40 +77,44 @@ int Energy::findArmors(const cv::Mat src) {
     ArmorStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
     findContours(src_bin, armor_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
     if (show_process)imshow("armor struct", src_bin);
-//    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
-//    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
-//    {
-//        unsigned long external_contour_size = armor_contours_external[i].size();
-//        for (int j = 0; j < armor_contours.size(); j++) {
-//            unsigned long all_size = armor_contours[j].size();
-//            if (external_contour_size == all_size) {
-//                swap(armor_contours[j], armor_contours[armor_contours.size() - 1]);
-//                armor_contours.pop_back();
-//                break;
-//            }
-//        }
-//    }
+    findContours(src_bin, armor_contours_external, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    for (int i = 0; i < armor_contours_external.size(); i++)//去除外轮廓
+    {
+        unsigned long external_contour_size = armor_contours_external[i].size();
+        for (int j = 0; j < armor_contours.size(); j++) {
+            unsigned long all_size = armor_contours[j].size();
+            if (external_contour_size == all_size) {
+                swap(armor_contours[j], armor_contours[armor_contours.size() - 1]);
+                armor_contours.pop_back();
+                break;
+            }
+        }
+    }
+
     for (auto &armor_contour : armor_contours) {
         if (!isValidArmorContour(armor_contour)) {
             continue;
         }
         armors.emplace_back(cv::minAreaRect(armor_contour));
+
 //        RotatedRect cur_rect = minAreaRect(armor_contour);
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length > 5 && width > 5) {
-//            armors.emplace_back(cv::minAreaRect(armor_contour));
-//            cout << "armor area: " << length << '\t' << width << '\t' << cur_rect.center << endl;
-//        }
+//        double cur_contour_area = contourArea(armor_contour);
+//        float length_width_ratio = length / width;
+//        cout << "area: " << cur_contour_area << '\t' << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
+//        cout<<endl;
 
     }
 
-//    cout<<armors.size()<<endl;
-//    showArmors("armor",src);
-
-//    if (armors.size() < 1)cout << "no armors!" << endl;
+    if (show_info) {
+//        if (armors.size() < 1)cout << "no armors!" << endl;
+    }
 
     return static_cast<int>(armors.size());
 }
@@ -120,7 +124,7 @@ int Energy::findArmors(const cv::Mat src) {
 // 此函数用于寻找图像内大风车中心字母“R”
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findCenterR(const cv::Mat src) {
-    if (src.empty()){
+    if (src.empty()) {
         if (show_info) cout << "empty!" << endl;
         return false;
     }
@@ -147,22 +151,18 @@ bool Energy::findCenterR(const cv::Mat src) {
 //        Size2f cur_size = cur_rect.size;
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length < 10 || width < 5 || length>19) {
-//            continue;
-//        }
-//        std::vector<cv::Point2f> intersection;
-//        if (rotatedRectangleIntersection(cur_rect, center_ROI, intersection) != 0 &&
-//            contourArea(intersection) > energy_part_param_.CENTER_R_CONTOUR_INTERSETION_AREA_MIN) {
-//            centerR = cv::minAreaRect(center_R_contour);
-//            cout << "center R area: " << length << '\t' << width << '\t' << cur_rect.center << endl;
-//            cout << "R intersection: " << contourArea(intersection) << endl;
-//            return true;
-//        }
-//        cout << cur_rect.center << endl;
+//        double cur_contour_area = contourArea(center_R_contour);
+//        float length_width_ratio = length / width;
+//        cout << "area: " << cur_contour_area << '\t' << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
+//        cout<<endl;
+
         return true;
     }
     if (show_info)cout << "find center R false!" << endl;
-    //    cv::waitKey(0);
+//    cv::waitKey(0);
     return false;
 
 }
@@ -172,7 +172,7 @@ bool Energy::findCenterR(const cv::Mat src) {
 // 此函数用于判断找到的矩形候选区是否为含流动条的扇叶
 // ---------------------------------------------------------------------------------------------------------------------
 bool Energy::findFlowStripFan(const cv::Mat src) {
-    if (src.empty()){
+    if (src.empty()) {
         if (show_info) cout << "empty!" << endl;
         return false;
     }
@@ -201,17 +201,16 @@ bool Energy::findFlowStripFan(const cv::Mat src) {
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
 //        double cur_contour_area = contourArea(flow_strip_fan_contour);
-//        if (length > 40 && width > 30 && length < 110 && width < 100) {
-//            cout << cur_rect.center<<endl;
-//            flow_strip_fan = cv::minAreaRect(flow_strip_fan_contour);
-//            cout << "flow strip fan area: " << length << '\t' << width << endl;
-//            cout << "non zero: " << non_zero_rate << endl;
-//            cout<<cur_contour_area / cur_size.area()<<endl;
-//        }
+//        float length_width_ratio = length / width;
+//        cout << "area: " << cur_contour_area << '\t' << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
+//        cout<<endl;
     }
-//    cout << "flow_strip_fans_cnt: " << flow_strip_fans.size() << endl;
     if (flow_strip_fans.empty()) {
-        if (show_info)cout << "flow strip fan false!" << endl;
+        if (show_info)cout << "flow strip fan false!" << endl;\
+//        waitKey(0);
         return false;
     }
     return true;
@@ -274,25 +273,15 @@ bool Energy::findFlowStrip(const cv::Mat src) {
 //            Size2f cur_size = cur_rect.size;
 //            float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //            float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//            float length_width_ratio = length / width;//计算矩形长宽比
 //            double cur_contour_area = contourArea(flow_strip_contour);
+//            float length_width_ratio = length / width;
+//            cout << "area: " << cur_contour_area << '\t' << endl;
 //            cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
 //            cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
 //            cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
-
-//        RotatedRect cur_rect = minAreaRect(flow_strip_contour);
-//        Size2f cur_size = cur_rect.size;
-//        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
-//        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
-//        if (length / width > 2.5 && width > 7 && width<40) {
-//            cout << cur_rect.center << endl;
-//            flow_strip = cv::minAreaRect(flow_strip_contour);
-//            cout << "flow strip area: " << length << '\t' << width << endl;
-//        }
-//        cout << cur_rect.center << endl;
+//            cout<<endl;
         }
     }
-//    cout << "flow strip cnt: " << flow_strips.size() << endl;
     if (flow_strips.empty()) {
         if (show_info)cout << "flow strip false!" << endl;
 //        waitKey(0);
@@ -326,6 +315,97 @@ bool Energy::findFlowStrip(const cv::Mat src) {
     return true;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于弱识别寻找流动条
+// ---------------------------------------------------------------------------------------------------------------------
+bool Energy::findFlowStripWeak(const cv::Mat src) {
+    if (src.empty()) {
+        if (show_info) cout << "empty!" << endl;
+        return false;
+    }
+    cv::Mat src_bin;
+    src_bin = src.clone();
+
+    if (src_bin.type() == CV_8UC1) // 黑白图像
+    {
+        cvtColor(src_bin, src_bin, COLOR_GRAY2RGB);
+
+    }
+    std::vector<cv::RotatedRect> candidate_armors = armors;
+    for (auto &candidate_armor: candidate_armors) {
+        Point2f vertices[4];
+        candidate_armor.size.height *= 1.3;
+        candidate_armor.size.width *= 1.3;
+        candidate_armor.points(vertices);   //计算矩形的4个顶点
+        for (int i = 0; i < 4; i++) {
+            line(src_bin, vertices[i], vertices[(i + 1) % 4], Scalar(0, 0, 0), 20);
+        }
+    }
+
+    cvtColor(src_bin, src_bin, CV_BGR2GRAY);//若读取三通道视频文件，需转换为单通道
+
+    FlowStripStruct(src_bin);//图像膨胀，防止图像断开并更方便寻找
+    if (show_process)imshow("weak struct", src_bin);
+//    waitKey(0);
+
+    std::vector<vector<Point> > flow_strip_contours;
+    findContours(src_bin, flow_strip_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+
+    for (auto &flow_strip_contour : flow_strip_contours) {
+        if (!isValidFlowStripContour(flow_strip_contour)) {
+            continue;
+        }
+
+        flow_strips.emplace_back(cv::minAreaRect(flow_strip_contour));
+
+//        RotatedRect cur_rect = minAreaRect(flow_strip_contour);
+//        Size2f cur_size = cur_rect.size;
+//        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
+//        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
+//        double cur_contour_area = contourArea(flow_strip_contour);
+//        float length_width_ratio = length / width;
+//        cout << "area: " << cur_contour_area << '\t' << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
+//        cout << endl;
+
+    }
+//    cout << "size: " << flow_strips.size() << endl;
+
+    if (flow_strips.empty()) {
+        if (show_info)cout << "weak flow strip false!" << endl;
+//        waitKey(0);
+        return false;
+    } else {
+        for (const auto &candidate_flow_strip: flow_strips) {
+            for (const auto &candidate_armor: armors) {
+                if (pointDistance(candidate_flow_strip.center, candidate_armor.center) <
+                    energy_part_param_.STRIP_ARMOR_DISTANCE_MIN ||
+                    pointDistance(candidate_flow_strip.center, candidate_armor.center) >
+                    energy_part_param_.STRIP_ARMOR_DISTANCE_MAX) {
+                    continue;
+                }
+                float angle_armor = candidate_armor.size.width > candidate_armor.size.height ? candidate_armor.angle :
+                                    candidate_armor.angle - 90;
+                float angle_strip = candidate_flow_strip.size.width > candidate_flow_strip.size.height ?
+                                    candidate_flow_strip.angle: candidate_flow_strip.angle - 90;
+
+                if (abs(angle_armor - angle_strip) < 60 || abs(angle_armor - angle_strip) > 120) {
+                    continue;
+                }
+                target_armor = candidate_armor;
+                target_point = candidate_armor.center;
+                flow_strip = candidate_flow_strip;
+                return true;
+            }
+        }
+        if (show_info)cout << "weak flow strip false!" << endl;
+//        waitKey(0);
+        return false;
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于框取中心R的寻找范围

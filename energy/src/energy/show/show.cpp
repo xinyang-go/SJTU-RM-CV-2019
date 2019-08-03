@@ -126,7 +126,7 @@ void Energy::showCenterR(std::string windows_name, const cv::Mat src) {
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// 此函数用于显示图像中所有流动条
+// 此函数用于显示图像中流动条扇叶
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::showFlowStripFan(std::string windows_name, const cv::Mat src) {
     if (src.empty())return;
@@ -145,7 +145,23 @@ void Energy::showFlowStripFan(std::string windows_name, const cv::Mat src) {
     flow_strip_fan.points(strip_fan_vertices);   //计算矩形的4个顶点for (int i = 0; i < 4; i++)
     for (int i = 0; i < 4; i++)
         line(image2show, strip_fan_vertices[i], strip_fan_vertices[(i + 1) % 4], Scalar(127, 127, 255), 2);
+}
 
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于显示图像中流动条扇叶
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::showFlowStrip(std::string windows_name, const cv::Mat src) {
+    if (src.empty())return;
+    static Mat image2show;
+
+    if (src.type() == CV_8UC1) // 黑白图像
+    {
+        cvtColor(src, image2show, COLOR_GRAY2RGB);
+
+    } else if (src.type() == CV_8UC3) //RGB 彩色
+    {
+        image2show = src.clone();
+    }
 
     Point2f strip_vertices[4];      //定义矩形的4个顶点
     flow_strip.points(strip_vertices);   //计算矩形的4个顶点
