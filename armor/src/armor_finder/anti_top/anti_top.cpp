@@ -87,7 +87,9 @@ void ArmorFinder::antiTop() {
         anti_top_state = NORMAL;
         LOGM(STR_CTR(WORD_YELLOW, "switch to normal"));
     }
-    if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 3.0) {
+//    cout << getPointLength(last_box.getCenter() - target_box.getCenter()) << endl;
+    if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 1.0) {
+        LOGM("switch!");
         if (150 < interval && interval < 700) {
             if (anti_top_state == ANTI_TOP) {
                 top_periodms.push(interval);
@@ -96,7 +98,6 @@ void ArmorFinder::antiTop() {
                 getsystime(curr_time);
                 auto calculate_time = getTimeIntervalms(curr_time, frame_time);
                 shoot_delay = mean(top_periodms) - calculate_time;
-
             } else {
                 if (++anti_top_cnt > 4) {
                     anti_top_state = ANTI_TOP;
@@ -104,11 +105,13 @@ void ArmorFinder::antiTop() {
                 }
             }
         }
+        last_front_time = frame_time;
     }
     if (anti_top_state == NORMAL) {
         sendBoxPosition(0);
     } else if (interval < top_periodms[-1] * 0.2){
         sendBoxPosition(shoot_delay);
     }
+    last_box = target_box;
 }
 

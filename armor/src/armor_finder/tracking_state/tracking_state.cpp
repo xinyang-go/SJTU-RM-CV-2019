@@ -62,6 +62,5 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
         target_box.rect = pos;
         target_box.light_blobs.clear();
     }
-    last_box = target_box;
     return true;
 }

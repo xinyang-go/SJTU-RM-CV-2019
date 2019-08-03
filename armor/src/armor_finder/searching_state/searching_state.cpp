@@ -18,7 +18,6 @@ bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
             target_box = ArmorBox();
             return false;
         } else {
-            last_box = target_box;
             anti_switch_cnt = 0;
             return true;
         }
