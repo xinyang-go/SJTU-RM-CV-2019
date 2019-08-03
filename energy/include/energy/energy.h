@@ -80,6 +80,7 @@ private:
     float guess_polar_angle;//猜测的下一个目标装甲板极坐标角度
     float last_base_angle;//上一帧的各扇叶在0区（0°~72°）的基础角度
     float predict_rad;//预测提前角
+    float predict_rad_norm;//预测提前角的绝对值
     float attack_distance;//步兵与风车平面距离
     float center_delta_yaw, center_delta_pitch;//对心时相差的角度
     float yaw_rotation, pitch_rotation;//云台yaw轴和pitch轴应该转到的角度
