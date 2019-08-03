@@ -144,6 +144,7 @@ private:
     void showFans(std::string windows_name, const cv::Mat src);//显示扇叶
     void showArmors(std::string windows_name, const cv::Mat src);//显示装甲板
     void showBoth(std::string windows_name, const cv::Mat src);//显示扇叶和装甲板
+    void showTarget(std::string windows_name, const cv::Mat src);//显示目标装甲板
     void showCenterR(std::string windows_name, const cv::Mat src);//显示风车中心候选区R
     void showFlowStrip(std::string windows_name, const cv::Mat src);//显示流动条
     void showFlowStripFan(std::string windows_name, const cv::Mat src);//显示流动条所在扇叶

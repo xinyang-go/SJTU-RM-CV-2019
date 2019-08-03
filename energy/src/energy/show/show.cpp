@@ -99,6 +99,32 @@ void Energy::showBoth(std::string windows_name, const cv::Mat src) {
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// 此函数用于显示图像中目标装甲板
+// ---------------------------------------------------------------------------------------------------------------------
+void Energy::showTarget(std::string windows_name, const cv::Mat src) {
+    if (src.empty())return;
+    static Mat image2show;
+
+    if (src.type() == CV_8UC1) // 黑白图像
+    {
+        cvtColor(src, image2show, COLOR_GRAY2RGB);
+
+    } else if (src.type() == CV_8UC3) //RGB 彩色
+    {
+        image2show = src.clone();
+    }
+    for (const auto &armor : armors) {
+        if (pointDistance(armor.center, target_point) < energy_part_param_.TWIN_POINT_MAX) {
+            Point2f vertices[4];      //定义矩形的4个顶点
+            armor.points(vertices);   //计算矩形的4个顶点
+            for (int i = 0; i < 4; i++)
+                line(image2show, vertices[i], vertices[(i + 1) % 4], Scalar(255, 255, 0), 2);
+        }
+    }
+    imshow(windows_name, image2show);
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 // 此函数用于显示图像中所有可能的风车中心候选区R
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::showCenterR(std::string windows_name, const cv::Mat src) {
