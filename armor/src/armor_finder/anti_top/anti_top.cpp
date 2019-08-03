@@ -81,15 +81,17 @@ void ArmorFinder::antiTop() {
 
 void ArmorFinder::antiTop() {
     if (target_box.rect == cv::Rect2d()) return;
+    static int fps = 0;
     uint16_t shoot_delay = 0;
     auto interval = getTimeIntervalms(frame_time, last_front_time);
     if (anti_top_state == ANTI_TOP && interval > 700) {
         anti_top_state = NORMAL;
         LOGM(STR_CTR(WORD_YELLOW, "switch to normal"));
     }
-//    cout << getPointLength(last_box.getCenter() - target_box.getCenter()) << endl;
-    if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 2.0) {
-        LOGM("switch!");
+    fps++;
+    if (last_box.rect != cv::Rect2d() &&
+        getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 1.0) {
+        LOGM("switch %d! %lf", fps, getPointLength(last_box.getCenter() - target_box.getCenter()) / last_box.rect.height);
         if (150 < interval && interval < 700) {
             if (anti_top_state == ANTI_TOP) {
                 top_periodms.push(interval);
@@ -106,11 +108,12 @@ void ArmorFinder::antiTop() {
                 }
             }
         }
+        fps = 0;
         last_front_time = frame_time;
     }
     if (anti_top_state == NORMAL) {
         sendBoxPosition(0);
-    } else if (interval < top_periodms[-1] * 0.2){
+    } else if (interval < top_periodms[-1] * 0.2) {
         sendBoxPosition(0);
     }
     last_box = target_box;

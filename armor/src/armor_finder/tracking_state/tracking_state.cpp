@@ -42,25 +42,27 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
         tracker = TrackerToUse::create();
         tracker->init(src, target_box.rect);
     }else{
-        roi = src(pos).clone();
-        if(classifier){
-            cv::resize(roi, roi, cv::Size(48, 36));
-            if(classifier(roi) == 0){
-                target_box = ArmorBox();
-                return false;
-            }
-        }else{
-            cv::Mat roi_gray;
-            cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
-            cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
-            contour_area = cv::countNonZero(roi_gray);
-            if(abs(cv::countNonZero(roi_gray) - contour_area) > contour_area * 0.3){
-                target_box = ArmorBox();
-                return false;
-            }
-        }
-        target_box.rect = pos;
-        target_box.light_blobs.clear();
+//        roi = src(pos).clone();
+//        if(classifier){
+//            cv::resize(roi, roi, cv::Size(48, 36));
+//            if(classifier(roi) == 0){
+//                target_box = ArmorBox();
+//                return false;
+//            }
+//        }else{
+//            cv::Mat roi_gray;
+//            cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
+//            cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
+//            contour_area = cv::countNonZero(roi_gray);
+//            if(abs(cv::countNonZero(roi_gray) - contour_area) > contour_area * 0.3){
+//                target_box = ArmorBox();
+//                return false;
+//            }
+//        }
+//        target_box.rect = pos;
+//        target_box.light_blobs.clear();
+        target_box = ArmorBox();
+        return false;
     }
     return true;
 }
