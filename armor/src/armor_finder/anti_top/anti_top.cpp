@@ -106,7 +106,6 @@ void ArmorFinder::antiTop() {
                 }
             }
         }
-        fps = 0;
         last_front_time = frame_time;
     }
     if (anti_top_state == NORMAL) {
