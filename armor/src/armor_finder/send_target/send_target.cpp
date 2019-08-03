@@ -44,7 +44,7 @@ static bool sendTarget(Serial &serial, double x, double y, double z, uint16_t sh
 bool ArmorFinder::sendBoxPosition(uint16_t shoot_delay) {
     if (target_box.rect == cv::Rect2d()) return false;
     if (shoot_delay) {
-        LOGM(STR_CTR(WORD_BLUE, "shoot after %dms"), shoot_delay);
+        LOGM(STR_CTR(WORD_BLUE, "next box %dms"), shoot_delay);
     }
     auto rect = target_box.rect;
     double dx = rect.x + rect.width / 2 - IMAGE_CENTER_X;
