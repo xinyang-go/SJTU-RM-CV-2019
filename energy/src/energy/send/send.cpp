@@ -24,10 +24,10 @@ void Energy::sendEnergy() {
             pitch_rotation = BIG_PITCH_AIM_KP * pitch_rotation + BIG_PITCH_AIM_KI * sum_pitch +
                     BIG_PITCH_AIM_KD * (pitch_rotation - last_pitch);
         } else if (is_chassis) {
-            sum_yaw += yaw_rotation - mcuData.curr_yaw;
-            sum_pitch += pitch_rotation - mcuData.curr_pitch;
-            yaw_rotation = BIG_YAW_AIM_KP * (yaw_rotation - mcuData.curr_yaw) + BIG_YAW_AIM_KI * sum_yaw;
-            pitch_rotation = BIG_PITCH_AIM_KP * (pitch_rotation - mcuData.curr_pitch) + BIG_PITCH_AIM_KI * sum_pitch;
+            sum_yaw += yaw_rotation - mcu_data.curr_yaw;
+            sum_pitch += pitch_rotation - mcu_data.curr_pitch;
+            yaw_rotation = BIG_YAW_AIM_KP * (yaw_rotation - mcu_data.curr_yaw) + BIG_YAW_AIM_KI * sum_yaw;
+            pitch_rotation = BIG_PITCH_AIM_KP * (pitch_rotation - mcu_data.curr_pitch) + BIG_PITCH_AIM_KI * sum_pitch;
         }
     } else if (is_small){
         sum_yaw += yaw_rotation;
