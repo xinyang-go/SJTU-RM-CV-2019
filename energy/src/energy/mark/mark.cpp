@@ -12,7 +12,7 @@ using namespace cv;
 // 此函数用于记录操作手的微调dx和dy
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::writeDownSlightChange(cv::Mat &src) {
-    if (findFans(src) >= 4) {
+    if (fans_cnt >= 4) {
         FILE *fp_delta = fopen(PROJECT_DIR"/Mark/delta.txt", "w");
         if (fp_delta) {
             fprintf(fp_delta, "delta_x: %d, delta_y: %d\n", mcuData.delta_x + manual_delta_x,

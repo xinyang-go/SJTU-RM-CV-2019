@@ -30,6 +30,7 @@ void Energy::initEnergy() {
 
     send_cnt = 0;
     camera_cnt = 1;
+    fans_cnt = 0;
     last_fans_cnt = 0;
     guess_devide = 0;
     energy_rotation_direction = ANTICLOCKWISE;
@@ -86,15 +87,15 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
 
-    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MAX = 6600;
-    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MIN = 0;
-    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 80;
-    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 100;
+    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MAX = 3000;
+    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MIN = 500;
+    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 55;
+    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 95;
     gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 20;
     gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 52;
-    gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 4;
-    gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN = 1;
-    gimbal_energy_part_param_.FAN_CONTOUR_AREA_RATIO_MIN = 0.65;
+    gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 3.5;
+    gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN = 1.2;
+    gimbal_energy_part_param_.FAN_CONTOUR_AREA_RATIO_MIN = 0.6;
     gimbal_energy_part_param_.FAN_NON_ZERO_RATE_MAX = 0.8;
     gimbal_energy_part_param_.FAN_NON_ZERO_RATE_MIN = 0.48;
 //    gimbal_energy_part_param_.FAN_NON_ZERO_RATE_MAX = 0.3;

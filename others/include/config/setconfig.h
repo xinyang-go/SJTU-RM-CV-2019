@@ -44,19 +44,19 @@
     #define SMALL_PITCH_AIM_KP (2.4)
 #endif
 #ifndef BIG_YAW_AIM_KD
-    #define BIG_YAW_AIM_KD (0.7)
+    #define BIG_YAW_AIM_KD (1)
 #endif
 #ifndef BIG_YAW_AIM_KP
-    #define BIG_YAW_AIM_KP (4.5)
+    #define BIG_YAW_AIM_KP (5.5)
 #endif
 #ifndef BIG_YAW_AIM_KI
     #define BIG_YAW_AIM_KI (0.1)
 #endif
 #ifndef BIG_PITCH_AIM_KD
-    #define BIG_PITCH_AIM_KD (0.7)
+    #define BIG_PITCH_AIM_KD (1)
 #endif
 #ifndef BIG_PITCH_AIM_KP
-    #define BIG_PITCH_AIM_KP (4.5)
+    #define BIG_PITCH_AIM_KP (5.5)
 #endif
 #ifndef BIG_PITCH_AIM_KI
     #define BIG_PITCH_AIM_KI (0.1)

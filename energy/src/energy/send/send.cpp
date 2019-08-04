@@ -38,11 +38,14 @@ void Energy::sendEnergy() {
         pitch_rotation = SMALL_PITCH_AIM_KP * pitch_rotation + SMALL_PITCH_AIM_KD * (pitch_rotation - last_pitch);
     }
 
+
     if (change_target) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 5, 0);
     } else if (is_guessing) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 6, 0);
-    } else {
+    } /*else if (fans_cnt >= 4) {
+        sendTarget(serial, yaw_rotation, pitch_rotation, 7, 0);
+    }*/ else {
         sendTarget(serial, yaw_rotation, pitch_rotation, shoot, 0);
     }
 
