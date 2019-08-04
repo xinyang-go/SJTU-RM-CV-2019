@@ -53,9 +53,9 @@ void Energy::ArmorStruct(cv::Mat &src) {
 //    imshow("dilate_1", src);
     erode(src,src, element_erode_1);
 //    imshow("erode_1", src);
-    erode(src,src, element_erode_2);
+//    erode(src,src, element_erode_2);
 //    imshow("erode_2", src);
-    erode(src,src, element_erode_3);
+//    erode(src,src, element_erode_3);
 //    imshow("erode_3", src);
 
 //    dilate(src, src, element_dilate_2);
