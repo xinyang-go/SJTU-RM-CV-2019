@@ -8,6 +8,15 @@
 ArmorBox::ArmorBox(const cv::Rect &pos, const LightBlobs &blobs, uint8_t color, int i) :
         rect(pos), light_blobs(blobs), box_color(color), id(i) {};
 
+
+cv::Point2f ArmorBox::getCenter() const {
+    return cv::Point2f(
+            rect.x + rect.width / 2,
+            rect.y + rect.height / 2
+    );
+}
+
+
 double ArmorBox::getBlobsDistance() const {
     if (light_blobs.size() == 2) {
         auto &x = light_blobs[0].rect.center;
@@ -78,10 +87,10 @@ bool ArmorBox::operator<(const ArmorBox &box) const {
             return prior_red[id2name[id]] < prior_red[id2name[box.id]];
         }
     } else {
-        auto d1 = (rect.x-IMAGE_CENTER_X)*(rect.x-IMAGE_CENTER_X)
-                + (rect.y-IMAGE_CENTER_Y)*(rect.y-IMAGE_CENTER_Y);
-        auto d2 = (box.rect.x-IMAGE_CENTER_X)*(box.rect.x-IMAGE_CENTER_X)
-                + (box.rect.y-IMAGE_CENTER_Y)*(box.rect.y-IMAGE_CENTER_Y);
+        auto d1 = (rect.x - IMAGE_CENTER_X) * (rect.x - IMAGE_CENTER_X)
+                  + (rect.y - IMAGE_CENTER_Y) * (rect.y - IMAGE_CENTER_Y);
+        auto d2 = (box.rect.x - IMAGE_CENTER_X) * (box.rect.x - IMAGE_CENTER_X)
+                  + (box.rect.y - IMAGE_CENTER_Y) * (box.rect.y - IMAGE_CENTER_Y);
         return d1 < d2;
     }
 }

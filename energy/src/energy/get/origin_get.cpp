@@ -40,8 +40,8 @@ bool Energy::getOrigin() {
         if (abs(center_delta_yaw) > 0.3 || abs(center_delta_pitch) > 0.3) {
             return false;
         } else {
-            origin_yaw = mcuData.curr_yaw;
-            origin_pitch = mcuData.curr_pitch;
+            origin_yaw = mcu_data.curr_yaw;
+            origin_pitch = mcu_data.curr_pitch;
             auto_mark = true;
             LOGM(STR_CTR(WORD_BLUE_CODE, "auto mark success!"));
             return true;

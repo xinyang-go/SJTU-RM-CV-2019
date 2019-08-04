@@ -8,10 +8,31 @@
 #include <log.h>
 
 bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
-    if(findArmorBox(src, armor_box)){
-        return true;
-    }else{
-        armor_box = ArmorBox();
+    if (findArmorBox(src, target_box)) {
+        if (last_box.rect != cv::Rect2d() &&
+            (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 2.0) &&
+            anti_switch_cnt++ < 3) {
+            target_box = ArmorBox();
+            LOGM("anti-switch!");
+            return false;
+        } else {
+            anti_switch_cnt = 0;
+            return true;
+        }
+    } else {
+        target_box = ArmorBox();
+        anti_switch_cnt++;
         return false;
     }
 }
+
+/*
+bool ArmorFinder::stateSearchingTarget(cv::Mat &src) {
+    if (findArmorBox(src, target_box)) {
+        return true;
+    } else {
+        target_box = ArmorBox();
+        return false;
+    }
+}
+*/

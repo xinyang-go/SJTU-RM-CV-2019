@@ -15,23 +15,23 @@ using std::vector;
 // 此函数用于操作手手动标定
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::changeMark() {
-    if (mcuData.mark == 0 && last_mark == 1) {//完成标定
-        last_mark = mcuData.mark;
-        origin_yaw = mcuData.curr_yaw;
-        origin_pitch = mcuData.curr_pitch;
+    if (mcu_data.mark == 0 && last_mark == 1) {//完成标定
+        last_mark = mcu_data.mark;
+        origin_yaw = mcu_data.curr_yaw;
+        origin_pitch = mcu_data.curr_pitch;
         is_mark = false;
         manual_mark = true;
 //        LOGM(STR_CTR(WORD_LIGHT_YELLOW, "IsMark"));
-    } else if (mcuData.mark == 1) {//正在标定
-        last_mark = mcuData.mark;
+    } else if (mcu_data.mark == 1) {//正在标定
+        last_mark = mcu_data.mark;
         is_mark = true;
 //		LOGM(STR_CTR(WORD_BLUE,"Marking..."));
 
     } else {//未在标定
-        last_mark = mcuData.mark;
+        last_mark = mcu_data.mark;
         is_mark = false;
     }
-    //cout<<"mark: "<<int(mcuData.mark)<<endl;
+    //cout<<"mark: "<<int(mcu_data.mark)<<endl;
 }
 
 
