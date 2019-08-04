@@ -96,19 +96,21 @@ void ArmorFinder::antiTop() {
                 getsystime(curr_time);
                 auto calculate_time = getTimeIntervalms(curr_time, frame_time);
                 shoot_delay = mean(top_periodms) - calculate_time;
-
+                sendBoxPosition(shoot_delay);
             } else {
                 if (++anti_top_cnt > 4) {
-                    anti_top_state == ANTI_TOP;
+                    anti_top_state = ANTI_TOP;
                     LOGM(STR_CTR(WORD_CYAN, "switch to anti-top"));
                 }
             }
         }
+        last_front_time = frame_time;
     }
     if (anti_top_state == NORMAL) {
         sendBoxPosition(0);
     } else if (interval < top_periodms[-1] * 0.1){
         sendBoxPosition(shoot_delay);
     }
+    last_box = target_box;
 }
 

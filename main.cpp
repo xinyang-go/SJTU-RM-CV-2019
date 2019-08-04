@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
-            video_chassis = new VideoWrapper("/home/sun/项目/energy_video/7.27.avi");
+            video_gimbal = new VideoWrapper(PROJECT_DIR"/gimbal_video/0.avi");
+            video_chassis = new VideoWrapper(PROJECT_DIR"/gimbal_video/0.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
                     armorFinder.run(gimbal_src);
                 });
             }
-//                cv::waitKey(0);
+//            cv::waitKey(0);
             });
         } while (ok);
         delete video_gimbal;

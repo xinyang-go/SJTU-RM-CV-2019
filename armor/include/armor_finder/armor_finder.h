@@ -124,9 +124,7 @@ private:
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
     const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
     RoundQueue<double, 4> top_periodms;                 // 陀螺周期循环队列
-    RoundQueue<double, 5> box_ratioes;                  //
     systime last_front_time;                            // 上一次发生装甲板方向切换的时间
-    BoxRatioChangeType last_ratio_type;                 //
     int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
     AntiTopState anti_top_state;                        // 当前是否识别到陀螺
 

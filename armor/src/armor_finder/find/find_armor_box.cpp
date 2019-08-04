@@ -155,8 +155,10 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
                 return a < b;
             }
         });
-        if(armor_boxes[0].id != 0){
-            box = armor_boxes[0];
+        for(auto &one_box : armor_boxes){
+            if(one_box.id != 0){
+                box = one_box;
+            }
         }
         if (save_labelled_boxes) {
             for (const auto &one_box : armor_boxes) {
