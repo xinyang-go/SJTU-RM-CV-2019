@@ -19,30 +19,45 @@ void Energy::sendEnergy() {
             sum_yaw += yaw_rotation;
             sum_pitch += pitch_rotation;
             MINMAX(sum_yaw, -100, 100);
-            MINMAX(sum_pitch, -100, 100);\
+            MINMAX(sum_pitch, -100, 100);
+            double tmp_yaw = yaw_rotation;
+            double tmp_pitch = pitch_rotation;
             yaw_rotation = BIG_YAW_AIM_KP * yaw_rotation + BIG_YAW_AIM_KI * sum_yaw + BIG_YAW_AIM_KD * (yaw_rotation - last_yaw);
             pitch_rotation = BIG_PITCH_AIM_KP * pitch_rotation + BIG_PITCH_AIM_KI * sum_pitch +
                     BIG_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+            last_yaw = tmp_yaw;
+            last_pitch = tmp_pitch;
         } else if (is_chassis) {
-            sum_yaw += yaw_rotation - mcuData.curr_yaw;
-            sum_pitch += pitch_rotation - mcuData.curr_pitch;
-            yaw_rotation = BIG_YAW_AIM_KP * (yaw_rotation - mcuData.curr_yaw) + BIG_YAW_AIM_KI * sum_yaw;
-            pitch_rotation = BIG_PITCH_AIM_KP * (pitch_rotation - mcuData.curr_pitch) + BIG_PITCH_AIM_KI * sum_pitch;
+            sum_yaw += yaw_rotation - mcu_data.curr_yaw;
+            sum_pitch += pitch_rotation - mcu_data.curr_pitch;
+            double tmp_yaw = yaw_rotation;
+            double tmp_pitch = pitch_rotation;
+            yaw_rotation = BIG_YAW_AIM_KP * (yaw_rotation - mcu_data.curr_yaw) + BIG_YAW_AIM_KI * sum_yaw;
+            pitch_rotation = BIG_PITCH_AIM_KP * (pitch_rotation - mcu_data.curr_pitch) + BIG_PITCH_AIM_KI * sum_pitch;
+            last_yaw = tmp_yaw;
+            last_pitch = tmp_pitch;
         }
     } else if (is_small){
         sum_yaw += yaw_rotation;
         sum_pitch += pitch_rotation;
         MINMAX(sum_yaw, -100, 100);
         MINMAX(sum_pitch, -100, 100);
+        double tmp_yaw = yaw_rotation;
+        double tmp_pitch = pitch_rotation;
         yaw_rotation = SMALL_YAW_AIM_KP * yaw_rotation + SMALL_YAW_AIM_KD * (yaw_rotation - last_yaw);
         pitch_rotation = SMALL_PITCH_AIM_KP * pitch_rotation + SMALL_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+        last_yaw = tmp_yaw;
+        last_pitch = tmp_pitch;
     }
+
 
     if (change_target) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 5, 0);
     } else if (is_guessing) {
         sendTarget(serial, yaw_rotation, pitch_rotation, 6, 0);
-    } else {
+    } /*else if (fans_cnt >= 4) {
+        sendTarget(serial, yaw_rotation, pitch_rotation, 7, 0);
+    }*/ else {
         sendTarget(serial, yaw_rotation, pitch_rotation, shoot, 0);
     }
 

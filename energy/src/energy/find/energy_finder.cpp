@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include "energy/energy.h"
@@ -39,14 +39,13 @@ int Energy::findFans(const cv::Mat src) {
 //        float length = cur_size.height > cur_size.width ? cur_size.height : cur_size.width;
 //        float width = cur_size.height < cur_size.width ? cur_size.height : cur_size.width;
 //        double cur_contour_area = contourArea(fan_contour);
-//        double non_zero_rate = nonZeroRateOfRotateRect(src_bin, cur_rect);
-//        if (length > 60 && width > 20) {
-//            fans.emplace_back(cv::minAreaRect(fan_contour));
-//            cout << cur_rect.center << endl;
-//            cout << "fan area: " << length << '\t' << width << endl;
-//            cout << "non zero: " << nonZeroRateOfRotateRect(src_bin, cur_rect) << endl;
-//            cout << "rate: " << cur_contour_area / cur_size.area() << endl;
-//        }
+//        float length_width_ratio = length / width;
+//        cout << "area: " << cur_contour_area << '\t' << endl;
+//        cout << "length: " << length << '\t' << "width: " << width << '\t' << cur_rect.center << endl;
+//        cout << "HW: " << length_width_ratio << '\t' << cur_rect.center << endl;
+//        cout << "area ratio: " << cur_contour_area / cur_size.area() << '\t' << cur_rect.center << endl;
+//        cout<<endl;
+
     }
 //    showFans("fan", src_bin);
     if (fans.size() < last_fans_cnt) {

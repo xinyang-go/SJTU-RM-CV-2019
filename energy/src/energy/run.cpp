@@ -89,6 +89,8 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_energy)showFlowStrip("strip", gimbal_src);
     if (!findCenterR(gimbal_src))return;
     if (show_energy)showCenterR("R", gimbal_src);
+    fans_cnt = findFans(gimbal_src);
+    if (show_energy)showFans("fans", gimbal_src);
 
 //    getCenter();
 //    sendEnergy();
@@ -127,7 +129,9 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
         if (!findTargetInFlowStripFan()) return;
         if (!findFlowStrip(gimbal_src))return;
     }
-    if(show_energy)showTarget("target", gimbal_src);
+    if (show_energy)showTarget("target", gimbal_src);
+    fans_cnt = findFans(gimbal_src);
+    if (show_energy)showFans("fans", gimbal_src);
 
 //    getCenter();
 //    sendEnergy();

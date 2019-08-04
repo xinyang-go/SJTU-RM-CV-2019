@@ -96,7 +96,7 @@ def train(dataset, show_bar=False):
 
             _, loss_value, step = sess.run(
                 [train_op, loss, global_step],
-                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.4}
+                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.3}
             )
 
             if step % 500 == 0:

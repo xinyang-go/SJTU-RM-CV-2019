@@ -32,31 +32,31 @@
     #define ENERGY_CAMERA_GAIN  (20)
 #endif
 #ifndef SMALL_YAW_AIM_KD
-    #define SMALL_YAW_AIM_KD (1.5)
+    #define SMALL_YAW_AIM_KD (0)
 #endif
 #ifndef SMALL_YAW_AIM_KP
-    #define SMALL_YAW_AIM_KP (2.5)
+    #define SMALL_YAW_AIM_KP (4)
 #endif
 #ifndef SMALL_PITCH_AIM_KD
-    #define SMALL_PITCH_AIM_KD (1.3)
+    #define SMALL_PITCH_AIM_KD (0)
 #endif
 #ifndef SMALL_PITCH_AIM_KP
-    #define SMALL_PITCH_AIM_KP (2.4)
+    #define SMALL_PITCH_AIM_KP (3.7)
 #endif
 #ifndef BIG_YAW_AIM_KD
-    #define BIG_YAW_AIM_KD (0.7)
+    #define BIG_YAW_AIM_KD (0)
 #endif
 #ifndef BIG_YAW_AIM_KP
-    #define BIG_YAW_AIM_KP (4.5)
+    #define BIG_YAW_AIM_KP (6.5)
 #endif
 #ifndef BIG_YAW_AIM_KI
     #define BIG_YAW_AIM_KI (0.1)
 #endif
 #ifndef BIG_PITCH_AIM_KD
-    #define BIG_PITCH_AIM_KD (0.7)
+    #define BIG_PITCH_AIM_KD (0)
 #endif
 #ifndef BIG_PITCH_AIM_KP
-    #define BIG_PITCH_AIM_KP (4.5)
+    #define BIG_PITCH_AIM_KP (6.5)
 #endif
 #ifndef BIG_PITCH_AIM_KI
     #define BIG_PITCH_AIM_KI (0.1)

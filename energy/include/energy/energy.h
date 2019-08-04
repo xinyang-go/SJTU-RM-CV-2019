@@ -66,6 +66,7 @@ private:
 
     int send_cnt;//向主控板发送的数据总次数
     int camera_cnt;//摄像头数量
+    int fans_cnt;//扇叶个数
     int last_fans_cnt;//上一帧的扇叶个数
     int guess_devide;//刚进入猜测状态时，猜测目标点在极坐标中的分区
     int energy_rotation_direction;//风车旋转方向

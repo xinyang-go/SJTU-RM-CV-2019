@@ -14,7 +14,7 @@ using namespace cv;
 // 此函数用于判断世界坐标系下是否可以发弹
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::judgeShootInWorld() {
-    if (abs(yaw_rotation - mcuData.curr_yaw) < 0.5 && abs(pitch_rotation - mcuData.curr_pitch) < 0.5) {
+    if (abs(yaw_rotation - mcu_data.curr_yaw) < 0.5 && abs(pitch_rotation - mcu_data.curr_pitch) < 0.5) {
         shoot = 4;
 //        is_predicting = false;
 //        is_guessing = true;

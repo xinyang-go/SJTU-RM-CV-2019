@@ -34,12 +34,12 @@ void uartReceive(Serial *pSerial) {
     LOGM(STR_CTR(WORD_LIGHT_WHITE, "data receive start!"));
     while (true) {
         memset(buffer, 0, sizeof(buffer));
-        pSerial->ReadData((uint8_t *) buffer, sizeof(mcuData)+1);
-        if (buffer[sizeof(mcuData)] == '\n') {
-            memcpy(&mcuData, buffer, sizeof(mcuData));
-//            LOGM("Get, state:%c, mark:%d!", mcuData.state, (int) mcuData.mark);
-//            LOGM("Get yaw: %f, pitch: %f!", mcuData.curr_yaw, mcuData.curr_pitch);
-//            LOGM("Get delta x: %d, delta y: %d!", mcuData.delta_x, mcuData.delta_y);
+        pSerial->ReadData((uint8_t *) buffer, sizeof(mcu_data)+1);
+        if (buffer[sizeof(mcu_data)] == '\n') {
+            memcpy(&mcu_data, buffer, sizeof(mcu_data));
+//            LOGM("Get, state:%c, mark:%d!", mcu_data.state, (int) mcu_data.mark);
+//            LOGM("Get yaw: %f, pitch: %f!", mcu_data.curr_yaw, mcu_data.curr_pitch);
+//            LOGM("Get delta x: %d, delta y: %d!", mcu_data.delta_x, mcu_data.delta_y);
 //            static int t = time(nullptr);
 //            static int cnt = 0;
 //            if(time(nullptr) > t){
@@ -172,4 +172,8 @@ void extract(cv::Mat &gimbal_src) {//图像预处理，将视频切成640×480�
 
 float getTimeIntervalms(const systime &now, const systime &last){
     return (now.second-last.second)*1000.0 + (now.millisecond-last.millisecond);
+}
+
+double getPointLength(const cv::Point2f &p) {
+    return sqrt(p.x * p.x + p.y * p.y);
 }

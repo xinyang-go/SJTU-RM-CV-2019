@@ -10,7 +10,7 @@
 #include <serial.h>
 #include <opencv2/core.hpp>
 
-struct mcu_data {
+struct McuData {
     float curr_yaw;
     float curr_pitch;
     uint8_t state;
@@ -21,7 +21,7 @@ struct mcu_data {
     int delta_y;
 };
 
-extern mcu_data mcuData;
+extern McuData mcu_data;
 
 void uartReceive(Serial *pSerial);
 
@@ -42,6 +42,8 @@ void extract(cv::Mat &gimbal_src, cv::Mat &chassis_src);
 void extract(cv::Mat &gimbal_src);
 
 float getTimeIntervalms(const systime &now, const systime &last);
+
+double getPointLength(const cv::Point2f &p);
 
 template<class type, int length>
 class RoundQueue {

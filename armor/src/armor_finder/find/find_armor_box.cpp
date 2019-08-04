@@ -147,9 +147,18 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
                 armor_box.id = c;
             }
         }, armor_boxes.size());
-        sort(armor_boxes.begin(), armor_boxes.end());
-        if(armor_boxes[0].id != 0){
-            box = armor_boxes[0];
+        sort(armor_boxes.begin(), armor_boxes.end(), [&](const ArmorBox &a, const ArmorBox &b){
+            if(last_box.rect != cv::Rect2d()){
+                return getPointLength(a.getCenter()-last_box.getCenter()) <
+                       getPointLength(b.getCenter()-last_box.getCenter());
+            }else{
+                return a < b;
+            }
+        });
+        for(auto &one_box : armor_boxes){
+            if(one_box.id != 0){
+                box = one_box;
+            }
         }
         if (save_labelled_boxes) {
             for (const auto &one_box : armor_boxes) {
