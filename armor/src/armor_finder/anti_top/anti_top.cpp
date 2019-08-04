@@ -87,7 +87,7 @@ void ArmorFinder::antiTop() {
         anti_top_state = NORMAL;
         LOGM(STR_CTR(WORD_YELLOW, "switch to normal"));
     }
-    if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 3.0) {
+    if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 1.5) {
         if (150 < interval && interval < 700) {
             if (anti_top_state == ANTI_TOP) {
                 top_periodms.push(interval);
@@ -107,7 +107,7 @@ void ArmorFinder::antiTop() {
     }
     if (anti_top_state == NORMAL) {
         sendBoxPosition(0);
-    } else if (interval < top_periodms[-1] * 0.2){
+    } else if (interval < top_periodms[-1] * 0.1){
         sendBoxPosition(shoot_delay);
     }
 }
