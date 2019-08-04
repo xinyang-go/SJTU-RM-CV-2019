@@ -16,8 +16,9 @@ using std::vector;
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::getPredictPoint(cv::Point target_point) {
     if (is_big) {
-        if (energy_rotation_direction == 1) rotate(target_point);
-        if (energy_rotation_direction == -1) rotate(target_point);
+        if (energy_rotation_direction == 1) predict_rad = predict_rad_norm;
+        else if (energy_rotation_direction == -1) predict_rad = -predict_rad_norm;
+        rotate(target_point);
     } else if (is_small) predict_point = target_point;
 }
 

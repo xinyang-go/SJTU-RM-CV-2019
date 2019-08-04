@@ -66,6 +66,7 @@ private:
 
     int send_cnt;//向主控板发送的数据总次数
     int camera_cnt;//摄像头数量
+    int fans_cnt;//扇叶个数
     int last_fans_cnt;//上一帧的扇叶个数
     int guess_devide;//刚进入猜测状态时，猜测目标点在极坐标中的分区
     int energy_rotation_direction;//风车旋转方向
@@ -80,11 +81,13 @@ private:
     float guess_polar_angle;//猜测的下一个目标装甲板极坐标角度
     float last_base_angle;//上一帧的各扇叶在0区（0°~72°）的基础角度
     float predict_rad;//预测提前角
+    float predict_rad_norm;//预测提前角的绝对值
     float attack_distance;//步兵与风车平面距离
     float center_delta_yaw, center_delta_pitch;//对心时相差的角度
     float yaw_rotation, pitch_rotation;//云台yaw轴和pitch轴应该转到的角度
     float origin_yaw, origin_pitch;//初始的云台角度设定值
     float shoot;//若为2，则要求主控板发弹
+    float last_yaw, last_pitch;//PID中微分项
     float sum_yaw, sum_pitch;//yaw和pitch的累计误差，即PID中积分项
 
     systime time_start_guess;
@@ -131,6 +134,7 @@ private:
     bool findFlowStrip(const cv::Mat src);//寻找图中的流动条
     bool findCenterROI(const cv::Mat src);//框取中心R候选区
     bool findFlowStripFan(const cv::Mat src);//寻找图中的流动条所在扇叶
+    bool findFlowStripWeak(const cv::Mat src);//弱识别寻找图中的流动条
 
     bool isValidFanContour(cv::Mat &src, const vector<cv::Point> &fan_contour);//扇叶矩形尺寸要求
     bool isValidArmorContour(const vector<cv::Point> &armor_contour);//装甲板矩形尺寸要求
@@ -141,7 +145,9 @@ private:
     void showFans(std::string windows_name, const cv::Mat src);//显示扇叶
     void showArmors(std::string windows_name, const cv::Mat src);//显示装甲板
     void showBoth(std::string windows_name, const cv::Mat src);//显示扇叶和装甲板
+    void showTarget(std::string windows_name, const cv::Mat src);//显示目标装甲板
     void showCenterR(std::string windows_name, const cv::Mat src);//显示风车中心候选区R
+    void showFlowStrip(std::string windows_name, const cv::Mat src);//显示流动条
     void showFlowStripFan(std::string windows_name, const cv::Mat src);//显示流动条所在扇叶
     void showGuessTarget(std::string windows_name, const cv::Mat src);//显示猜测点位
 

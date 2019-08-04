@@ -78,13 +78,19 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (show_process)imshow("bin", gimbal_src);
     if (findArmors(gimbal_src) < 1)return;
     if (show_energy)showArmors("armor", gimbal_src);
-    if (!findFlowStripFan(gimbal_src))return;
-    if (!findTargetInFlowStripFan()) return;
-    if (!findFlowStrip(gimbal_src))return;
+    if (!findFlowStripFan(gimbal_src)) {
+        if (!findFlowStripWeak(gimbal_src))return;
+    } else {
+        if (show_energy)showFlowStripFan("strip fan", gimbal_src);
+        if (!findTargetInFlowStripFan()) return;
+        if (!findFlowStrip(gimbal_src))return;
+    }
     if (!findCenterROI(gimbal_src))return;
-    if (show_energy)showFlowStripFan("strip", gimbal_src);
+    if (show_energy)showFlowStrip("strip", gimbal_src);
     if (!findCenterR(gimbal_src))return;
     if (show_energy)showCenterR("R", gimbal_src);
+    fans_cnt = findFans(gimbal_src);
+    if (show_energy)showFans("fans", gimbal_src);
 
 //    getCenter();
 //    sendEnergy();
@@ -92,6 +98,7 @@ void Energy::runBig(cv::Mat &gimbal_src) {
 
     changeTarget();
     getTargetPolarAngle();
+
     if (energy_rotation_init) {
         initRotation();
         return;
@@ -115,9 +122,16 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     if (show_process)imshow("bin", gimbal_src);
     if (findArmors(gimbal_src) < 1)return;
     if (show_energy)showArmors("armor", gimbal_src);
-    if (!findFlowStripFan(gimbal_src))return;
-    if (!findTargetInFlowStripFan()) return;
-    if (!findFlowStrip(gimbal_src))return;
+    if (!findFlowStripFan(gimbal_src)) {
+        if (!findFlowStripWeak(gimbal_src))return;
+    } else {
+        if (show_energy)showFlowStripFan("strip fan", gimbal_src);
+        if (!findTargetInFlowStripFan()) return;
+        if (!findFlowStrip(gimbal_src))return;
+    }
+    if (show_energy)showTarget("target", gimbal_src);
+    fans_cnt = findFans(gimbal_src);
+    if (show_energy)showFans("fans", gimbal_src);
 
 //    getCenter();
 //    sendEnergy();

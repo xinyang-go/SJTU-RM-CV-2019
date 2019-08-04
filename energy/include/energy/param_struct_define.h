@@ -83,6 +83,9 @@ struct EnergyPartParam {
 
 	long TARGET_CHANGE_DISTANCE_MAX;//目标未更改时，目标装甲板中心与原目标装甲板中心的距离变化最大值
 	long TWIN_POINT_MAX;//两个点相同时距离最大值
+
+    long STRIP_ARMOR_DISTANCE_MIN;//流动条中心和目标装甲板中心距离最小值
+    long STRIP_ARMOR_DISTANCE_MAX;//流动条中心和目标装甲板中心距离最大值
 };
 
 
