@@ -120,7 +120,7 @@ std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
     }}
 };
 
-void process_options(int argc, char *argv[]) {
+void processOptions(int argc, char **argv) {
     if (argc >= 2) {
         for (int i = 1; i < argc; i++) {
             auto key = options.find(std::string(argv[i])); // 寻找对应选项。

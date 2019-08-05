@@ -24,6 +24,6 @@ extern bool show_energy;
 extern bool save_mark;
 extern bool show_info;
 
-void process_options(int argc, char *argv[]);
+void processOptions(int argc, char **argv);
 
 #endif /* _OPTIONS_H_ */

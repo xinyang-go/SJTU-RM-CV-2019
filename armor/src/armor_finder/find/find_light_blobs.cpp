@@ -173,7 +173,7 @@ bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
     for (int l = 0; l != light_blobs_light.size(); l++) {
         for (int d = 0; d != light_blobs_dim.size(); d++) {
             if (isSameBlob(light_blobs_light[l], light_blobs_dim[d])) {
-                if (light_blobs_light[l].areaRatio > light_blobs_dim[d].areaRatio) {
+                if (light_blobs_light[l].area_ratio > light_blobs_dim[d].area_ratio) {
                     dim_to_remove.emplace_back(d);
                 } else {
                     light_to_remove.emplace_back(l);

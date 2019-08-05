@@ -44,14 +44,14 @@ WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 Serial serial(115200);                  // 串口对象
 uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化
 // 自瞄主程序对象
-ArmorFinder armorFinder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/", mcu_data.use_classifier);
+ArmorFinder armor_finder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/", mcu_data.use_classifier);
 // 能量机关主程序对象
 Energy energy(serial, mcu_data.enemy_color);
 
 int box_distance = 0;
 
 int main(int argc, char *argv[]) {
-    process_options(argc, argv);            // 处理命令行参数
+    processOptions(argc, argv);            // 处理命令行参数
     thread receive(uartReceive, &serial);   // 开启串口接收线程
 
     int from_camera = 1;                    // 根据条件选择视频源
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]) {
                     if (show_origin) showOrigin(gimbal_src);
 //                });
                 CNT_TIME(STR_CTR(WORD_CYAN, "Armor Time"), {
-                    armorFinder.run(gimbal_src);
+                    armor_finder.run(gimbal_src);
                 });
             }
 //            cv::waitKey(0);
