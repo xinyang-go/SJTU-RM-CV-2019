@@ -26,7 +26,7 @@ extern WrapperHead *video_chassis;
 extern Serial serial;
 extern uint8_t last_state;
 
-extern ArmorFinder armorFinder;
+extern ArmorFinder armor_finder;
 extern Energy energy;
 
 void uartReceive(Serial *pSerial) {

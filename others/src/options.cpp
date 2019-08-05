@@ -5,6 +5,7 @@
 #include <options.h>
 #include <log.h>
 #include <cstring>
+#include <map>
 
 bool show_armor_box = false;
 bool show_armor_boxes = false;
@@ -19,70 +20,115 @@ bool show_energy = false;
 bool save_mark = false;
 bool show_info = false;
 
-void process_options(int argc, char *argv[]) {
+// 使用map保存所有选项及其描述和操作，加快查找速度。
+std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
+    {"--help",{
+        "show the help information.", [](){
+            LOG(LOG_MSG, "<HELP>: " STR_CTR(WORD_BLUE, "All options below are for debug use."));
+            for(const auto &option : options){
+                LOG(LOG_MSG, "<HELP>: " STR_CTR(WORD_GREEN, "%s: %s"), option.first.data(), option.second.first.data());
+            }
+        }
+    }},
+    {"--show-armor-box", {
+        "show the aim box.", []() {
+            show_armor_box = true;
+            LOGM("Enable show armor box");
+        }
+    }},
+    {"--show-armor-boxes",{
+        "show the candidate aim boxes.", [](){
+            show_armor_boxes = true;
+            LOGM("Enable show armor boxes");
+        }
+    }},
+    {"--show-light-blobs",{
+        "show the candidate light blobs.", [](){
+            show_light_blobs = true;
+            LOGM("Enable show light blobs");
+        }
+    }},
+    {"--show-origin", {
+        "show the origin image.", [](){
+            show_origin = true;
+            LOGM("Enable show origin");
+        }
+    }},
+    {"--run-with-camera", {
+        "start the program with camera directly without asking.", []() {
+            run_with_camera = true;
+            LOGM("Run with camera!");
+        }
+    }},
+    {"--save-video", {
+        "save the video.", [](){
+            save_video = true;
+            LOGM("Enable save video!");
+        }
+    }},
+    {"--save-labelled-boxes",{
+        "save the candidate boxes with their id labels.", [](){
+            save_labelled_boxes = true;
+            LOGM("labelled armor boxes will be saved!");
+        }
+    }},
+    {"--wait-uart", {
+        "wait uart until ready before running.", [](){
+            wait_uart = true;
+            LOGM("Enable wait uart!");
+        }
+    }},
+    {"--show-process", {
+        "", [](){
+            show_process = true;
+            LOGM("Enable show processed image!");
+        }
+    }},
+    {"--show-energy", {
+        "",[](){
+            show_energy = true;
+            LOGM("Enable show energy part!");
+        }
+    }},
+    {"--save-mark", {
+        "", [](){
+            save_mark = true;
+            LOGM("Write down mark");
+        }
+    }},
+    {"--show-info", {
+        "", [](){
+            show_info = true;
+            LOGM("Show information!");
+        }
+    }},
+    {"--show-all", {
+        "show all image windows.", [](){
+            show_armor_box = true;
+            LOGM("Enable show armor box");
+            show_armor_boxes = true;
+            LOGM("Enable show armor boxes");
+            show_light_blobs = true;
+            LOGM("Enable show light blobs");
+            show_origin = true;
+            LOGM("Enable show origin");
+            show_process = true;
+            LOGM("Enable show processed image");
+            show_energy = true;
+            LOGM("Enable show energy part");
+        }
+    }}
+};
+
+void processOptions(int argc, char **argv) {
     if (argc >= 2) {
         for (int i = 1; i < argc; i++) {
-            if (strcmp(argv[i], "--help") == 0) {
-                LOGM("--show-armor-box: show the aim box.");
-                LOGM("--show-armor-boxes: show the candidate aim boxes.");
-                LOGM("--show-light-blobs: show the candidate light blobs.");
-                LOGM("--show-origin: show the origin image.");
-                LOGM("--run-with-camera: start the program with camera directly without asking.");
-                LOGM("--save-video: save the video.");
-                LOGM("--save-labelled-boxes: save labelled armor boxes.");
-            } else if (strcmp(argv[i], "--show-armor-box") == 0) {
-                show_armor_box = true;
-                LOGM("Enable show armor box");
-            } else if (strcmp(argv[i], "--show-armor-boxes") == 0) {
-                show_armor_boxes = true;
-                LOGM("Enable show armor boxes");
-            } else if (strcmp(argv[i], "--show-light-blobs") == 0) {
-                show_light_blobs = true;
-                LOGM("Enable show light blobs");
-            } else if (strcmp(argv[i], "--show-origin") == 0) {
-                show_origin = true;
-                LOGM("Enable show origin");
-            } else if (strcmp(argv[i], "--show-all") == 0) {
-                show_armor_box = true;
-                LOGM("Enable show armor box");
-                show_armor_boxes = true;
-                LOGM("Enable show armor boxes");
-                show_light_blobs = true;
-                LOGM("Enable show light blobs");
-                show_origin = true;
-                LOGM("Enable show origin");
-                show_process = true;
-                LOGM("Enable show processed image");
-                show_energy = true;
-                LOGM("Enable show energy part");
-            } else if (strcmp(argv[i], "--run-with-camera") == 0) {
-                run_with_camera = true;
-                LOGM("Run with camera!");
-            } else if (strcmp(argv[i], "--save-video") == 0) {
-                save_video = true;
-                LOGM("Save video!");
-            } else if (strcmp(argv[i], "--wait-uart") == 0) {
-                wait_uart = true;
-                LOGM("Wait uart until available!");
-            } else if (strcmp(argv[i], "--save-labelled-boxes") == 0) {
-                save_labelled_boxes = true;
-                LOGM("labelled armor boxes will be saved!");
-            } else if (strcmp(argv[i], "--show-process") == 0) {
-                show_process = true;
-                LOGM("Enable show processed image!");
-            } else if (strcmp(argv[i], "--show-energy") == 0) {
-                show_energy = true;
-                LOGM("Enable show energy part!");
-            } else if (strcmp(argv[i], "--save-mark") == 0) {
-                save_mark = true;
-                LOGM("Write down mark");
-            } else if (strcmp(argv[i], "--show-info") == 0) {
-                show_info = true;
-                LOGM("Show information!");
-            } else {
+            auto key = options.find(std::string(argv[i])); // 寻找对应选项。
+            if(key != options.end()){
+                key->second.second();
+            }else{
                 LOGW("Unknown option: %s. Use --help to see options.", argv[i]);
             }
         }
     }
 }
-
