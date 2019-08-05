@@ -25,6 +25,7 @@ void Energy::sendEnergy() {
             yaw_rotation = BIG_YAW_AIM_KP * yaw_rotation + BIG_YAW_AIM_KI * sum_yaw + BIG_YAW_AIM_KD * (yaw_rotation - last_yaw);
             pitch_rotation = BIG_PITCH_AIM_KP * pitch_rotation + BIG_PITCH_AIM_KI * sum_pitch +
                     BIG_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+            MINMAX(yaw_rotation, -10, 10);
             last_yaw = tmp_yaw;
             last_pitch = tmp_pitch;
         } else if (is_chassis) {
