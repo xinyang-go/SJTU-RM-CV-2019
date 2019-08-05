@@ -5,7 +5,11 @@
 #ifndef _OPTIONS_H_
 #define _OPTIONS_H_
 
-#define PROJECT_DIR  PATH
+#ifdef PATH
+    #define PROJECT_DIR PATH
+#else
+    #define PROJECT_DIR ""
+#endif
 
 extern bool show_armor_box;
 extern bool show_armor_boxes;
