@@ -31,6 +31,11 @@
 #ifndef ENERGY_CAMERA_GAIN
     #define ENERGY_CAMERA_GAIN  (20)
 #endif
+
+#ifndef ROBOT_ID
+    #define ROBOT_ID (0)
+#endif
+
 #ifndef SMALL_YAW_AIM_KD
     #define SMALL_YAW_AIM_KD (0.35)
 #endif
