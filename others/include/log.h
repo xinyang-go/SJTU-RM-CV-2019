@@ -6,6 +6,7 @@
 #define _LOG_H_
 
 #include <stdio.h>
+#include <systime.h>
 
 /************** Define the control code *************/
 #define START_CTR           "\033[0"
@@ -130,28 +131,22 @@
 
 /******************** the time counter API ************************/
 #if !defined(DO_NOT_CNT_TIME) && LOG_LEVEL > LOG_NONE
-	#ifdef Windows
-		#include <Windows.h>
-		#define CNT_TIME(tag, codes, ...) do{ \
-			static SYSTEMTIME ts, te; \
-			GetLocalTime(&ts); \
-			codes; \
-			GetLocalTime(&te); \
-			LOGM(tag": %dms", (te.wSecond-ts.wSecond)*1000+(te.wMilliseconds-ts.wMilliseconds)); \
-		}while (0)
-	#elif defined(Linux)
-		#include <sys/time.h>
-		#define CNT_TIME(tag, codes, ...) do{ \
-			static timeval ts, te; \
-			gettimeofday(&ts, NULL); \
-			codes; \
-			gettimeofday(&te, NULL); \
-			LOGM(tag": %.1lfms", ##__VA_ARGS__, (te.tv_sec-ts.tv_sec)*1000.0+(te.tv_usec-ts.tv_usec)/1000.0); \
-		}while (0)
-    #else
-        #warning "Unsupport plantform for CNT_TIME"
-        #define CNT_TIME(tag, codes, ...) codes
-    #endif
+    #define CNT_TIME(tag, codes, ...) do{ \
+        class TimeCounter{ \
+        private: \
+            systime begin; \
+        public: \
+            TimeCounter(){ \
+                getsystime(begin); \
+            } \
+            ~TimeCounter(){ \
+                systime end; \
+                getsystime(end); \
+                LOGM(tag": %.1lfms", ##__VA_ARGS__, getTimeIntervalms(end, begin)); \
+            } \
+        } time_cnt; \
+        codes; \
+    }while (0)
 #else
 	#define CNT_TIME(tag, codes, ...) codes
 #endif
