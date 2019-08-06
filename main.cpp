@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
         bool ok = true;
         cout << "start running" << endl;
         do {
-            auto curr_state = mcu_data.state;
+            char curr_state = mcu_data.state;
             CNT_TIME("Total", {
             if (curr_state == BIG_ENERGY_STATE) {//大能量机关模式
                 if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
