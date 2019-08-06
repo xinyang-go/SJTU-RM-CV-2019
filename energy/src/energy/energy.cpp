@@ -53,6 +53,8 @@ void Energy::setBigEnergyInit() {
     initEnergy();
     initEnergyPartParam();
 
+    getsystime(time_start_energy);
+
     is_big = true;
     is_small = false;
     is_gimbal = true;

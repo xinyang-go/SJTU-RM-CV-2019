@@ -30,7 +30,7 @@ using namespace std;
 McuData mcu_data = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        SMALL_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
         ENEMY_BLUE,      // 敌方颜色
@@ -42,7 +42,7 @@ WrapperHead *video_gimbal = nullptr;    // 云台摄像头视频源
 WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 
 Serial serial(115200);                  // 串口对象
-uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化
+uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化y
 // 自瞄主程序对象
 ArmorFinder armor_finder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/");
 // 能量机关主程序对象
@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper(PROJECT_DIR"/5.avi");
-            video_chassis = new VideoWrapper(PROJECT_DIR"/5.avi");
+            video_gimbal = new VideoWrapper("/home/sun/桌面/video_8.7/round1-8-5-7-small.avi");
+            video_chassis = new VideoWrapper("/home/sun/桌面/video_8.7/round1-8-5-7-small.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -123,8 +123,8 @@ int main(int argc, char *argv[]) {
                 if (!from_camera) extract(gimbal_src, chassis_src);
                 if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                 if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-                energy.runBig(gimbal_src, chassis_src);
-//                energy.runBig(gimbal_src);
+//                energy.runBig(gimbal_src, chassis_src);
+                energy.runBig(gimbal_src);
             } else if (curr_state == SMALL_ENERGY_STATE) {
                 if (last_state != SMALL_ENERGY_STATE) {
                     LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));

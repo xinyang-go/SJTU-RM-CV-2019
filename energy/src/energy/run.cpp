@@ -85,6 +85,7 @@ void Energy::runBig(cv::Mat &gimbal_src) {
         if (!findTargetInFlowStripFan()) return;
         if (!findFlowStrip(gimbal_src))return;
     }
+    is_find_target = true;
     if (!findCenterROI(gimbal_src))return;
     if (show_energy)showFlowStrip("strip", gimbal_src);
     if (!findCenterR(gimbal_src))return;
