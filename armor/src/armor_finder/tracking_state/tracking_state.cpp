@@ -28,8 +28,8 @@ bool ArmorFinder::stateTrackingTarget(cv::Mat &src) {
     bigger_rect.width  = pos.width * 2;
     bigger_rect &= cv::Rect2d(0, 0, 640, 480);
 
-    if(show_armor_box)
-        showTrackSearchingPos("track", src, bigger_rect);
+//    if(show_armor_box)
+//        showTrackSearchingPos("track", src, bigger_rect);
 
     cv::Mat roi = src(bigger_rect).clone();
 
