@@ -83,11 +83,11 @@ static double centerDistance(const cv::Rect2d &box) {
     return dx * dx + dy * dy;
 }
 
-bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes, uint8_t color) {
+bool ArmorFinder::matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes) {
     armor_boxes.clear();
     for (int i = 0; i < light_blobs.size() - 1; ++i) {
         for (int j = i + 1; j < light_blobs.size(); ++j) {
-            if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j), color)) {
+            if (!isCoupleLight(light_blobs.at(i), light_blobs.at(j), enemy_color)) {
                 continue;
             }
             cv::Rect2d rect_left = light_blobs.at(static_cast<unsigned long>(i)).rect.boundingRect();
@@ -101,13 +101,13 @@ bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBox
             if (min_x < 0 || max_x > src.cols || min_y < 0 || max_y > src.rows) {
                 continue;
             }
-            if ((max_y + min_y) / 2 < 120) continue;
+            if (state == SEARCHING_STATE && (max_y + min_y) / 2 < 120) continue;
             if ((max_x - min_x) / (max_y - min_y) < 0.8) continue;
             LightBlobs pair_blobs = {light_blobs.at(i), light_blobs.at(j)};
             armor_boxes.emplace_back(
                     cv::Rect2d(min_x, min_y, max_x - min_x, max_y - min_y),
                     pair_blobs,
-                    color
+                    enemy_color
             );
         }
     }
@@ -130,8 +130,7 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
         cv::waitKey(1);
     }
     CNT_TIME("boxes", {
-        if (!matchArmorBoxes(src, light_blobs, armor_boxes, enemy_color)) {
-            //        cout << "Box fail!" << endl;
+        if (!matchArmorBoxes(src, light_blobs, armor_boxes)) {
             return false;
         }
     });

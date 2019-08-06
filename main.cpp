@@ -30,10 +30,10 @@ using namespace std;
 McuData mcu_data = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        SMALL_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
-        ENEMY_BLUE,      // 敌方颜色
+        ENEMY_RED,      // 敌方颜色
         0,              // 能量机关x轴补偿量
         0,              // 能量机关y轴补偿量
 };
@@ -42,7 +42,7 @@ WrapperHead *video_gimbal = nullptr;    // 云台摄像头视频源
 WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 
 Serial serial(115200);                  // 串口对象
-uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化
+uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化y
 // 自瞄主程序对象
 ArmorFinder armor_finder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/");
 // 能量机关主程序对象
@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper(PROJECT_DIR"/5.avi");
-            video_chassis = new VideoWrapper(PROJECT_DIR"/5.avi");
+            video_gimbal = new VideoWrapper("/home/sun/桌面/video_8.7/round1-8-5-7-small.avi");
+            video_chassis = new VideoWrapper("/home/sun/桌面/video_8.7/round1-8-5-7-small.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
         bool ok = true;
         cout << "start running" << endl;
         do {
-            auto curr_state = mcu_data.state;
+            char curr_state = mcu_data.state;
             CNT_TIME("Total", {
             if (curr_state == BIG_ENERGY_STATE) {//大能量机关模式
                 if (last_state != BIG_ENERGY_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
