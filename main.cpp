@@ -93,7 +93,6 @@ int main(int argc, char *argv[]) {
         bool ok = true;
         cout << "start running" << endl;
         do {
-            cout<<"save_mark: "<<save_mark<<endl;
             char curr_state = mcu_data.state;
             CNT_TIME("Total", {
             if (curr_state == BIG_ENERGY_STATE) {//大能量机关模式
