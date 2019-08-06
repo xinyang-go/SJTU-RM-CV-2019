@@ -140,7 +140,7 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
         cv::waitKey(1);
     }
 
-    if (classifier && use_classifier) {
+    if (classifier) {
         CNT_TIME("classify: %d", {
             for (auto &armor_box : armor_boxes) {
                 cv::Mat roi = src(armor_box.rect).clone();
