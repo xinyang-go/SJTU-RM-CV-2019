@@ -46,7 +46,7 @@ std::map<string, int> prior_red = {
         {"NO", 10},
 };
 
-ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, const uint8_t &use) :
+ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder) :
         serial(u),
         enemy_color(color),
         state(STANDBY_STATE),
@@ -55,7 +55,6 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
         anti_top_state(NORMAL),
         classifier(paras_folder),
         contour_area(0),
-        use_classifier(use),
         tracking_cnt(0) {
 }
 
@@ -67,7 +66,7 @@ void ArmorFinder::run(cv::Mat &src) {
         case SEARCHING_STATE:
             if (stateSearchingTarget(src)) {
                 if ((target_box.rect & cv::Rect2d(0, 0, 640, 480)) == target_box.rect) { // 判断装甲板区域是否脱离图像区域
-                    if (!classifier || !use_classifier) {                    /* 如果分类器不可用或者不使用分类器 */
+                    if (!classifier) {                                          /* 如果分类器不可用 */
                         cv::Mat roi = src(target_box.rect).clone(), roi_gray;  /* 就使用装甲区域亮点数判断是否跟丢 */
                         cv::cvtColor(roi, roi_gray, CV_RGB2GRAY);
                         cv::threshold(roi_gray, roi_gray, 180, 255, cv::THRESH_BINARY);
