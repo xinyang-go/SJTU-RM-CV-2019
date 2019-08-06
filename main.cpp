@@ -123,8 +123,8 @@ int main(int argc, char *argv[]) {
                 if (!from_camera) extract(gimbal_src, chassis_src);
                 if (save_video) saveVideos(gimbal_src, chassis_src);//保存视频
                 if (show_origin) showOrigin(gimbal_src, chassis_src);//显示原始图像
-//                energy.runBig(gimbal_src, chassis_src);
-                energy.runBig(gimbal_src);
+                energy.runBig(gimbal_src, chassis_src);
+//                energy.runBig(gimbal_src);
             } else if (curr_state == SMALL_ENERGY_STATE) {
                 if (last_state != SMALL_ENERGY_STATE) {
                     LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));

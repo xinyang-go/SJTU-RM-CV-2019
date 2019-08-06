@@ -79,11 +79,20 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (findArmors(gimbal_src) < 1)return;
     if (show_energy)showArmors("armor", gimbal_src);
     if (!findFlowStripFan(gimbal_src)) {
-        if (!findFlowStripWeak(gimbal_src))return;
+        if (!findFlowStripWeak(gimbal_src)){
+            is_find_target = false;
+            return;
+        }
     } else {
         if (show_energy)showFlowStripFan("strip fan", gimbal_src);
-        if (!findTargetInFlowStripFan()) return;
-        if (!findFlowStrip(gimbal_src))return;
+        if (!findTargetInFlowStripFan()) {
+            is_find_target = false;
+            return;
+        }
+        if (!findFlowStrip(gimbal_src)){
+            is_find_target = false;
+            return;
+        }
     }
     is_find_target = true;
     if (!findCenterROI(gimbal_src))return;
