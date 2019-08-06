@@ -92,8 +92,9 @@ void ArmorFinder::run(cv::Mat &src) {
             stateStandBy();
     }
 end:
-    antiTop();
-
+//    antiTop();
+    if(target_box.rect != cv::Rect2d())
+        sendBoxPosition(0);
     if (show_armor_box) {                 // 根据条件显示当前目标装甲板
         showArmorBox("box", src, target_box);
         cv::waitKey(1);
