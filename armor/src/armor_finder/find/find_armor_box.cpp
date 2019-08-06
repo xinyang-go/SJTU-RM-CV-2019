@@ -6,9 +6,10 @@
 #include <show_images/show_images.h>
 #include <options.h>
 #include <opencv2/highgui.hpp>
-#define DO_NOT_CNT_TIME
-#include <log.h>
 
+#define DO_NOT_CNT_TIME
+
+#include <log.h>
 
 
 static bool angelJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
@@ -100,7 +101,8 @@ bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBox
             if (min_x < 0 || max_x > src.cols || min_y < 0 || max_y > src.rows) {
                 continue;
             }
-            if((max_x-min_x)/(max_y-min_y) < 0.8) continue;
+            if ((max_y + min_y) / 2 < 120) continue;
+            if ((max_x - min_x) / (max_y - min_y) < 0.8) continue;
             LightBlobs pair_blobs = {light_blobs.at(i), light_blobs.at(j)};
             armor_boxes.emplace_back(
                     cv::Rect2d(min_x, min_y, max_x - min_x, max_y - min_y),
@@ -127,9 +129,9 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
         showLightBlobs("light_blobs", src, light_blobs);
         cv::waitKey(1);
     }
-    CNT_TIME("boxes",{
+    CNT_TIME("boxes", {
         if (!matchArmorBoxes(src, light_blobs, armor_boxes, enemy_color)) {
-    //        cout << "Box fail!" << endl;
+            //        cout << "Box fail!" << endl;
             return false;
         }
     });
@@ -147,16 +149,16 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
                 armor_box.id = c;
             }
         }, armor_boxes.size());
-        sort(armor_boxes.begin(), armor_boxes.end(), [&](const ArmorBox &a, const ArmorBox &b){
-            if(last_box.rect != cv::Rect2d()){
-                return getPointLength(a.getCenter()-last_box.getCenter()) <
-                       getPointLength(b.getCenter()-last_box.getCenter());
-            }else{
+        sort(armor_boxes.begin(), armor_boxes.end(), [&](const ArmorBox &a, const ArmorBox &b) {
+            if (last_box.rect != cv::Rect2d()) {
+                return getPointLength(a.getCenter() - last_box.getCenter()) <
+                       getPointLength(b.getCenter() - last_box.getCenter());
+            } else {
                 return a < b;
             }
         });
-        for(auto &one_box : armor_boxes){
-            if(one_box.id != 0){
+        for (auto &one_box : armor_boxes) {
+            if (one_box.id != 0) {
                 box = one_box;
             }
         }
