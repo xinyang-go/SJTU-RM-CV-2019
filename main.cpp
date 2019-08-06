@@ -33,7 +33,7 @@ McuData mcu_data = {    // 单片机端回传结构体
         SMALL_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         1,              // 是否启用数字识别
-        ENEMY_BLUE,      // 敌方颜色
+        ENEMY_RED,      // 敌方颜色
         0,              // 能量机关x轴补偿量
         0,              // 能量机关y轴补偿量
 };
@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
         bool ok = true;
         cout << "start running" << endl;
         do {
+            cout<<"save_mark: "<<save_mark<<endl;
             char curr_state = mcu_data.state;
             CNT_TIME("Total", {
             if (curr_state == BIG_ENERGY_STATE) {//大能量机关模式

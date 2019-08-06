@@ -32,11 +32,11 @@ void Energy::sendEnergy() {
 
             double tmp_yaw = yaw_rotation;
             double tmp_pitch = pitch_rotation;
-            if(mcu_data.mark == 1){
+            if (mcu_data.mark == 1) {
                 yaw_rotation = TRY_BIG_YAW_AIM_KP * yaw_rotation + TRY_BIG_YAW_AIM_KI * sum_yaw +
-                        TRY_BIG_YAW_AIM_KD * (yaw_rotation - last_yaw);
+                               TRY_BIG_YAW_AIM_KD * (yaw_rotation - last_yaw);
                 pitch_rotation = TRY_BIG_PITCH_AIM_KP * pitch_rotation + TRY_BIG_PITCH_AIM_KI * sum_pitch +
-                        TRY_BIG_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+                                 TRY_BIG_PITCH_AIM_KD * (pitch_rotation - last_pitch);
             } else {
                 yaw_rotation = BIG_YAW_AIM_KP * yaw_rotation + BIG_YAW_AIM_KI * sum_yaw +
                                BIG_YAW_AIM_KD * (yaw_rotation - last_yaw);
@@ -67,8 +67,14 @@ void Energy::sendEnergy() {
     } else if (is_small) {
         double tmp_yaw = yaw_rotation;
         double tmp_pitch = pitch_rotation;
-        yaw_rotation = SMALL_YAW_AIM_KP * yaw_rotation + SMALL_YAW_AIM_KD * (yaw_rotation - last_yaw);
-        pitch_rotation = SMALL_PITCH_AIM_KP * pitch_rotation + SMALL_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+        if (mcu_data.mark == 1) {
+            yaw_rotation = TRY_SMALL_YAW_AIM_KP * yaw_rotation + TRY_SMALL_YAW_AIM_KD * (yaw_rotation - last_yaw);
+            pitch_rotation =
+                    TRY_SMALL_PITCH_AIM_KP * pitch_rotation + TRY_SMALL_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+        } else {
+            yaw_rotation = SMALL_YAW_AIM_KP * yaw_rotation + SMALL_YAW_AIM_KD * (yaw_rotation - last_yaw);
+            pitch_rotation = SMALL_PITCH_AIM_KP * pitch_rotation + SMALL_PITCH_AIM_KD * (pitch_rotation - last_pitch);
+        }
         if (ROBOT_ID == 7) {
             MINMAX(yaw_rotation, -6, 6);
             MINMAX(pitch_rotation, -6, 6);
