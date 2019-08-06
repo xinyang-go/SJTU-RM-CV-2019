@@ -8,7 +8,9 @@ import forward
 import cv2
 import numpy as np
 import mvsdk
+
 print("Finish!")
+
 
 def save_kernal(fp, val):
     print(val.shape[2], file=fp)
@@ -49,24 +51,24 @@ def save_para(folder, paras, names, info):
         fp.close()
 
 
-STEPS = 50000
-BATCH = 30
-LEARNING_RATE_BASE  = 0.0005
+STEPS = 100000
+BATCH = 40
+LEARNING_RATE_BASE = 0.0002
 LEARNING_RATE_DECAY = 0.99
 MOVING_AVERAGE_DECAY = 0.99
 
 
 def train(dataset, show_bar=False):
     x = tf.placeholder(tf.float32, [None, generate.SRC_ROWS, generate.SRC_COLS, generate.SRC_CHANNELS])
-    y_= tf.placeholder(tf.float32, [None, forward.OUTPUT_NODES])
+    y_ = tf.placeholder(tf.float32, [None, forward.OUTPUT_NODES])
     keep_rate = tf.placeholder(tf.float32)
-    nodes, vars, vars_name = forward.forward(x, 0.01)
+    nodes, vars, vars_name = forward.forward(x, 0.01, keep_rate)
     y = nodes[-1]
 
-    ce  = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
-#    ce  = tf.nn.weighted_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1), pos_weight=1)
+    ce = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
+    #    ce  = tf.nn.weighted_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1), pos_weight=1)
     cem = tf.reduce_mean(ce)
-    loss= cem + tf.add_n(tf.get_collection("losses"))
+    loss = cem + tf.add_n(tf.get_collection("losses"))
 
     global_step = tf.Variable(0, trainable=False)
     learning_rate = tf.train.exponential_decay(
@@ -92,31 +94,33 @@ def train(dataset, show_bar=False):
 
         bar = tqdm(range(STEPS), ascii=True, dynamic_ncols=True)
         for i in bar:
-            images_samples, labels_samples = dataset.sample_train_sets(BATCH)
+            images_samples, labels_samples = dataset.sample_train_sets(BATCH, 0.03)
 
             _, loss_value, step = sess.run(
                 [train_op, loss, global_step],
-                feed_dict={x: images_samples, y_: labels_samples, keep_rate:0.3}
+                feed_dict={x: images_samples, y_: labels_samples, keep_rate: 0.3}
             )
 
             if step % 500 == 0:
-                test_images, test_labels = dataset.sample_test_sets(6000)
-                test_acc, output = sess.run([accuracy, y], feed_dict={x: test_images, y_: test_labels, keep_rate:1.0})
+                test_images, test_labels = dataset.sample_test_sets(10000)
+                test_acc, output = sess.run([accuracy, y],
+                                            feed_dict={x: test_images, y_: test_labels, keep_rate: 1.0})
                 output = np.argmax(output, axis=1)
                 real = np.argmax(test_labels, axis=1)
                 print("=============test-set===============")
                 for n in range(forward.OUTPUT_NODES):
                     print("label: %d, precise: %f, recall: %f" %
-                        (n, np.mean(real[output==n]==n), np.mean(output[real==n]==n)))
+                          (n, np.mean(real[output == n] == n), np.mean(output[real == n] == n)))
 
-                train_images, train_labels = dataset.sample_train_sets(6000)
-                train_acc, output = sess.run([accuracy, y], feed_dict={x: train_images, y_: train_labels, keep_rate:1.0})
+                train_images, train_labels = dataset.sample_train_sets(10000)
+                train_acc, output = sess.run([accuracy, y],
+                                             feed_dict={x: train_images, y_: train_labels, keep_rate: 1.0})
                 output = np.argmax(output, axis=1)
                 real = np.argmax(train_labels, axis=1)
                 print("=============train-set===============")
                 for n in range(forward.OUTPUT_NODES):
                     print("label: %d, precise: %f, recall: %f" %
-                          (n, np.mean(real[output==n]==n), np.mean(output[real==n]==n)))
+                          (n, np.mean(real[output == n] == n), np.mean(output[real == n] == n)))
                 print("\n")
                 if train_acc >= 0.99 and test_acc >= 0.99:
                     vars_val = sess.run(vars)
@@ -131,8 +135,8 @@ def train(dataset, show_bar=False):
 
         # pred = sess.run(y, feed_dict={x: test_images, keep_rate:1.0})
 
-#        nodes_val = sess.run(nodes, feed_dict={x:test_images})
-#        return vars_val, nodes_val
+        #        nodes_val = sess.run(nodes, feed_dict={x:test_images})
+        #        return vars_val, nodes_val
         DevList = mvsdk.CameraEnumerateDevice()
         nDev = len(DevList)
         if nDev < 1:
@@ -150,7 +154,7 @@ def train(dataset, show_bar=False):
         try:
             hCamera = mvsdk.CameraInit(DevInfo, -1, -1)
         except mvsdk.CameraException as e:
-            print("CameraInit Failed({}): {}".format(e.error_code, e.message) )
+            print("CameraInit Failed({}): {}".format(e.error_code, e.message))
             return
 
         # 获取相机特性描述
@@ -192,24 +196,25 @@ def train(dataset, show_bar=False):
                 # 把pFrameBuffer转换成opencv的图像格式以进行后续算法处理
                 frame_data = (mvsdk.c_ubyte * FrameHead.uBytes).from_address(pFrameBuffer)
                 frame = np.frombuffer(frame_data, dtype=np.uint8)
-                frame = frame.reshape((FrameHead.iHeight, FrameHead.iWidth, 1 if FrameHead.uiMediaType == mvsdk.CAMERA_MEDIA_TYPE_MONO8 else 3) )
+                frame = frame.reshape((FrameHead.iHeight, FrameHead.iWidth,
+                                       1 if FrameHead.uiMediaType == mvsdk.CAMERA_MEDIA_TYPE_MONO8 else 3))
 
-                frame = cv2.resize(frame, (640,480), interpolation = cv2.INTER_LINEAR)
+                frame = cv2.resize(frame, (640, 480), interpolation=cv2.INTER_LINEAR)
                 cv2.imshow("Press q to end", frame)
-                if (cv2.waitKey(1)&0xFF) == ord(' '):
+                if (cv2.waitKey(1) & 0xFF) == ord(' '):
                     roi = cv2.selectROI("roi", frame)
-                    roi = frame[roi[1]:roi[1]+roi[3], roi[0]:roi[0]+roi[2]]
+                    roi = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2]]
                     print(roi)
                     cv2.imshow("box", roi)
                     image = cv2.resize(roi, (48, 36))
                     image = image.astype(np.float32) / 255.0
-                    out = sess.run(y, feed_dict={x:[image]})
+                    out = sess.run(y, feed_dict={x: [image]})
                     print(out)
                     print(np.argmax(out))
-                
+
             except mvsdk.CameraException as e:
                 if e.error_code != mvsdk.CAMERA_STATUS_TIME_OUT:
-                    print("CameraGetImageBuffer failed({}): {}".format(e.error_code, e.message) )
+                    print("CameraGetImageBuffer failed({}): {}".format(e.error_code, e.message))
 
         # 关闭相机
         mvsdk.CameraUnInit(hCamera)
@@ -219,9 +224,9 @@ def train(dataset, show_bar=False):
 
 
 if __name__ == "__main__":
-    # import os
-    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+    #    import os
+    #    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    #    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     dataset = generate.DataSet("/home/xinyang/Workspace/box_resize")
     train(dataset, show_bar=True)
     input("press enter to continue...")

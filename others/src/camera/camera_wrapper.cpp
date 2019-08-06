@@ -11,7 +11,7 @@
 using namespace std;
 using namespace cv;
 
-CameraWrapper::CameraWrapper(int gain, int camera_mode, const std::string &n) :
+CameraWrapper::CameraWrapper(int exposure, int gain, int camera_mode, const std::string &n) :
         name(n),
         init_done(false),
         mode(camera_mode),
@@ -20,7 +20,8 @@ CameraWrapper::CameraWrapper(int gain, int camera_mode, const std::string &n) :
         iplImage(nullptr),
         rgb_buffer(nullptr),
         channel(3),
-        gain(gain){
+        gain(gain),
+        exposure(exposure){
 }
 
 void cameraCallback(CameraHandle hCamera, BYTE *pFrameBuffer, tSdkFrameHead* pFrameHead,PVOID pContext){
@@ -85,7 +86,7 @@ bool CameraWrapper::init() {
     CameraReadParameterFromFile(h_camera, PROJECT_DIR"/others/MV-UB31-Group0.config");
     CameraLoadParameter(h_camera, PARAMETER_TEAM_A);
     CameraSetAeState(h_camera, false);
-    CameraSetExposureTime(h_camera, CAMERA_EXPOSURE * 1000);
+    CameraSetExposureTime(h_camera, exposure * 1000);
     CameraSetAnalogGain(h_camera, gain);
 #endif
     double t;
