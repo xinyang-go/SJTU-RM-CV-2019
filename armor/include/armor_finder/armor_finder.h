@@ -124,6 +124,7 @@ private:
 
     bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs);
     bool findArmorBox(const cv::Mat &src, ArmorBox &box);
+    bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes);
 
     bool stateSearchingTarget(cv::Mat &src);            // searching state主函数
     bool stateTrackingTarget(cv::Mat &src);             // tracking state主函数
