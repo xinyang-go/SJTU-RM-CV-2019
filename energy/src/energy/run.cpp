@@ -106,6 +106,8 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     if (save_mark)writeDownSlightChange(gimbal_src);
     getPredictPoint(target_point);
     getAimPoint(predict_point);
+//    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << '\t' << "shoot: " << shoot << endl;
+//    waitKey(0);
     judgeShootInGimbal();
     sendEnergy();
 }

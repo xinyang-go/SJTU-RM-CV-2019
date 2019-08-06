@@ -35,35 +35,40 @@
 #ifndef ENERGY_CAMERA_GAIN
     #define ENERGY_CAMERA_GAIN  (20)
 #endif
+
+#ifndef ROBOT_ID
+    #define ROBOT_ID (0)
+#endif
+
 #ifndef SMALL_YAW_AIM_KD
-    #define SMALL_YAW_AIM_KD (0)
+    #define SMALL_YAW_AIM_KD (0.35)
 #endif
 #ifndef SMALL_YAW_AIM_KP
-    #define SMALL_YAW_AIM_KP (4)
+    #define SMALL_YAW_AIM_KP (0.85)
 #endif
 #ifndef SMALL_PITCH_AIM_KD
-    #define SMALL_PITCH_AIM_KD (0)
+    #define SMALL_PITCH_AIM_KD (0.35)
 #endif
 #ifndef SMALL_PITCH_AIM_KP
-    #define SMALL_PITCH_AIM_KP (3.7)
+    #define SMALL_PITCH_AIM_KP (0.85)
 #endif
 #ifndef BIG_YAW_AIM_KD
-    #define BIG_YAW_AIM_KD (0)
+    #define BIG_YAW_AIM_KD (0.35)
 #endif
 #ifndef BIG_YAW_AIM_KP
-    #define BIG_YAW_AIM_KP (6.5)
+    #define BIG_YAW_AIM_KP (0.85)
 #endif
 #ifndef BIG_YAW_AIM_KI
-    #define BIG_YAW_AIM_KI (0.1)
+    #define BIG_YAW_AIM_KI (0)
 #endif
 #ifndef BIG_PITCH_AIM_KD
-    #define BIG_PITCH_AIM_KD (0)
+    #define BIG_PITCH_AIM_KD (0.35)
 #endif
 #ifndef BIG_PITCH_AIM_KP
-    #define BIG_PITCH_AIM_KP (6.5)
+    #define BIG_PITCH_AIM_KP (0.85)
 #endif
 #ifndef BIG_PITCH_AIM_KI
-    #define BIG_PITCH_AIM_KI (0.1)
+    #define BIG_PITCH_AIM_KI (0)
 #endif
 #ifndef COMPENSATE_YAW
     #define COMPENSATE_YAW (5)
@@ -72,7 +77,7 @@
     #define COMPENSATE_PITCH (74)
 #endif
 #ifndef EXTRA_DELTA_X
-    #define EXTRA_DELTA_X (10)
+    #define EXTRA_DELTA_X (0)
 #endif
 #ifndef EXTRA_DELTA_Y
     #define EXTRA_DELTA_Y (10)

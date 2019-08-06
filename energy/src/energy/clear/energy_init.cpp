@@ -82,7 +82,7 @@ void Energy::initEnergy() {
 void Energy::initEnergyPartParam() {
 //    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
-    gimbal_energy_part_param_.GRAY_THRESH = 180;//game
+    gimbal_energy_part_param_.GRAY_THRESH =180;//game
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 180;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
