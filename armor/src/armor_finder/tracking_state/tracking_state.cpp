@@ -1,6 +1,7 @@
 //
 // Created by xinyang on 19-3-27.
 //
+#define LOG_LEVEL LOG_NONE
 #include <log.h>
 #include <options.h>
 #include <armor_finder/armor_finder.h>
