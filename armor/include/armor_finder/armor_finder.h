@@ -93,7 +93,7 @@ typedef std::vector<ArmorBox> ArmorBoxes;
 /********************* 自瞄类定义 **********************/
 class ArmorFinder{
 public:
-    ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, const uint8_t &use);
+    ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder);
     ~ArmorFinder() = default;
 
 private:
@@ -117,7 +117,6 @@ private:
     int contour_area;                                  // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
     int tracking_cnt;                                   // 记录追踪帧数，用于定时退出追踪
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
-    const uint8_t &use_classifier;                      // 标记是否启用CNN分类器，引用外部变量，自动变化
     RoundQueue<double, 4> top_periodms;                 // 陀螺周期循环队列
     systime last_front_time;                            // 上一次发生装甲板方向切换的时间
     int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
@@ -125,6 +124,7 @@ private:
 
     bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs);
     bool findArmorBox(const cv::Mat &src, ArmorBox &box);
+    bool matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes);
 
     bool stateSearchingTarget(cv::Mat &src);            // searching state主函数
     bool stateTrackingTarget(cv::Mat &src);             // tracking state主函数

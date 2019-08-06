@@ -52,6 +52,7 @@ private:
     bool is_chassis;//同时具有底盘和云台摄像头时，处于底盘摄像头击打过程
     bool is_guessing;//当前处于发弹到新目标出现的过程，则为true，此时猜测下一个目标
     bool is_predicting;//当前处于新目标出现到发弹的过程，则为true，此时正常击打
+    bool is_find_target;//判断当前是否找到了目标
     bool energy_mode_init;//正在进行大小符判断
     bool energy_rotation_init;//若仍在判断风车旋转方向，则为true
     bool manual_mark;//若操作手进行过手动标定，则为true
@@ -91,6 +92,7 @@ private:
     float sum_yaw, sum_pitch;//yaw和pitch的累计误差，即PID中积分项
 
     systime time_start_guess;
+    systime time_start_energy;
 
     cv::RotatedRect centerR;//风车中心字母R的可能候选区
     cv::RotatedRect flow_strip;//图像中所有流动条（理论上只有一个）
@@ -114,8 +116,6 @@ private:
     std::vector<cv::Point> all_target_armor_centers;//记录全部的装甲板中心，用于风车圆心和半径的计算
 
     std::queue<float> recent_target_armor_centers;//记录最近一段时间的装甲板中心，用于判断大符还是小符
-
-
 
 
     void initEnergy();//能量机关初始化

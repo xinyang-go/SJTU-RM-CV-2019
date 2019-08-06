@@ -41,7 +41,7 @@ CONV2_OUTPUT_CHANNELS = 8
 CONV3_KERNAL_SIZE = 3
 
 # 第三层卷积输出通道数
-CONV3_OUTPUT_CHANNELS = 16
+CONV3_OUTPUT_CHANNELS = 12
 
 # 第一层全连接宽度
 FC1_OUTPUT_NODES = 60
@@ -77,7 +77,6 @@ def forward(x, regularizer=None, keep_rate=tf.constant(1.0)):
     conv2 = tf.nn.relu(tf.nn.bias_add(conv2d(pool1, conv2_w), conv2_b))
     pool2 = avg_pool_2x2(conv2)
     print("conv2: ", conv2.shape)
-    print("pool2: ", pool2.shape)
     vars.extend([conv2_w, conv2_b])
     vars_name.extend(["conv2_w", "conv2_b"])
     nodes.extend([conv2, pool2])

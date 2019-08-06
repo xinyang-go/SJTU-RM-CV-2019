@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by xixiliadorabarry on 1/24/19.
 //
 #include "energy/energy.h"

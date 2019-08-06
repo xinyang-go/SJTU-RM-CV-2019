@@ -17,6 +17,7 @@ void Energy::initEnergy() {
     is_mark = false;
     is_guessing = false;
     is_predicting = true;
+    is_find_target = false;
     energy_mode_init = true;
     energy_rotation_init = true;
     manual_mark = false;
@@ -71,7 +72,7 @@ void Energy::initEnergy() {
     target_armors.clear();
     flow_strips.clear();
     all_target_armor_centers.clear();
-    while(!recent_target_armor_centers.empty())recent_target_armor_centers.pop();
+    while (!recent_target_armor_centers.empty())recent_target_armor_centers.pop();
 
 }
 
@@ -81,8 +82,9 @@ void Energy::initEnergy() {
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::initEnergyPartParam() {
 //    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
-//    gimbal_energy_part_param_.GRAY_THRESH = 220;//official
+//    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
     gimbal_energy_part_param_.GRAY_THRESH = 180;//game
+    gimbal_energy_part_param_.SUB_GRAY_THRESH = 100;
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 180;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
@@ -155,7 +157,6 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.STRIP_ARMOR_DISTANCE_MIN = 28;
     gimbal_energy_part_param_.STRIP_ARMOR_DISTANCE_MAX = 52;
-
 
 
     chassis_energy_part_param_.GRAY_THRESH = 120;//home
