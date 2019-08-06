@@ -27,10 +27,10 @@ static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::Ro
 // 此函数可以有性能优化.
 static uint8_t get_blob_color(const cv::Mat &src, const cv::RotatedRect &blobPos) {
     auto region = blobPos.boundingRect();
-    region.x -= fmax(2, region.width * 0.1);
-    region.y -= fmax(2, region.height * 0.05);
-    region.width += 2 * fmax(2, region.width * 0.1);
-    region.height += 2 * fmax(2, region.height * 0.05);
+    region.x -= fmax(3, region.width * 0.1);
+    region.y -= fmax(3, region.height * 0.05);
+    region.width += 2 * fmax(3, region.width * 0.1);
+    region.height += 2 * fmax(3, region.height * 0.05);
     region &= cv::Rect(0, 0, src.cols, src.rows);
     cv::Mat roi = src(region);
     int red_cnt = 0, blue_cnt = 0;

@@ -8,8 +8,12 @@
     #warning "Without config.h"
 #endif
 
-#ifndef CAMERA_EXPOSURE
-    #define CAMERA_EXPOSURE     (10)
+#ifndef ARMOR_CAMERA_EXPOSURE
+    #define ARMOR_CAMERA_EXPOSURE     (10)
+#endif
+
+#ifndef ENERGY_CAMERA_EXPOSURE
+    #define ENERGY_CAMERA_EXPOSURE         (10)
 #endif
 
 #ifndef CAMERA_RED_GAIN

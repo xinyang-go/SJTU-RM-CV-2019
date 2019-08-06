@@ -41,8 +41,9 @@ private:
     RoundQueue<cv::Mat, 2> src_queue;
 public:
     int gain;
+    int exposure;
 
-    CameraWrapper(int gain, int camera_mode=1, const std::string &n="NULL");
+    CameraWrapper(int exposure, int gain, int camera_mode=1, const std::string &n="NULL");
     ~CameraWrapper() final;
 
     bool init() final;
