@@ -29,6 +29,7 @@ void Energy::getAimPoint(cv::Point target_point_) {
         extra_delta_y = 0;
     }
 
+
     double dx = -(target_point_.x - 320 - COMPENSATE_YAW - mcu_data.delta_x - manual_delta_x - extra_delta_x);
     double dy = -(target_point_.y - 240 - COMPENSATE_PITCH - mcu_data.delta_y - manual_delta_y - extra_delta_y);
     yaw_rotation = atan(dx / FOCUS_PIXAL) * 180 / PI;
