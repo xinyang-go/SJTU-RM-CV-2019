@@ -130,8 +130,13 @@ bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
         color_channel = channels[2];        /************************/
     }
 
-
-    cv::threshold(color_channel, src_bin_light, 200, 255, CV_THRESH_BINARY); // 二值化对应通道
+    int light_threshold;
+    if(enemy_color == ENEMY_BLUE){
+        light_threshold = 225;
+    }else{
+        light_threshold = 200;
+    }
+    cv::threshold(color_channel, src_bin_light, light_threshold, 255, CV_THRESH_BINARY); // 二值化对应通道
     if (src_bin_light.empty()) return false;
     imagePreProcess(src_bin_light);                                  // 开闭运算
 
