@@ -83,16 +83,16 @@ void Energy::initEnergy() {
 void Energy::initEnergyPartParam() {
 //    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
-    gimbal_energy_part_param_.GRAY_THRESH = 180;//game
-    gimbal_energy_part_param_.SUB_GRAY_THRESH = 100;
+    gimbal_energy_part_param_.RED_GRAY_THRESH = 180;//game
+    gimbal_energy_part_param_.BLUE_GRAY_THRESH = 100;//game
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 180;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
     gimbal_energy_part_param_.ARMOR_GRAY_THRESH = 80;
 
-    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MAX = 3000;
-    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MIN = 500;
+    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MAX = 5000;
+    gimbal_energy_part_param_.FAN_CONTOUR_AREA_MIN = 1500;
     gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 55;
-    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 95;
+    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 100;
     gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 20;
     gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 52;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 3.5;

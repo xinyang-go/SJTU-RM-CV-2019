@@ -7,6 +7,8 @@
 using namespace std;
 using namespace cv;
 
+extern McuData mcu_data;
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于清空各vector
@@ -26,15 +28,11 @@ void Energy::clearAll() {
 void Energy::initImage(cv::Mat &src) {
 //    imagePreprocess(src);
 //    if(show_process)imshow("img_preprocess", src);
-    systime cur_time;
-    getsystime(cur_time);
-    float interval = getTimeIntervalms(cur_time, time_start_energy);
-
     if (src.type() == CV_8UC3)cvtColor(src, src, COLOR_BGR2GRAY);
-    if(interval > 3000 && !is_find_target){
-        threshold(src, src, energy_part_param_.SUB_GRAY_THRESH, 255, THRESH_BINARY);
-    }else{
-        threshold(src, src, energy_part_param_.GRAY_THRESH, 255, THRESH_BINARY);
+    if (mcu_data.enemy_color == ENEMY_BLUE){
+        threshold(src, src, energy_part_param_.RED_GRAY_THRESH, 255, THRESH_BINARY);
+    } else if(mcu_data.enemy_color == ENEMY_RED){
+        threshold(src, src, energy_part_param_.BLUE_GRAY_THRESH, 255, THRESH_BINARY);
     }
     if (show_process)imshow("bin", src);
     if (show_energy)waitKey(1);

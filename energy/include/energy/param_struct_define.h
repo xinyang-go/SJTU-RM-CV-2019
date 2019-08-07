@@ -17,7 +17,8 @@ using std::vector;
 // ---------------------------------------------------------------------------------------------------------------------
 struct EnergyPartParam {
 	int GRAY_THRESH;//二值化阈值
-	int SUB_GRAY_THRESH;//备用二值化阈值
+	int RED_GRAY_THRESH;//红方二值化阈值
+	int BLUE_GRAY_THRESH;//蓝方二值化阈值
 	int SPLIT_GRAY_THRESH;//通道分离二值化阈值
 	int FAN_GRAY_THRESH;//扇叶识别二值化阈值
 	int ARMOR_GRAY_THRESH;//装甲板识别二值化阈值
