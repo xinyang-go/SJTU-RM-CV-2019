@@ -92,7 +92,6 @@ private:
     float sum_yaw, sum_pitch;//yaw和pitch的累计误差，即PID中积分项
 
     systime time_start_guess;
-    systime time_start_energy;
 
     cv::RotatedRect centerR;//风车中心字母R的可能候选区
     cv::RotatedRect flow_strip;//图像中所有流动条（理论上只有一个）
