@@ -30,7 +30,7 @@ void Energy::judgeShootInWorld() {
 // 此函数用于判断云台坐标系下是否可以发弹
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::judgeShootInGimbal() {
-    if (abs(yaw_rotation) < 0.5 && abs(pitch_rotation) < 0.5) {
+    if (abs(yaw_rotation) < 0.7 && abs(pitch_rotation) < 0.7) {
         shoot = 4;
 //        is_predicting = false;
 //        is_guessing = true;

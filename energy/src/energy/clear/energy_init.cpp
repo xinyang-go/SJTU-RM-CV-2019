@@ -91,9 +91,9 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.FAN_CONTOUR_AREA_MAX = 5000;
     gimbal_energy_part_param_.FAN_CONTOUR_AREA_MIN = 1500;
-    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 55;
+    gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MIN = 45;
     gimbal_energy_part_param_.FAN_CONTOUR_LENGTH_MAX = 100;
-    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 20;
+    gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MIN = 10;
     gimbal_energy_part_param_.FAN_CONTOUR_WIDTH_MAX = 52;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MAX = 3.5;
     gimbal_energy_part_param_.FAN_CONTOUR_HW_RATIO_MIN = 1.2;
@@ -105,10 +105,10 @@ void Energy::initEnergyPartParam() {
 
     gimbal_energy_part_param_.ARMOR_CONTOUR_AREA_MAX = 500;
     gimbal_energy_part_param_.ARMOR_CONTOUR_AREA_MIN = 180;
-    gimbal_energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 16;
-    gimbal_energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 32;
-    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 5;
-    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 20;
+    gimbal_energy_part_param_.ARMOR_CONTOUR_LENGTH_MIN = 10;
+    gimbal_energy_part_param_.ARMOR_CONTOUR_LENGTH_MAX = 50;
+    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MIN = 0;
+    gimbal_energy_part_param_.ARMOR_CONTOUR_WIDTH_MAX = 30;
     gimbal_energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MAX = 3;
     gimbal_energy_part_param_.ARMOR_CONTOUR_HW_RATIO_MIN = 1;
 
