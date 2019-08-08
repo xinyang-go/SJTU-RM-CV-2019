@@ -417,7 +417,7 @@ bool Energy::findCenterROI(const cv::Mat src) {
                 flow_strip.center.y - target_point.y);
     p2p = p2p / pointDistance(flow_strip.center, target_point);//单位化
     center_ROI = cv::RotatedRect(cv::Point2f(flow_strip.center + p2p * length * 1.7),
-                                 Size2f(length * 1.4, length * 1.4), -90);
+                                 Size2f(length * 1.7, length * 1.7), -90);
     return true;
 
 }

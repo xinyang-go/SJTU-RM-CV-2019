@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper(PROJECT_DIR"/gimbal_video/1.avi");
-            video_chassis = new VideoWrapper(PROJECT_DIR"/gimbal_video/1.avi");
+            video_gimbal = new VideoWrapper(PROJECT_DIR"/8-7-NO7.avi");
+            video_chassis = new VideoWrapper(PROJECT_DIR"/8-7-NO7.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");
