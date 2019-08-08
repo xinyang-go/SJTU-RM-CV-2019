@@ -83,7 +83,7 @@ void Energy::initEnergy() {
 void Energy::initEnergyPartParam() {
 //    gimbal_energy_part_param_.GRAY_THRESH = 120;//home
 //    gimbal_energy_part_param_.GRAY_THRESH = 200;//official
-    gimbal_energy_part_param_.RED_GRAY_THRESH = 180;//game
+    gimbal_energy_part_param_.RED_GRAY_THRESH = 150;//game
     gimbal_energy_part_param_.BLUE_GRAY_THRESH = 100;//game
     gimbal_energy_part_param_.SPLIT_GRAY_THRESH = 180;
     gimbal_energy_part_param_.FAN_GRAY_THRESH = 75;
@@ -143,9 +143,11 @@ void Energy::initEnergyPartParam() {
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MIN = 32;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_LENGTH_MAX = 55;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MIN = 4;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 20;
+//    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 20;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_WIDTH_MAX = 40;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MAX = 7;
-    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 3;
+//    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 3;
+    gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_HW_RATIO_MIN = 1;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_AREA_RATIO_MIN = 0.6;
     gimbal_energy_part_param_.FLOW_STRIP_CONTOUR_INTERSETION_AREA_MIN = 100;
 

@@ -76,7 +76,7 @@ bool Energy::findTargetInFlowStripFan() {
 //    waitKey();
 //    cout << "target armor cnt: " << target_armors.size() << endl;
     if (target_armors.empty()) {
-        if (show_info)cout << "t6find target armor false" << endl;
+        if (show_info)cout << "find target armor false" << endl;
         return false;
     } else {
         return true;
