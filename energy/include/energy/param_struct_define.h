@@ -20,8 +20,6 @@ struct EnergyPartParam {
 	int RED_GRAY_THRESH;//红方二值化阈值
 	int BLUE_GRAY_THRESH;//蓝方二值化阈值
 	int SPLIT_GRAY_THRESH;//通道分离二值化阈值
-	int FAN_GRAY_THRESH;//扇叶识别二值化阈值
-	int ARMOR_GRAY_THRESH;//装甲板识别二值化阈值
 
 	long FAN_CONTOUR_AREA_MAX;//扇叶面积最大值
 	long FAN_CONTOUR_AREA_MIN;//扇叶面积最小值

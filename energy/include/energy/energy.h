@@ -65,6 +65,7 @@ private:
 
     double radius;//大风车半径
 
+    int curr_fps;//帧率
     int send_cnt;//向主控板发送的数据总次数
     int camera_cnt;//摄像头数量
     int fans_cnt;//扇叶个数
@@ -131,6 +132,7 @@ private:
     int findArmors(const cv::Mat src);//寻找图中所有装甲板
     bool findCenterR(const cv::Mat src);//寻找图中可能的风车中心字母R
     bool findFlowStrip(const cv::Mat src);//寻找图中的流动条
+    bool findFlowStripSub(const cv::Mat src);//寻找图中的流动条
     bool findCenterROI(const cv::Mat src);//框取中心R候选区
     bool findFlowStripFan(const cv::Mat src);//寻找图中的流动条所在扇叶
     bool findFlowStripWeak(const cv::Mat src);//弱识别寻找图中的流动条
@@ -191,6 +193,7 @@ private:
     void ArmorStruct(cv::Mat &src);//腐蚀和膨胀
     void FlowStripFanStruct(cv::Mat &src);//腐蚀和膨胀
     void FlowStripStruct(cv::Mat &src);//腐蚀和膨胀
+    void FlowStripStructSub(cv::Mat &src);//腐蚀和膨胀
     void CenterRStruct(cv::Mat &src);//腐蚀和膨胀
 };
 

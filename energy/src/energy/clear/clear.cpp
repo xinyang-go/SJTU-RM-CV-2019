@@ -28,12 +28,16 @@ void Energy::clearAll() {
 void Energy::initImage(cv::Mat &src) {
 //    imagePreprocess(src);
 //    if(show_process)imshow("img_preprocess", src);
-    if (src.type() == CV_8UC3)cvtColor(src, src, COLOR_BGR2GRAY);
+    if (src.type() == CV_8UC3){
+        cvtColor(src, src, COLOR_BGR2GRAY);
+    }
     if (mcu_data.enemy_color == ENEMY_BLUE){
         threshold(src, src, energy_part_param_.RED_GRAY_THRESH, 255, THRESH_BINARY);
     } else if(mcu_data.enemy_color == ENEMY_RED){
         threshold(src, src, energy_part_param_.BLUE_GRAY_THRESH, 255, THRESH_BINARY);
     }
-    if (show_process)imshow("bin", src);
+    if (show_process){
+        imshow("bin", src);
+    }
     if (show_energy || show_process)waitKey(1);
 }
