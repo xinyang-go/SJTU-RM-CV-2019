@@ -93,7 +93,7 @@ typedef std::vector<ArmorBox> ArmorBoxes;
 /********************* 自瞄类定义 **********************/
 class ArmorFinder{
 public:
-    ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder);
+    ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, const uint8_t &anti_top);
     ~ArmorFinder() = default;
 
 private:
@@ -103,24 +103,21 @@ private:
         SEARCHING_STATE, TRACKING_STATE, STANDBY_STATE
     } State;                                            // 自瞄状态枚举定义
 
-    typedef enum{
-        NORMAL, ANTI_TOP
-    } AntiTopState;
-
-    systime frame_time;                                 // 当前帧对应时间;
+    systime frame_time;                                 // 当前帧对应时间
     const uint8_t &enemy_color;                         // 敌方颜色，引用外部变量，自动变化
+    const uint8_t &is_anti_top;                         // 进入反陀螺，引用外部变量，自动变化
     State state;                                        // 自瞄状态对象实例
     ArmorBox target_box, last_box;                      // 目标装甲板
     int anti_switch_cnt;                                // 防止乱切目标计数器
     cv::Ptr<cv::Tracker> tracker;                       // tracker对象实例
     Classifier classifier;                              // CNN分类器对象实例，用于数字识别
-    int contour_area;                                  // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
+    int contour_area;                                   // 装甲区域亮点个数，用于数字识别未启用时判断是否跟丢（已弃用）
     int tracking_cnt;                                   // 记录追踪帧数，用于定时退出追踪
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
+    systime last_front_time;                            // 上次陀螺正对时间
     RoundQueue<double, 4> top_periodms;                 // 陀螺周期循环队列
-    systime last_front_time;                            // 上一次发生装甲板方向切换的时间
-    int anti_top_cnt;                                   // 满足条件的装甲板方向切换持续次数，用于反陀螺
-    AntiTopState anti_top_state;                        // 当前是否识别到陀螺
+    vector<systime> time_seq;                           // 一个周期内的时间采样点
+    vector<float> angle_seq;                            // 一个周期内的角度采样点
 
     bool findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs);
     bool findArmorBox(const cv::Mat &src, ArmorBox &box);

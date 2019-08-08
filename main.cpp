@@ -32,7 +32,7 @@ McuData mcu_data = {    // 单片机端回传结构体
         0,              // 当前云台pitch角
         ARMOR_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
-        1,              // 是否启用数字识别
+        0,              // 是否为反陀螺模式
         ENEMY_RED,      // 敌方颜色
         0,              // 能量机关x轴补偿量
         0,              // 能量机关y轴补偿量
@@ -44,7 +44,7 @@ WrapperHead *video_chassis = nullptr;   // 底盘摄像头视频源
 Serial serial(115200);                  // 串口对象
 uint8_t last_state = INIT_STATE;     // 上次状态，用于初始化
 // 自瞄主程序对象
-ArmorFinder armor_finder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/");
+ArmorFinder armor_finder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/", mcu_data.anti_top);
 // 能量机关主程序对象
 Energy energy(serial, mcu_data.enemy_color);
 
@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper(PROJECT_DIR"/8-7-NO7.avi");
-            video_chassis = new VideoWrapper(PROJECT_DIR"/8-7-NO7.avi");
+            video_gimbal = new VideoWrapper(PROJECT_DIR"/gimbal_video/1.avi");
+            video_chassis = new VideoWrapper(PROJECT_DIR"/gimbal_video/1.avi");
         }
         if (video_gimbal->init()) {
             LOGM("video_gimbal source initialization successfully.");

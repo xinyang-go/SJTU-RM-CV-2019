@@ -5,12 +5,15 @@
 #ifndef _PLATFORM_H_
 #define _PLATFORM_H_
 
-typedef struct{
-    int second;
-    int millisecond;
-} systime;
+//typedef struct{
+//    float second;
+//    float millisecond;
+//} systime;
+
+typedef double systime;
 
 void getsystime(systime &t);
+double getTimeIntervalms(const systime &now, const systime &last);
 
 #if defined(Linux) || defined(Darwin)
     #include <sys/time.h>

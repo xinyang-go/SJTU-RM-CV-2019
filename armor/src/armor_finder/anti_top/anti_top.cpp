@@ -15,38 +15,47 @@ static double mean(RoundQueue<double, length> &vec) {
     return sum / length;
 }
 
+static systime getFrontTime(const vector<systime> time_seq, const vector<float> angle_seq) {
+    double A = 0, B = 0, C = 0, D = 0;
+    int len = time_seq.size();
+    for (int i = 0; i < len; i++) {
+        A += angle_seq[i] * angle_seq[i];
+        B += angle_seq[i];
+        C += angle_seq[i] * time_seq[i];
+        D += time_seq[i];
+        cout << "(" << angle_seq[i] << ", " << time_seq[i] << ") ";
+    }
+    double b = (A * D - B * C) / (len * A - B * B);
+    cout << b << endl;
+    return b;
+}
+
 void ArmorFinder::antiTop() {
     if (target_box.rect == cv::Rect2d()) return;
-    uint16_t shoot_delay = 0;
-    auto interval = getTimeIntervalms(frame_time, last_front_time);
-    if (anti_top_state == ANTI_TOP && interval > 700) {
-        anti_top_state = NORMAL;
-        LOGM(STR_CTR(WORD_YELLOW, "switch to normal"));
-    }
+
     if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 1.5) {
-        if (150 < interval && interval < 700) {
-            if (anti_top_state == ANTI_TOP) {
-                top_periodms.push(interval);
-                LOGM(STR_CTR(WORD_LIGHT_GREEN, "top period: %.1lf ms"), interval);
-                systime curr_time;
-                getsystime(curr_time);
-                auto calculate_time = getTimeIntervalms(curr_time, frame_time);
-                shoot_delay = mean(top_periodms) - calculate_time;
-                sendBoxPosition(shoot_delay);
-            } else {
-                if (++anti_top_cnt > 4) {
-                    anti_top_state = ANTI_TOP;
-                    LOGM(STR_CTR(WORD_CYAN, "switch to anti-top"));
-                }
-            }
-        }
-        last_front_time = frame_time;
-    }
-    if (anti_top_state == NORMAL) {
-        sendBoxPosition(0);
-    } else if (interval < top_periodms[-1] * 0.1){
+        auto front_time = getFrontTime(time_seq, angle_seq);
+        auto once_periodms = getTimeIntervalms(front_time, last_front_time);
+//        if (abs(once_periodms - top_periodms[-1]) > 50) {
+//            sendBoxPosition(0);
+//            return;
+//        }
+        LOGM(STR_CTR(WORD_GREEN, "Top period: %.1lf"), once_periodms);
+        top_periodms.push(once_periodms);
+        auto periodms = mean(top_periodms);
+        systime curr_time;
+        getsystime(curr_time);
+        uint16_t shoot_delay = front_time + periodms * 2 - curr_time;
         sendBoxPosition(shoot_delay);
+        time_seq.clear();
+        angle_seq.clear();
+        last_front_time = front_time;
+    } else {
+        time_seq.emplace_back(frame_time);
+        double dx = target_box.rect.x + target_box.rect.width / 2 - IMAGE_CENTER_X;
+        double yaw = atan(dx / FOCUS_PIXAL) * 180 / PI;
+        angle_seq.emplace_back(yaw);
+        sendBoxPosition(0);
     }
-    last_box = target_box;
 }
 
