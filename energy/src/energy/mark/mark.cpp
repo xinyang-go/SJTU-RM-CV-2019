@@ -37,6 +37,7 @@ void Energy::writeDownSlightChange(cv::Mat &src) {
             }
             fprintf(fp_data, "fps: %d\t", curr_fps);
             fprintf(fp_data, "fans_cnt: %d\t", fans_cnt);
+            fprintf(fp_data, "shoot: %d\t", int(shoot));
             fprintf(fp_data, "yaw: %lf , pitch: %lf\t", yaw_rotation, pitch_rotation);
             fprintf(fp_data, "delta_x: %d, delta_y: %d\n", mcu_data.delta_x + manual_delta_x,
                     mcu_data.delta_y + manual_delta_y);

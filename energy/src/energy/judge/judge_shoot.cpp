@@ -39,6 +39,5 @@ void Energy::judgeShootInGimbal() {
 //        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
         shoot = 2;
-
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
 }

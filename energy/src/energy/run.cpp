@@ -107,13 +107,13 @@ void Energy::runBig(cv::Mat &gimbal_src) {
         initRotation();
         return;
     }
-    if (save_mark)writeDownSlightChange(gimbal_src);
     getPredictPoint(target_point);
     getAimPoint(predict_point);
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << '\t' << "shoot: " << shoot << endl;
 //    waitKey(0);
     judgeShootInGimbal();
     sendEnergy();
+    if (save_mark)writeDownSlightChange(gimbal_src);
 }
 
 
@@ -133,7 +133,11 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
     } else {
         if (show_energy)showFlowStripFan("strip fan", gimbal_src);
         if (!findTargetInFlowStripFan()) return;
-        if (!findFlowStrip(gimbal_src)) return;
+        if (!findFlowStrip(gimbal_src)) {
+            if(!findFlowStripSub(gimbal_src)) {
+                return;
+            }
+        }
     }
     if (show_energy)showTarget("target", gimbal_src);
     fans_cnt = findFans(gimbal_src);
@@ -144,11 +148,11 @@ void Energy::runSmall(cv::Mat &gimbal_src) {
 //    return;
 
     changeTarget();
-    if (save_mark)writeDownSlightChange(gimbal_src);
     getPredictPoint(target_point);
     getAimPoint(predict_point);
     judgeShootInGimbal();
     sendEnergy();
+    if (save_mark)writeDownSlightChange(gimbal_src);
 }
 
 

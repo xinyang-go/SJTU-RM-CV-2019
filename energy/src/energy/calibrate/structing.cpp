@@ -17,7 +17,8 @@ using std::vector;
 void Energy::FanStruct(cv::Mat &src) {
     Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(5, 5));
     Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(2, 2));
-    Mat element_dilate_2 = getStructuringElement(MORPH_RECT, Size(3, 3));
+    Mat element_dilate_2 = getStructuringElement(MORPH_RECT,
+            Size(3, 3));
     Mat element_erode_2 = getStructuringElement(MORPH_RECT, Size(2 , 2));
     Mat element_dilate_3 = getStructuringElement(MORPH_RECT, Size(3, 3));
     Mat element_erode_3 = getStructuringElement(MORPH_RECT, Size(1 , 1));
