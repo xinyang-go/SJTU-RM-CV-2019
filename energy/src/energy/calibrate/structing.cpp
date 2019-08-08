@@ -99,24 +99,30 @@ void Energy::FlowStripFanStruct(cv::Mat &src) {
 // ---------------------------------------------------------------------------------------------------------------------
 void Energy::FlowStripStruct(cv::Mat &src) {
     Mat element_dilate_1 = getStructuringElement(MORPH_RECT, Size(5, 5));
-    Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(3, 3));
-    Mat element_dilate_2 = getStructuringElement(MORPH_RECT, Size(3, 3));
+    Mat element_erode_1 = getStructuringElement(MORPH_RECT, Size(5, 5));
+    Mat element_dilate_2 = getStructuringElement(MORPH_RECT, Size(2, 2));
     Mat element_erode_2 = getStructuringElement(MORPH_RECT, Size(2 , 2));
-    Mat element_dilate_3 = getStructuringElement(MORPH_RECT, Size(3, 3));
-    Mat element_erode_3 = getStructuringElement(MORPH_RECT, Size(1 , 1));
+    Mat element_dilate_3 = getStructuringElement(MORPH_RECT, Size(2, 2));
+    Mat element_erode_3 = getStructuringElement(MORPH_RECT, Size(2 , 2));
+    Mat element_dilate_4 = getStructuringElement(MORPH_RECT, Size(2, 2));
+    Mat element_erode_4 = getStructuringElement(MORPH_RECT, Size(1 , 1));
 
-    dilate(src, src, element_dilate_1);
+//    dilate(src, src, element_dilate_1);
 //    imshow("dilate_1", src);
     erode(src,src, element_erode_1);
-//    imshow("erode_1", src);
-    erode(src,src, element_erode_2);
+    imshow("erode_1", src);
+//    erode(src,src, element_erode_2);
 //    imshow("erode_2", src);
-    erode(src,src, element_erode_3);
+//    erode(src,src, element_erode_3);
 //    imshow("erode_3", src);
-//    dilate(src, src, element_dilate_2);
-//    imshow("dilate_2", src);
+    dilate(src, src, element_dilate_1);
+//    imshow("dilate_1", src);
+    dilate(src, src, element_dilate_2);
+    imshow("dilate_2", src);
 //    dilate(src, src, element_dilate_3);
 //    imshow("dilate_3", src);
+//    dilate(src, src, element_dilate_4);
+//    imshow("dilate_4", src);
 }
 
 

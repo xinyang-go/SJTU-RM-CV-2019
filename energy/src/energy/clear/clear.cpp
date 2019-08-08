@@ -35,5 +35,5 @@ void Energy::initImage(cv::Mat &src) {
         threshold(src, src, energy_part_param_.BLUE_GRAY_THRESH, 255, THRESH_BINARY);
     }
     if (show_process)imshow("bin", src);
-    if (show_energy)waitKey(1);
+    if (show_energy || show_process)waitKey(1);
 }
