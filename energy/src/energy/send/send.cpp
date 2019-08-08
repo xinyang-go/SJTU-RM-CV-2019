@@ -112,6 +112,7 @@ void Energy::sendTarget(Serial &serial, float x, float y, float z) {
     if (last_time != t) {
         last_time = t;
         cout << "Energy: fps:" << fps << ", (" << x << "," << y << "," << z << ")" << endl;
+        curr_fps = fps;
         fps = 0;
     }
     fps += 1;
@@ -148,6 +149,7 @@ void Energy::sendTarget(Serial &serial, float x, float y, float z, uint16_t u) {
     if (last_time != t) {
         last_time = t;
         cout << "Energy: fps:" << fps << ", (" << x << "," << y << "," << z << "," << u << ")" << endl;
+        curr_fps = fps;
         fps = 0;
     }
     fps += 1;

@@ -83,7 +83,11 @@ void Energy::runBig(cv::Mat &gimbal_src) {
     } else {
         if (show_energy)showFlowStripFan("strip fan", gimbal_src);
         if (!findTargetInFlowStripFan()) return;
-        if (!findFlowStrip(gimbal_src))return;
+            if(!findFlowStrip(gimbal_src)){
+                if(!findFlowStripSub(gimbal_src)) {
+                    return;
+                }
+            }
     }
     if (!findCenterROI(gimbal_src))return;
     if (show_energy)showFlowStrip("strip", gimbal_src);
