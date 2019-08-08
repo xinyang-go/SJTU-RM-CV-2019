@@ -20,18 +20,26 @@ void Energy::getAimPoint(cv::Point target_point_) {
 
     if (target_polar_angle_ > 0 && target_polar_angle_ <= 90) {
         extra_delta_x = EXTRA_DELTA_X * (90 - target_polar_angle_) / 90;
-        extra_delta_y = - EXTRA_DELTA_Y * target_polar_angle_  / 90;
+        extra_delta_y = -EXTRA_DELTA_Y * target_polar_angle_ / 90;
     } else if (target_polar_angle_ > 90 && target_polar_angle_ < 180) {
-        extra_delta_x = - EXTRA_DELTA_X * (target_polar_angle_ - 90) / 90;
-        extra_delta_y = - EXTRA_DELTA_Y * (180 - target_polar_angle_) / 90;
+        extra_delta_x = -EXTRA_DELTA_X * (target_polar_angle_ - 90) / 90;
+        extra_delta_y = -EXTRA_DELTA_Y * (180 - target_polar_angle_) / 90;
     } else {
         extra_delta_x = 0;
         extra_delta_y = 0;
     }
 
+    int compensate_yaw = 0, compensate_pitch = 0;
+    if (mcu_data.enemy_color == ENEMY_BLUE) {
+        compensate_yaw = RED_COMPENSATE_YAW;
+        compensate_pitch = RED_COMPENSATE_PITCH;
+    } else if (mcu_data.enemy_color == ENEMY_RED) {
+        compensate_yaw = BLUE_COMPENSATE_YAW;
+        compensate_pitch = BLUE_COMPENSATE_PITCH;
+    }
 
-    double dx = -(target_point_.x - 320 - COMPENSATE_YAW - mcu_data.delta_x - manual_delta_x - extra_delta_x);
-    double dy = -(target_point_.y - 240 - COMPENSATE_PITCH - mcu_data.delta_y - manual_delta_y - extra_delta_y);
+    double dx = -(target_point_.x - 320 - compensate_yaw - mcu_data.delta_x - manual_delta_x - extra_delta_x);
+    double dy = -(target_point_.y - 240 - compensate_pitch - mcu_data.delta_y - manual_delta_y - extra_delta_y);
     yaw_rotation = atan(dx / FOCUS_PIXAL) * 180 / PI;
     pitch_rotation = atan(dy / FOCUS_PIXAL) * 180 / PI;
 //    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;

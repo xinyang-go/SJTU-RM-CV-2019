@@ -30,10 +30,10 @@ using namespace std;
 McuData mcu_data = {    // 单片机端回传结构体
         0,              // 当前云台yaw角
         0,              // 当前云台pitch角
-        ARMOR_STATE,    // 当前状态，自瞄-大符-小符
+        BIG_ENERGY_STATE,    // 当前状态，自瞄-大符-小符
         0,              // 云台角度标记位
         0,              // 是否为反陀螺模式
-        ENEMY_BLUE,      // 敌方颜色
+        ENEMY_RED,      // 敌方颜色
         0,              // 能量机关x轴补偿量
         0,              // 能量机关y轴补偿量
 };
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
             video_gimbal = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
             video_chassis = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2/*, "energy"*/);
         } else {
-            video_gimbal = new VideoWrapper(PROJECT_DIR"/test_video/red_small.avi");
+            video_gimbal = new VideoWrapper(PROJECT_DIR"/test_video/blue_small.avi");
             video_chassis = new VideoWrapper(PROJECT_DIR"/test_video/red_small.avi");
         }
         if (video_gimbal->init()) {

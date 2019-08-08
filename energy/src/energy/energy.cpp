@@ -80,7 +80,7 @@ void Energy::setSmallEnergyInit() {
 
     FILE *fp = fopen(PROJECT_DIR"/Mark/delta.txt", "r");
     if (fp) {
-        fscanf(fp, "%d %d", &manual_delta_x, &manual_delta_y);
+        fscanf(fp, "delta_x: %d, delta_y: %d", &manual_delta_x, &manual_delta_y);
         fclose(fp);
     }
 }
