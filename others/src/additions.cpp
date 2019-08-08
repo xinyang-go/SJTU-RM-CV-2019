@@ -173,10 +173,6 @@ void extract(cv::Mat &gimbal_src) {//图像预处理，将视频切成640×480�
     }
 }
 
-float getTimeIntervalms(const systime &now, const systime &last){
-    return (now.second-last.second)*1000.0 + (now.millisecond-last.millisecond);
-}
-
 double getPointLength(const cv::Point2f &p) {
     return sqrt(p.x * p.x + p.y * p.y);
 }

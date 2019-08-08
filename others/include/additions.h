@@ -15,7 +15,7 @@ struct McuData {
     float curr_pitch;
     uint8_t state;
     uint8_t mark;
-    uint8_t use_classifier;
+    uint8_t anti_top;
     uint8_t enemy_color;
     int delta_x;
     int delta_y;
@@ -41,7 +41,7 @@ void extract(cv::Mat &gimbal_src, cv::Mat &chassis_src);
 
 void extract(cv::Mat &gimbal_src);
 
-float getTimeIntervalms(const systime &now, const systime &last);
+double getTimeIntervalms(const systime &now, const systime &last);
 
 double getPointLength(const cv::Point2f &p);
 

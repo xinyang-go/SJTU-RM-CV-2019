@@ -5,11 +5,17 @@
 
 #if defined(Linux) || defined(Darwin)
 
-void getsystime(systime &t){
+static systime getsystime(){
     timeval tv;
     gettimeofday(&tv, nullptr);
-    t.second = tv.tv_sec;
-    t.millisecond = tv.tv_usec/1000;
+    return tv.tv_usec / 1000.0 + tv.tv_sec * 1000.0;
+}
+
+void getsystime(systime &t) {
+    static systime time_base = getsystime();
+    timeval tv;
+    gettimeofday(&tv, nullptr);
+    t = tv.tv_usec / 1000.0 + tv.tv_sec * 1000.0 - time_base;
 }
 
 #elif defined(Windows)
@@ -17,10 +23,14 @@ void getsystime(systime &t){
 void getsystime(systime &t){
     SYSTEMTIME tv;
     GetLocalTime(&tv);
-    t.second = tv.wSecond;
-    t.millisecond = tv.wMilliseconds;
+    t = tv.wMilliseconds + tv.wSecond * 1000.0;
 }
 
 #else
-    #error "nonsupport platform."
+#error "nonsupport platform."
 #endif
+
+
+double getTimeIntervalms(const systime &now, const systime &last) {
+    return now - last;
+}

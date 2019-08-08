@@ -46,13 +46,12 @@ std::map<string, int> prior_red = {
         {"NO", 10},
 };
 
-ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder) :
+ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, const uint8_t &anti_top) :
         serial(u),
         enemy_color(color),
+        is_anti_top(anti_top),
         state(STANDBY_STATE),
-        anti_top_cnt(0),
         anti_switch_cnt(0),
-        anti_top_state(NORMAL),
         classifier(paras_folder),
         contour_area(0),
         tracking_cnt(0) {
@@ -91,9 +90,18 @@ void ArmorFinder::run(cv::Mat &src) {
             stateStandBy();
     }
 end:
-//    antiTop();
-    if(target_box.rect != cv::Rect2d())
+    if(is_anti_top) {
+        antiTop();
+    }else if(target_box.rect != cv::Rect2d()) {
+        time_seq.clear();
+        angle_seq.clear();
         sendBoxPosition(0);
+    }
+
+    if(target_box.rect != cv::Rect2d()){
+        last_box = target_box;
+    }
+
     if (show_armor_box) {                 // 根据条件显示当前目标装甲板
         showArmorBox("box", src, target_box);
         cv::waitKey(1);
