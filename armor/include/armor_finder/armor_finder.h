@@ -115,6 +115,7 @@ private:
     int tracking_cnt;                                   // 记录追踪帧数，用于定时退出追踪
     Serial &serial;                                     // 串口对象，引用外部变量，用于和能量机关共享同一个变量
     systime last_front_time;                            // 上次陀螺正对时间
+    int anti_top_cnt;
     RoundQueue<double, 4> top_periodms;                 // 陀螺周期循环队列
     vector<systime> time_seq;                           // 一个周期内的时间采样点
     vector<float> angle_seq;                            // 一个周期内的角度采样点

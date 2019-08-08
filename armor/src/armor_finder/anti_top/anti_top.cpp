@@ -32,7 +32,6 @@ static systime getFrontTime(const vector<systime> time_seq, const vector<float> 
 
 void ArmorFinder::antiTop() {
     if (target_box.rect == cv::Rect2d()) return;
-
     if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 1.5) {
         auto front_time = getFrontTime(time_seq, angle_seq);
         auto once_periodms = getTimeIntervalms(front_time, last_front_time);
@@ -40,13 +39,20 @@ void ArmorFinder::antiTop() {
 //            sendBoxPosition(0);
 //            return;
 //        }
+
         LOGM(STR_CTR(WORD_GREEN, "Top period: %.1lf"), once_periodms);
         top_periodms.push(once_periodms);
         auto periodms = mean(top_periodms);
         systime curr_time;
         getsystime(curr_time);
         uint16_t shoot_delay = front_time + periodms * 2 - curr_time;
-        sendBoxPosition(shoot_delay);
+        if (anti_top_cnt < 4) {
+            sendBoxPosition(0);
+        } else if (abs(once_periodms - top_periodms[-1]) > 50) {
+            sendBoxPosition(0);
+        } else {
+            sendBoxPosition(shoot_delay);
+        }
         time_seq.clear();
         angle_seq.clear();
         last_front_time = front_time;
@@ -57,5 +63,6 @@ void ArmorFinder::antiTop() {
         angle_seq.emplace_back(yaw);
         sendBoxPosition(0);
     }
+    anti_top_cnt++;
 }
 

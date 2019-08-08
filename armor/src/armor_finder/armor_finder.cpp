@@ -93,6 +93,7 @@ end:
     if(is_anti_top) {
         antiTop();
     }else if(target_box.rect != cv::Rect2d()) {
+        anti_top_cnt = 0;
         time_seq.clear();
         angle_seq.clear();
         sendBoxPosition(0);
