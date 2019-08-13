@@ -16,7 +16,6 @@
 #define BIG_ENERGY_STATE   'b'
 #define SMALL_ENERGY_STATE 's'
 #define ARMOR_STATE        'a'
-#define INIT_STATE          0
 
 #define FOCUS_PIXAL_8MM  (1488)
 #define FOCUS_PIXAL_5MM  (917)

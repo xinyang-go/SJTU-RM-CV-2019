@@ -29,17 +29,11 @@ bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect);
 
 bool checkReconnect(bool is_camera_connect);
 
-void saveVideos(const cv::Mat &gimbal_src, const cv::Mat &chassis_src);
+void saveVideos(const cv::Mat &src);
 
-void saveVideos(const cv::Mat &gimbal_src);
+void showOrigin(const cv::Mat &src);
 
-void showOrigin(const cv::Mat &gimbal_src, const cv::Mat &chassis_src);
-
-void showOrigin(const cv::Mat &gimbal_src);
-
-void extract(cv::Mat &gimbal_src, cv::Mat &chassis_src);
-
-void extract(cv::Mat &gimbal_src);
+void extract(cv::Mat &src);
 
 double getTimeIntervalms(const systime &now, const systime &last);
 

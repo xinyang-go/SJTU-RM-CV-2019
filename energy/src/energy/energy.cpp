@@ -21,8 +21,6 @@ Energy::Energy(Serial &u, uint8_t &color) : serial(u), ally_color(color),
 
     is_big = false;
     is_small = false;
-    is_gimbal = true;
-    is_chassis = false;
 }
 
 
@@ -38,45 +36,6 @@ Energy::~Energy() = default;
 void Energy::setEnergyInit() {
     initEnergy();
     initEnergyPartParam();
-
-    is_big = false;
-    is_small = false;
-    is_gimbal = true;
-    is_chassis = false;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数为大能量机关再初始化函数
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::setBigEnergyInit() {
-    initEnergy();
-    initEnergyPartParam();
-
-    is_big = true;
-    is_small = false;
-    is_gimbal = true;
-    is_chassis = false;
-
-    FILE *fp = fopen(PROJECT_DIR"/Mark/delta.txt", "r");
-    if (fp) {
-        fscanf(fp, "delta_x: %d, delta_y: %d", &manual_delta_x, &manual_delta_y);
-        fclose(fp);
-    }
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数为大能量机关再初始化函数
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::setSmallEnergyInit() {
-    initEnergy();
-    initEnergyPartParam();
-
-    is_big = false;
-    is_small = true;
-    is_gimbal = true;
-    is_chassis = false;
 
     FILE *fp = fopen(PROJECT_DIR"/Mark/delta.txt", "r");
     if (fp) {

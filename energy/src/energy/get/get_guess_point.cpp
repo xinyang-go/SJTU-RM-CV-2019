@@ -52,7 +52,7 @@ bool Energy::guessTarget() {
         guess_polar_angle = base_angle + guess_devide * 72;
     }
     if (guess_polar_angle > 180)guess_polar_angle -= 360;
-    radius = pointDistance(target_point, circle_center_point);
+    double radius = pointDistance(target_point, circle_center_point);
     guess_point.x = circle_center_point.x + radius * cos(PI / 180.0 * guess_polar_angle);
     guess_point.y = circle_center_point.y - radius * sin(PI / 180.0 * guess_polar_angle);
     last_base_angle = base_angle;

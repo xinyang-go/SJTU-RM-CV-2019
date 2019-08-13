@@ -32,22 +32,6 @@ void Energy::rotate(cv::Point target_point) {
 }
 
 
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数将像素差转换到实际距离差
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::stretch(cv::Point point_1, cv::Point2f &point_2) {
-    if (point_1 == circle_center_point) {
-//        cout<<"stretch wrong!"<<endl;
-        return;
-    }
-    double x_0 = point_1.x - circle_center_point.x;
-    double y_0 = point_1.y - circle_center_point.y;
-    double r_0 = sqrt(pow(x_0, 2) + pow(y_0, 2));
-    point_2.x = static_cast<float >( ARMOR_CENTER_TO_CYCLE_CENTER * x_0 / r_0);
-    point_2.y = static_cast<float >( ARMOR_CENTER_TO_CYCLE_CENTER * y_0 / r_0);
-}
-
-
 
 
 //----------------------------------------------------------------------------------------------------------------------

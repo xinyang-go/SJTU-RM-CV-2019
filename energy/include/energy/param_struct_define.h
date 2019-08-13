@@ -16,7 +16,6 @@ using std::vector;
 // 此结构体包括能量机关参数
 // ---------------------------------------------------------------------------------------------------------------------
 struct EnergyPartParam {
-	int GRAY_THRESH;//二值化阈值
 	int RED_GRAY_THRESH;//红方二值化阈值
 	int BLUE_GRAY_THRESH;//蓝方二值化阈值
 	int SPLIT_GRAY_THRESH;//通道分离二值化阈值
@@ -30,8 +29,6 @@ struct EnergyPartParam {
 	float FAN_CONTOUR_HW_RATIO_MAX;//扇叶长宽比最大值
 	float FAN_CONTOUR_HW_RATIO_MIN;//扇叶长宽比最小值
     float FAN_CONTOUR_AREA_RATIO_MIN;//装甲板轮廓占旋转矩形面积比最小值
-    double FAN_NON_ZERO_RATE_MAX;//流动条扇叶中亮点占旋转矩形的比值最大值
-    double FAN_NON_ZERO_RATE_MIN;//流动条扇叶中亮点占旋转矩形的比值最大值
 
 	long ARMOR_CONTOUR_AREA_MAX;//装甲板面积最大值
 	long ARMOR_CONTOUR_AREA_MIN;//装甲板面积最小值
@@ -64,8 +61,6 @@ struct EnergyPartParam {
     float FLOW_STRIP_FAN_CONTOUR_HW_RATIO_MIN;//流动条扇叶（待击打）长宽比最小值
     float FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MAX;//流动条扇叶轮廓占旋转矩形面积比最小值
     float FLOW_STRIP_FAN_CONTOUR_AREA_RATIO_MIN;//流动条扇叶占旋转矩形面积比最小值
-    double FLOW_STRIP_FAN_NON_ZERO_RATE_MAX;//流动条扇叶中亮点占旋转矩形的比值最大值
-    double FLOW_STRIP_FAN_NON_ZERO_RATE_MIN;//流动条扇叶中亮点占旋转矩形的比值最大值
 
     long FLOW_STRIP_CONTOUR_AREA_MAX;//流动条（待击打）面积最大值
     long FLOW_STRIP_CONTOUR_AREA_MIN;//流动条（待击打）面积最小值
@@ -81,7 +76,6 @@ struct EnergyPartParam {
 	float TWIN_ANGEL_MAX;//两个理论上相等的角度在计算时具有的可能最大差值
 	long TARGET_INTERSETION_CONTOUR_AREA_MIN;//扇叶与装甲板匹配时的最小重合面积
 
-	long TARGET_CHANGE_DISTANCE_MAX;//目标未更改时，目标装甲板中心与原目标装甲板中心的距离变化最大值
 	long TWIN_POINT_MAX;//两个点相同时距离最大值
 
     long STRIP_ARMOR_DISTANCE_MIN;//流动条中心和目标装甲板中心距离最小值

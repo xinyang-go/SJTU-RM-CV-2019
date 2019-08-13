@@ -9,6 +9,4 @@ tools/TrainCNN/__pycache__
 others/include/config/config.h
 others/MV-UB31-Group0.config
 .DS_Store
-gimbal_video
-chassis_video
-test_video
+video

@@ -10,34 +10,18 @@ using namespace std;
 using namespace cv;
 
 
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数用于判断世界坐标系下是否可以发弹
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::judgeShootInWorld() {
-    if (abs(yaw_rotation - mcu_data.curr_yaw) < 0.5 && abs(pitch_rotation - mcu_data.curr_pitch) < 0.5) {
-        shoot = 4;
-//        is_predicting = false;
-//        is_guessing = true;
-//        start_guess = true;
-//        getsystime(time_start_guess);
-        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
-    } else
-        shoot = 2;
-}
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // 此函数用于判断云台坐标系下是否可以发弹
 // ---------------------------------------------------------------------------------------------------------------------
-void Energy::judgeShootInGimbal() {
+void Energy::judgeShoot() {
     if (abs(yaw_rotation) < 0.7 && abs(pitch_rotation) < 0.7) {
-        shoot = 4;
+        shoot = 2;
 //        is_predicting = false;
 //        is_guessing = true;
 //        start_guess = true;
 //        getsystime(time_start_guess);
 //        LOGM(STR_CTR(WORD_LIGHT_RED, "Start Guessing!"));
     } else
-        shoot = 2;
-//    cout << "yaw: " << yaw_rotation << '\t' << "pitch: " << pitch_rotation << endl;
+        shoot = 1;
 }

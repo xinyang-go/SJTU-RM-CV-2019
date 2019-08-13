@@ -11,43 +11,6 @@ using std::endl;
 using std::vector;
 
 
-//----------------------------------------------------------------------------------------------------------------------
-// 此函数根据矩形重合面积匹配扇叶与装甲板
-// ---------------------------------------------------------------------------------------------------------------------
-void Energy::findTargetByIntersection() {
-    if (fans.size() >= armors.size()) return;//扇叶多于装甲板，识别错误
-    for (const auto &fan : fans) {
-        for (const auto &armor : armors) {
-
-        }
-    }
-    /* if (fans.empty()) {
-         target_point = armors.at(0).rect.center;
-         return;
-     }
-     int i = 0, j = 0;
-     while (i < armors.size()) {
-         for (j = 0; j < fans.size(); ++j) {
-             std::vector<cv::Point2f> intersection;
-             if (rotatedRectangleIntersection(armors.at(i).rect, fans.at(j).rect, intersection) == 0)//返回0表示没有重合面积
-                 continue;
-             else
-                 rotatedRectangleIntersection(armors.at(i).rect, fans.at(j).rect, intersection);
-             double cur_contour_area = contourArea(intersection);
-             if (cur_contour_area > energy_part_param_.INTERSETION_CONTOUR_AREA_MIN) {
- //                    cout << endl;
- //                    cout << "NO. " << i << " armor and No. " << j << "fans are matched, the intersection area is"
- //                         << cur_contour_area << endl;
-                 break;
-             }
-         }
-         if (j == fans.size()) {
-             target_point = armors.at(i).rect.center;
-             break;
-         }
-         i++;
-     }*/
-}
 
 
 //----------------------------------------------------------------------------------------------------------------------

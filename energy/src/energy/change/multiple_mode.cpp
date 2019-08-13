@@ -7,11 +7,15 @@
 using namespace std;
 using namespace cv;
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 此函数用于切换预测模式和猜测模式，但最终未使用
+// ---------------------------------------------------------------------------------------------------------------------
 void Energy::multipleMode(cv::Mat &src) {
     if (is_predicting) {
         getPredictPoint(target_point);
         getAimPoint(predict_point);
-        judgeShootInGimbal();
+        judgeShoot();
         sendEnergy();
     } else if (is_guessing && stayGuessing()) {
         findFans(src);
