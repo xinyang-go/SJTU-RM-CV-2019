@@ -25,8 +25,6 @@ extern McuData mcu_data;
 
 void uartReceive(Serial *pSerial);
 
-bool checkReconnect(bool is_camera_0_connect, bool is_camera_1_connect);
-
 bool checkReconnect(bool is_camera_connect);
 
 void saveVideos(const cv::Mat &src);
@@ -35,10 +33,9 @@ void showOrigin(const cv::Mat &src);
 
 void extract(cv::Mat &src);
 
-double getTimeIntervalms(const systime &now, const systime &last);
-
 double getPointLength(const cv::Point2f &p);
 
+// 循环队列
 template<class type, int length>
 class RoundQueue {
 private:

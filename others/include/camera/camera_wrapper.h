@@ -1,11 +1,9 @@
 //
 // Created by zhikun on 18-11-7.
-// used for testing double cameras
-// camera0 is left camera, camera1 is right camera.
 //
 
-#ifndef VIDEO_TEST1_CAMERA_WRAPPER_H
-#define VIDEO_TEST1_CAMERA_WRAPPER_H
+#ifndef _CAMERA_WRAPPER_H_
+#define _CAMERA_WRAPPER_H_
 
 #include <additions.h>
 #include <opencv2/core/core.hpp>
@@ -54,4 +52,4 @@ public:
 };
 
 
-#endif //VIDEO_TEST1_CAMERA_WRAPPER_H
+#endif /* _CAMERA_WRAPPER_H_ */
