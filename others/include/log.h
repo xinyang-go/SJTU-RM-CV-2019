@@ -24,6 +24,8 @@
 // arguments: tag:显示代码块执行时间前的用户信息，支持printf格式化字符串
 //            codes:需要被统计时间的代码块
 // attention: 代码块内定义的局部变量作用域仅限于该代码块
+//            代码块内不支持使用break,continue语句,将无法达到预想效果
+//            支持多出口离开代码块都能显示代码块执行时间
 //
 #ifndef _LOG_H_
 #define _LOG_H_
@@ -155,7 +157,7 @@
 /******************** the time counter API ************************/
 #if !defined(DO_NOT_CNT_TIME) && LOG_LEVEL > LOG_NONE
     #define CNT_TIME(tag, codes, ...) do{ \
-        class TimeCounter{ \
+        class { \
         private: \
             systime begin; \
         public: \
