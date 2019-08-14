@@ -1,7 +1,30 @@
 //
 // Created by xinyang on 19-2-19.
 //
-
+// 该文件提供一个更加方便的调试信息输出方式
+// 所有输出信息分为三个LEVEL:MSG,WARNING,ERROR
+// 可使用宏LOG_LEVEL定义当前文件使用的输出LEVEL
+// 高于该LEVEL的输出讲不会被显示
+// ============================================================
+// 输出API：
+// LOG(level, format, ...)
+// arguments: level:当前输出的level
+//            format:标准printf格式化字符串
+// LOGM(format, ...) 使用MSG level进行输出
+// LOGW(format, ...) 使用WARNING level进行输出
+// LOGE(format, ...) 使用ERROR level进行输出
+// ============================================================
+// 输出颜色API：(仅对部分终端生效)
+// STR_CTR(ctrs, str)
+// arguments: ctrs:该字符串对应的颜色(所有以WORD开头的宏)
+//　　　　　　　str:需要上色的字符串
+// ============================================================
+// 时间计算API：(需要配合systime.h使用)
+// CNT_TIME(tag, codes, ...)
+// arguments: tag:显示代码块执行时间前的用户信息，支持printf格式化字符串
+//            codes:需要被统计时间的代码块
+// attention: 代码块内定义的局部变量作用域仅限于该代码块
+//
 #ifndef _LOG_H_
 #define _LOG_H_
 
@@ -35,6 +58,7 @@
 #define BACK_GRAY_CODE      ";47"
 
 #define CTRS(ctrs)          START_CTR ctrs END_CTR
+#define STR_CTR(ctrs, str)          START_CTR ctrs END_CTR str CLEAR_ALL
 
 #define WORD_WHITE          WORD_WHITE_CODE
 #define WORD_RED            WORD_RED_CODE
@@ -106,7 +130,6 @@
 #define LOG_4(format, ...)          ((void)0)
 #define LOG_(level, format, ...)    LOG_##level (format, ##__VA_ARGS__)
 #define LOG(level, format, ...)     LOG_(level, format"\n", ##__VA_ARGS__)
-#define STR_CTR(ctrs, str)          START_CTR ctrs END_CTR str CLEAR_ALL
 
 #define LOGA(format, ...)           LOG(LOG_NONE, format, ##__VA_ARGS__)
 #define LOGA_INFO(format, ...)      LOG(LOG_NONE, "<%s:%d>: " format, ##__VA_ARGS__)

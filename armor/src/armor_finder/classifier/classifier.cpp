@@ -1,6 +1,7 @@
 //
 // Created by xinyang on 19-4-19.
 //
+// 对本文件的大致描述请看classifier.h
 
 //#define LOG_LEVEL LOG_NONE
 #include <armor_finder/classifier/classifier.h>
@@ -321,7 +322,6 @@ int Classifier::operator()(const cv::Mat &image) {
     vector<MatrixXd> sub = {b, g, r};
     vector<vector<MatrixXd>> in = {sub};
     MatrixXd result = calculate(in);
-//    cout << result << "==============" <<endl;
     MatrixXd::Index minRow, minCol;
     result.maxCoeff(&minRow, &minCol);
     if(result(minRow, minCol) > 0.50){

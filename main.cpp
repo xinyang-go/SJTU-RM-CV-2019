@@ -47,10 +47,8 @@ ArmorFinder armor_finder(mcu_data.enemy_color, serial, PROJECT_DIR"/tools/para/"
 // 能量机关主程序对象
 Energy energy(serial, mcu_data.enemy_color);
 
-int box_distance = 0;
-
 int main(int argc, char *argv[]) {
-    processOptions(argc, argv);            // 处理命令行参数
+    processOptions(argc, argv);             // 处理命令行参数
     thread receive(uartReceive, &serial);   // 开启串口接收线程
 
     int from_camera = 1;                    // 根据条件选择视频源
@@ -84,69 +82,68 @@ int main(int argc, char *argv[]) {
         do {
             char curr_state = mcu_data.state;
             CNT_TIME("Total", {
-            if (curr_state != ARMOR_STATE) {//大能量机关模式
-                if (last_state == ARMOR_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
-                    destroyAllWindows();
-                    if (from_camera) {
-                        delete video;
-                        video = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2);
-                        if (video->init()) {
-                            LOGM("video_gimbal source initialization successfully.");
-                        } else {
-                            LOGW("video_gimbal source unavailable!");
+                if (curr_state != ARMOR_STATE) {//大能量机关模式
+                    if (last_state == ARMOR_STATE) {//若上一帧不是大能量机关模式，即刚往完成切换，则需要初始化
+                        destroyAllWindows();
+                        if (from_camera) {
+                            delete video;
+                            video = new CameraWrapper(ENERGY_CAMERA_EXPOSURE, ENERGY_CAMERA_GAIN, 2);
+                            if (video->init()) {
+                                LOGM("video_gimbal source initialization successfully.");
+                            } else {
+                                LOGW("video_gimbal source unavailable!");
+                            }
+                        }
+                        if(curr_state == BIG_ENERGY_STATE){
+                            energy.is_small = false;
+                            energy.is_big = true;
+                            LOGM(STR_CTR(WORD_BLUE, "Start Big Energy!"));
+                        } else if (curr_state == SMALL_ENERGY_STATE){
+                            energy.is_small = true;
+                            energy.is_big = false;
+                            LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));
+                        }
+                        energy.setEnergyInit();
+                    }
+                    ok = checkReconnect(video->read(src));
+    #ifdef GIMBAL_FLIP_MODE
+                    flip(src, src, GIMBAL_FLIP_MODE);
+    #endif
+                    if (!from_camera) extract(src);
+                    if (save_video) saveVideos(src);//保存视频
+                    if (show_origin) showOrigin(src);//显示原始图像
+                    energy.run(src);
+                }  else {                                         // 自瞄模式
+                    if (last_state != ARMOR_STATE) {
+                        LOGM(STR_CTR(WORD_RED, "Start Armor!"));
+                        destroyAllWindows();
+                        if (from_camera) {
+                            delete video;
+                            video = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
+                            if (video->init()) {
+                                LOGM("video_gimbal source initialization successfully.");
+                            } else {
+                                LOGW("video_gimbal source unavailable!");
+                            }
                         }
                     }
-                    if(curr_state == BIG_ENERGY_STATE){
-                        energy.is_small = false;
-                        energy.is_big = true;
-                        LOGM(STR_CTR(WORD_BLUE, "Start Big Energy!"));
-                    } else if (curr_state == SMALL_ENERGY_STATE){
-                        energy.is_small = true;
-                        energy.is_big = false;
-                        LOGM(STR_CTR(WORD_GREEN, "Start Small Energy!"));
-                    }
-                    energy.setEnergyInit();
+                    CNT_TIME(STR_CTR(WORD_GREEN, "read img"), {
+                        if(!checkReconnect(video->read(src))) continue;
+                    });
+#ifdef GIMBAL_FLIP_MODE
+                    flip(src, src, GIMBAL_FLIP_MODE);
+#endif
+                    CNT_TIME("something whatever", {
+                        if (!from_camera) extract(src);
+                        if (save_video) saveVideos(src);
+                        if (show_origin) showOrigin(src);
+                    });
+                    CNT_TIME(STR_CTR(WORD_CYAN, "Armor Time"), {
+                        armor_finder.run(src);
+                    });
                 }
                 last_state = curr_state;//更新上一帧状态
-                ok = checkReconnect(video->read(src));
-#ifdef GIMBAL_FLIP_MODE
-                flip(src, src, GIMBAL_FLIP_MODE);
-#endif
-                if (!from_camera) extract(src);
-                if (save_video) saveVideos(src);//保存视频
-                if (show_origin) showOrigin(src);//显示原始图像
-                energy.run(src);
-            }  else {                                         // 自瞄模式
-                if (last_state != ARMOR_STATE) {
-                    LOGM(STR_CTR(WORD_RED, "Start Armor!"));
-                    destroyAllWindows();
-                    if (from_camera) {
-                        delete video;
-                        video = new CameraWrapper(ARMOR_CAMERA_EXPOSURE, ARMOR_CAMERA_GAIN, 2/*, "armor"*/);
-                        if (video->init()) {
-                            LOGM("video_gimbal source initialization successfully.");
-                        } else {
-                            LOGW("video_gimbal source unavailable!");
-                        }
-                    }
-                }
-                last_state = curr_state;
-                CNT_TIME(STR_CTR(WORD_GREEN, "read img"), {
-                    if(!checkReconnect(video->read(src))) continue;
-                });
-#ifdef GIMBAL_FLIP_MODE
-                flip(src, src, GIMBAL_FLIP_MODE);
-#endif
-//                CNT_TIME("something whatever", {
-                    if (!from_camera) extract(src);
-                    if (save_video) saveVideos(src);
-                    if (show_origin) showOrigin(src);
-//                });
-                CNT_TIME(STR_CTR(WORD_CYAN, "Armor Time"), {
-                    armor_finder.run(src);
-                });
-            }
-//            cv::waitKey(0);
+                if(run_by_frame) cv::waitKey(0);
             });
         } while (ok);
         delete video;

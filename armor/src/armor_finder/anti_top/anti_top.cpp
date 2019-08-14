@@ -32,6 +32,11 @@ static systime getFrontTime(const vector<systime> time_seq, const vector<float> 
 
 void ArmorFinder::antiTop() {
     if (target_box.rect == cv::Rect2d()) return;
+    // 判断是否发生装甲目标切换。
+    // 记录切换前一段时间目标装甲的角度和时间
+    // 通过线性拟合计算出角度为0时对应的时间点
+    // 通过两次装甲角度为零的时间差计算陀螺旋转周期
+    // 根据旋转周期计算下一次装甲出现在角度为零的时间点
     if (getPointLength(last_box.getCenter() - target_box.getCenter()) > last_box.rect.height * 1.5) {
         auto front_time = getFrontTime(time_seq, angle_seq);
         auto once_periodms = getTimeIntervalms(front_time, last_front_time);
@@ -39,7 +44,6 @@ void ArmorFinder::antiTop() {
 //            sendBoxPosition(0);
 //            return;
 //        }
-
         LOGM(STR_CTR(WORD_GREEN, "Top period: %.1lf"), once_periodms);
         top_periodms.push(once_periodms);
         auto periodms = mean(top_periodms);

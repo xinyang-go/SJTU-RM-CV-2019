@@ -43,7 +43,7 @@ class DataSet:
                 if file[-3:] == "jpg":
                     sample = self.file2nparray("%s/%s" % (dir, file))
                     label = self.id2label(i)
-                    if random.random() > 0.7:
+                    if random.random() < 0.7:
                         self.train_samples.append(sample)
                         self.train_labels.append(label)
                         if i == 0:

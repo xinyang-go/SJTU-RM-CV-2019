@@ -19,6 +19,7 @@ bool show_process = false;
 bool show_energy = false;
 bool save_mark = false;
 bool show_info = false;
+bool run_by_frame = false;
 
 // 使用map保存所有选项及其描述和操作，加快查找速度。
 std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
@@ -76,6 +77,12 @@ std::map<std::string, std::pair<std::string, void(*)(void)>> options = {
         "wait uart until ready before running.", [](){
             wait_uart = true;
             LOGM("Enable wait uart!");
+        }
+    }},
+    {"--run-by-frame",{
+        "run the code frame by frame.(normally used when run video)", [](){
+            run_by_frame = true;
+            LOGM("Enable run frame by frame");
         }
     }},
     {"--show-process", {

@@ -23,6 +23,8 @@ extern bool show_process;
 extern bool show_energy;
 extern bool save_mark;
 extern bool show_info;
+extern bool run_by_frame;
+
 
 void processOptions(int argc, char **argv);
 

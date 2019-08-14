@@ -58,7 +58,7 @@ ArmorFinder::ArmorFinder(uint8_t &color, Serial &u, const string &paras_folder, 
 }
 
 void ArmorFinder::run(cv::Mat &src) {
-    getsystime(frame_time);
+    getsystime(frame_time); //　获取当前帧时间(不是足够精确)
 //    stateSearchingTarget(src);                    // for debug
 //    goto end;
     switch (state) {
@@ -87,10 +87,10 @@ void ArmorFinder::run(cv::Mat &src) {
             break;
         case STANDBY_STATE:
         default:
-            stateStandBy();
+            stateStandBy(); // currently meaningless
     }
 end:
-    if(is_anti_top) {
+    if(is_anti_top) { // 判断当前是否为反陀螺模式
         antiTop();
     }else if(target_box.rect != cv::Rect2d()) {
         anti_top_cnt = 0;
