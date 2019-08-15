@@ -52,8 +52,8 @@ def save_para(folder, paras, names, info):
 
 
 STEPS = 100000
-BATCH = 50
-LEARNING_RATE_BASE = 0.0005
+BATCH = 40
+LEARNING_RATE_BASE = 0.0003
 LEARNING_RATE_DECAY = 0.99
 MOVING_AVERAGE_DECAY = 0.99
 
@@ -98,7 +98,7 @@ def train(dataset, show_bar=False):
 
             _, loss_value, step = sess.run(
                 [train_op, loss, global_step],
-                feed_dict={x: images_samples, y_: labels_samples, keep_rate: 0.4}
+                feed_dict={x: images_samples, y_: labels_samples, keep_rate: 0.3}
             )
 
             if step % 500 == 0:
