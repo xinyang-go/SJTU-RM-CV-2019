@@ -11,7 +11,7 @@
 
 #include <log.h>
 
-
+// 判断两个灯条的角度差
 static bool angelJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
     float angle_i = light_blob_i.rect.size.width > light_blob_i.rect.size.height ? light_blob_i.rect.angle :
                     light_blob_i.rect.angle - 90;
@@ -19,19 +19,19 @@ static bool angelJudge(const LightBlob &light_blob_i, const LightBlob &light_blo
                     light_blob_j.rect.angle - 90;
     return abs(angle_i - angle_j) < 20;
 }
-
+// 判断两个灯条的高度差
 static bool heightJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
     cv::Point2f centers = light_blob_i.rect.center - light_blob_j.rect.center;
     return abs(centers.y) < 30;
 }
-
+// 判断两个灯条的间距
 static bool lengthJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
     double side_length;
     cv::Point2f centers = light_blob_i.rect.center - light_blob_j.rect.center;
     side_length = sqrt(centers.ddot(centers));
     return (side_length / light_blob_i.length < 10 && side_length / light_blob_i.length > 0.5);
 }
-
+// 判断两个灯条的长度比
 static bool lengthRatioJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
     return (light_blob_i.length / light_blob_j.length < 2.5
             && light_blob_i.length / light_blob_j.length > 0.4);
@@ -52,7 +52,7 @@ static bool CuoWeiDuJudge(const LightBlob &light_blob_i, const LightBlob &light_
                  light_blob_j.rect.center.y - light_blob_i.rect.center.y);
     return abs(orientation.dot(p2p)) < 25;
 }
-
+// 判断装甲板方向
 static bool boxAngleJudge(const LightBlob &light_blob_i, const LightBlob &light_blob_j) {
     float angle_i = light_blob_i.rect.size.width > light_blob_i.rect.size.height ? light_blob_i.rect.angle :
                     light_blob_i.rect.angle - 90;
@@ -64,7 +64,7 @@ static bool boxAngleJudge(const LightBlob &light_blob_i, const LightBlob &light_
     }
     return (-120.0 < angle && angle < -60.0) || (60.0 < angle && angle < 120.0);
 }
-
+// 判断两个灯条是否可以匹配
 static bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_blob_j, uint8_t enemy_color) {
     return light_blob_i.blob_color == enemy_color &&
            light_blob_j.blob_color == enemy_color &&
@@ -76,13 +76,7 @@ static bool isCoupleLight(const LightBlob &light_blob_i, const LightBlob &light_
            CuoWeiDuJudge(light_blob_i, light_blob_j);
 
 }
-
-static double centerDistance(const cv::Rect2d &box) {
-    double dx = box.x - box.width / 2 - 320;
-    double dy = box.y - box.height / 2 - 240;
-    return dx * dx + dy * dy;
-}
-
+// 匹配所有灯条，得出装甲板候选区
 bool ArmorFinder::matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_blobs, ArmorBoxes &armor_boxes) {
     armor_boxes.clear();
     for (int i = 0; i < light_blobs.size() - 1; ++i) {
@@ -113,32 +107,34 @@ bool ArmorFinder::matchArmorBoxes(const cv::Mat &src, const LightBlobs &light_bl
     }
     return !armor_boxes.empty();
 }
-
+// 在给定的图像上寻找装甲板
 bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
     LightBlobs light_blobs; // 存储所有可能的灯条
     ArmorBoxes armor_boxes; // 装甲板候选区
 
     box.rect = cv::Rect2d(0, 0, 0, 0);
     box.id = -1;
+// 寻找所有可能的灯条
     CNT_TIME("blob", {
         if (!findLightBlobs(src, light_blobs)) {
             return false;
         }
     });
-    if (show_light_blobs && src.size() == cv::Size(640, 480)) {
+    if (show_light_blobs && state==SEARCHING_STATE) {
         showLightBlobs("light_blobs", src, light_blobs);
         cv::waitKey(1);
     }
+// 对灯条进行匹配得出装甲板候选区
     CNT_TIME("boxes", {
         if (!matchArmorBoxes(src, light_blobs, armor_boxes)) {
             return false;
         }
     });
-    if (show_armor_boxes && src.size() == cv::Size(640, 480)) {
+    if (show_armor_boxes && state==SEARCHING_STATE) {
         showArmorBoxes("boxes", src, armor_boxes);
         cv::waitKey(1);
     }
-
+// 如果分类器可用，则使用分类器对装甲板候选区进行筛选
     if (classifier) {
         CNT_TIME("classify: %d", {
             for (auto &armor_box : armor_boxes) {
@@ -148,6 +144,7 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
                 armor_box.id = c;
             }
         }, armor_boxes.size());
+// 按照优先级对装甲板进行排序
         sort(armor_boxes.begin(), armor_boxes.end(), [&](const ArmorBox &a, const ArmorBox &b) {
             if (last_box.rect != cv::Rect2d()) {
                 return getPointLength(a.getCenter() - last_box.getCenter()) <
@@ -174,10 +171,10 @@ bool ArmorFinder::findArmorBox(const cv::Mat &src, ArmorBox &box) {
         if (box.rect == cv::Rect2d(0, 0, 0, 0)) {
             return false;
         }
-        if (show_armor_boxes && src.size() == cv::Size(640, 480)) {
+        if (show_armor_boxes && state==SEARCHING_STATE) {
             showArmorBoxesClass("class", src, armor_boxes);
         }
-    } else {
+    } else { // 如果分类器不可用，则直接选取候选区中的第一个区域作为目标(往往会误识别)
         box = armor_boxes[0];
     }
     return true;

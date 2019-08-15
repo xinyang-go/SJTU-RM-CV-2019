@@ -8,7 +8,7 @@
 ArmorBox::ArmorBox(const cv::Rect &pos, const LightBlobs &blobs, uint8_t color, int i) :
         rect(pos), light_blobs(blobs), box_color(color), id(i) {};
 
-
+// 获取装甲板中心点
 cv::Point2f ArmorBox::getCenter() const {
     return cv::Point2f(
             rect.x + rect.width / 2,
@@ -16,7 +16,7 @@ cv::Point2f ArmorBox::getCenter() const {
     );
 }
 
-
+// 获取两个灯条中心点的间距
 double ArmorBox::getBlobsDistance() const {
     if (light_blobs.size() == 2) {
         auto &x = light_blobs[0].rect.center;
@@ -27,6 +27,7 @@ double ArmorBox::getBlobsDistance() const {
     }
 }
 
+// 获取灯条长度和间距的比例
 double ArmorBox::lengthDistanceRatio() const {
     if (light_blobs.size() == 2) {
         return max(light_blobs[0].length, light_blobs[1].length)
@@ -36,6 +37,7 @@ double ArmorBox::lengthDistanceRatio() const {
     }
 }
 
+// 计算装甲板到摄像头的距离
 double ArmorBox::getBoxDistance() const {
     if (light_blobs.size() == 2) {
         return DISTANCE_HEIGHT / 2 / max(light_blobs[0].length, light_blobs[1].length);
@@ -44,8 +46,8 @@ double ArmorBox::getBoxDistance() const {
     }
 }
 
+// 判断装甲板的正对还是侧对(已弃用，误差过大)
 ArmorBox::BoxOrientation ArmorBox::getOrientation() const {
-//    cout << lengthDistanceRatio() << endl;
     if (light_blobs.size() != 2) {
         return UNKNOWN;
     }
@@ -78,7 +80,7 @@ ArmorBox::BoxOrientation ArmorBox::getOrientation() const {
             return UNKNOWN;
     }
 }
-
+// 装甲板的优先级比较
 bool ArmorBox::operator<(const ArmorBox &box) const {
     if (id != box.id) {
         if (box_color == BOX_BLUE) {

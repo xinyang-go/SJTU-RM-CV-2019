@@ -6,25 +6,24 @@
 #include <options.h>
 #include <opencv2/highgui.hpp>
 
+// 旋转矩形的长宽比
 static double lw_rate(const cv::RotatedRect &rect) {
     return rect.size.height > rect.size.width ?
            rect.size.height / rect.size.width :
            rect.size.width / rect.size.height;
 }
-
-
+// 轮廓面积和其最小外接矩形面积之比
 static double areaRatio(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect) {
     return cv::contourArea(contour) / rect.size.area();
 }
-
+// 判断轮廓是否为一个灯条
 static bool isValidLightBlob(const std::vector<cv::Point> &contour, const cv::RotatedRect &rect) {
     return (1.2 < lw_rate(rect) && lw_rate(rect) < 10) &&
            //           (rect.size.area() < 3000) &&
            ((rect.size.area() < 50 && areaRatio(contour, rect) > 0.4) ||
             (rect.size.area() >= 50 && areaRatio(contour, rect) > 0.6));
 }
-
-// 此函数可以有性能优化.
+// 判断灯条颜色(此函数可以有性能优化).
 static uint8_t get_blob_color(const cv::Mat &src, const cv::RotatedRect &blobPos) {
     auto region = blobPos.boundingRect();
     region.x -= fmax(3, region.width * 0.1);
@@ -46,60 +45,12 @@ static uint8_t get_blob_color(const cv::Mat &src, const cv::RotatedRect &blobPos
         return BLOB_BLUE;
     }
 }
-
-static float linePointX(const cv::Point2f &p1, const cv::Point2f &p2, int y) {
-    return (p2.x - p1.x) / (p2.y - p1.y) * (y - p1.y) + p1.x;
-}
-
-/// Todo:性能优化后的函数（还有点问题）
-static double get_blob_color_opt(const cv::Mat &src, cv::RotatedRect blobPos) {
-    int blue_cnt = 0, red_cnt = 0;
-    blobPos.size.height *= 1.05;
-    blobPos.size.width *= 1.1;
-    cv::Point2f corners[4];
-    blobPos.points(corners);
-    sort(corners, &corners[4], [](cv::Point2f p1, cv::Point2f p2) {
-        return p1.y < p2.y;
-    });
-    for (int r = corners[0].y; r < corners[1].y; r++) {
-        auto start = min(linePointX(corners[0], corners[1], r), linePointX(corners[0], corners[2], r)) - 1;
-        auto end = max(linePointX(corners[0], corners[1], r), linePointX(corners[0], corners[2], r)) + 1;
-        if (start < 0 || end > 640) return 0;
-        for (int c = start; c < end; c++) {
-            red_cnt += src.at<cv::Vec3b>(r, c)[2];
-            blue_cnt += src.at<cv::Vec3b>(r, c)[0];
-        }
-    }
-    for (int r = corners[1].y; r < corners[2].y; r++) {
-        auto start = min(linePointX(corners[0], corners[2], r), linePointX(corners[1], corners[3], r)) - 1;
-        auto end = max(linePointX(corners[0], corners[2], r), linePointX(corners[1], corners[3], r)) + 1;
-        if (start < 0 || end > 640) return 0;
-        for (int c = start; c < end; c++) {
-            red_cnt += src.at<cv::Vec3b>(r, c)[2];
-            blue_cnt += src.at<cv::Vec3b>(r, c)[0];
-        }
-    }
-    for (int r = corners[2].y; r < corners[3].y; r++) {
-        auto start = min(linePointX(corners[1], corners[3], r), linePointX(corners[2], corners[3], r)) - 1;
-        auto end = max(linePointX(corners[1], corners[3], r), linePointX(corners[2], corners[3], r)) + 1;
-        if (start < 0 || end > 640) return 0;
-        for (int c = start; c < end; c++) {
-            red_cnt += src.at<cv::Vec3b>(r, c)[2];
-            blue_cnt += src.at<cv::Vec3b>(r, c)[0];
-        }
-    }
-    if (red_cnt > blue_cnt) {
-        return BLOB_RED;
-    } else {
-        return BLOB_BLUE;
-    }
-}
-
+// 判断两个灯条区域是同一个灯条
 static bool isSameBlob(LightBlob blob1, LightBlob blob2) {
     auto dist = blob1.rect.center - blob2.rect.center;
     return (dist.x * dist.x + dist.y * dist.y) < 9;
 }
-
+// 开闭运算
 static void imagePreProcess(cv::Mat &src) {
     static cv::Mat kernel_erode = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
     erode(src, src, kernel_erode);
@@ -112,12 +63,8 @@ static void imagePreProcess(cv::Mat &src) {
 
     static cv::Mat kernel_erode2 = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 5));
     erode(src, src, kernel_erode2);
-
-//    float alpha = 1.5;
-//    int beta = 0;
-//    src.convertTo(src, -1, alpha, beta);
 }
-
+// 在给定图像上寻找所有可能的灯条
 bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
     cv::Mat color_channel;
     cv::Mat src_bin_light, src_bin_dim;
@@ -148,7 +95,8 @@ bool ArmorFinder::findLightBlobs(const cv::Mat &src, LightBlobs &light_blobs) {
         imshow("bin_light", src_bin_light);
         imshow("bin_dim", src_bin_dim);
     }
-
+// 使用两个不同的二值化阈值同时进行灯条提取，减少环境光照对二值化这个操作的影响。
+// 同时剔除重复的灯条，剔除冗余计算，即对两次找出来的灯条取交集。
     std::vector<std::vector<cv::Point>> light_contours_light, light_contours_dim;
     LightBlobs light_blobs_light, light_blobs_dim;
     std::vector<cv::Vec4i> hierarchy_light, hierarchy_dim;
