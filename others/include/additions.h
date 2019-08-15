@@ -9,7 +9,7 @@
 #include <systime.h>
 #include <serial.h>
 #include <opencv2/core.hpp>
-
+// 单片机端回传数据结构体
 struct McuData {
     float curr_yaw;
     float curr_pitch;
@@ -22,15 +22,15 @@ struct McuData {
 };
 
 extern McuData mcu_data;
-
+// 串口接收函数
 void uartReceive(Serial *pSerial);
-
+// 相机断线重连函数
 bool checkReconnect(bool is_camera_connect);
-
+// 视频保存函数
 void saveVideos(const cv::Mat &src);
-
+//　原始图像显示函数
 void showOrigin(const cv::Mat &src);
-
+// 图像裁剪函数
 void extract(cv::Mat &src);
 
 double getPointLength(const cv::Point2f &p);

@@ -95,8 +95,8 @@ void saveVideos(const cv::Mat &gimbal_src) {
 void showOrigin(const cv::Mat &src) {
     if (!src.empty()) {
         imshow("origin", src);
+        cv::waitKey(1);
     } else return;
-    cv::waitKey(1);
 }
 
 void extract(cv::Mat &src) {//图像预处理，将视频切成640×480的大小
