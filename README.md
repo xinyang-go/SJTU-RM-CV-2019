@@ -15,6 +15,9 @@
 
 运行效果：自瞄帧率120（摄像头最大帧率）,识别距离根据环境不同大约8米左右(5mm焦距镜头)。
 
+![front](https://github.com/lloi7/SJTU-RM-CV-2019/blob/master/picture0.png)
+![side](https://github.com/lloi7/SJTU-RM-CV-2019/blob/master/picture1.png)
+
 ## 一、代码运行环境
 
 | 硬件设备                                             | 操作系统                                     | 运行库                                                       | ToolChain                                                  |
