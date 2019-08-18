@@ -79,13 +79,13 @@ public:
 
     explicit ArmorBox(const cv::Rect &pos=cv::Rect2d(), const LightBlobs &blobs=LightBlobs(), uint8_t color=0, int i=0);
 
-    cv::Point2f getCenter() const;
-    double getBlobsDistance() const;
-    double lengthDistanceRatio() const;
-    double getBoxDistance() const;
-    BoxOrientation getOrientation() const;
+    cv::Point2f getCenter() const; // 获取装甲板中心
+    double getBlobsDistance() const; // 获取两个灯条中心间距
+    double lengthDistanceRatio() const; // 获取灯条中心距和灯条长度的比值
+    double getBoxDistance() const; // 获取装甲板到摄像头的距离
+    BoxOrientation getOrientation() const; // 获取装甲板朝向(误差较大，已弃用)
 
-    bool operator<(const ArmorBox &box) const;
+    bool operator<(const ArmorBox &box) const; // 装甲板优先级比较
 };
 
 typedef std::vector<ArmorBox> ArmorBoxes;

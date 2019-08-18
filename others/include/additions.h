@@ -11,14 +11,14 @@
 #include <opencv2/core.hpp>
 // 单片机端回传数据结构体
 struct McuData {
-    float curr_yaw;
-    float curr_pitch;
-    uint8_t state;
-    uint8_t mark;
-    uint8_t anti_top;
-    uint8_t enemy_color;
-    int delta_x;
-    int delta_y;
+    float curr_yaw;      // 当前云台yaw角度
+    float curr_pitch;    // 当前云台pitch角
+    uint8_t state;       // 当前状态，自瞄-大符-小符
+    uint8_t mark;        // 云台角度标记位
+    uint8_t anti_top;    // 是否为反陀螺模式
+    uint8_t enemy_color; // 敌方颜色
+    int delta_x;         // 能量机关x轴补偿量
+    int delta_y;         // 能量机关y轴补偿量
 };
 
 extern McuData mcu_data;
